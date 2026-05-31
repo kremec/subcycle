@@ -1,0 +1,259 @@
+diff --git a/build/universal/Slider/types.d.ts b/build/universal/Slider/types.d.ts
+index 98749050812c63417c046f8c1ab9b68c0518901d..4c420e4beae02bf7ce14b2fde0de2d1da5994e1c 100644
+--- a/build/universal/Slider/types.d.ts
++++ b/build/universal/Slider/types.d.ts
+@@ -1,3 +1,4 @@
++import type { ColorValue } from 'react-native';
+ import type { ModifierConfig } from '../../types';
+ /**
+  * Props for the [`Slider`](#slider) component.
+@@ -10,7 +11,11 @@ export interface SliderProps {
+     /**
+      * Called when the user changes the slider value.
+      */
+-    onValueChange: (value: number) => void;
++    onValueChange?: (value: number) => void;
++    /**
++     * Called when the user finishes changing the slider value.
++     */
++    onSlidingComplete?: (value: number) => void;
+     /**
+      * Minimum value of the slider range.
+      * @default 0
+@@ -38,5 +43,19 @@ export interface SliderProps {
+      * from `@expo/ui/swift-ui/modifiers` or `@expo/ui/jetpack-compose/modifiers`.
+      */
+     modifiers?: ModifierConfig[];
++    /**
++     * Color of the track before the thumb.
++     */
++    minimumTrackTintColor?: ColorValue;
++    /**
++     * Color of the track after the thumb.
++     * @platform android
++     */
++    maximumTrackTintColor?: ColorValue;
++    /**
++     * Color of the thumb.
++     * @platform android
++     */
++    thumbTintColor?: ColorValue;
+ }
+ //# sourceMappingURL=types.d.ts.map
+diff --git a/src/universal/Slider/index.android.tsx b/src/universal/Slider/index.android.tsx
+index f12eb5d88b358d55307536a82fab6b0c14b6c29d..90ec5e4a99bb3a6d85ddb226f4dfe5c7dfd25d3a 100644
+--- a/src/universal/Slider/index.android.tsx
++++ b/src/universal/Slider/index.android.tsx
+@@ -1,3 +1,4 @@
++import { useRef } from 'react';
+ import { Slider as ComposeSlider } from '@expo/ui/jetpack-compose';
+ import { testID as testIDModifier } from '@expo/ui/jetpack-compose/modifiers';
+ 
+@@ -6,13 +7,18 @@ import type { SliderProps } from './types';
+ export function Slider({
+   value,
+   onValueChange,
++  onSlidingComplete,
+   min = 0,
+   max = 1,
+   step,
+   disabled,
+   testID,
+   modifiers,
++  minimumTrackTintColor,
++  maximumTrackTintColor,
++  thumbTintColor,
+ }: SliderProps) {
++  const lastValueRef = useRef(value);
+   // Android `steps` = number of discrete intervals between min and max.
+   // Universal `step` = increment size. Convert: steps = (max - min) / step - 1.
+   let steps: number | undefined;
+@@ -23,9 +29,12 @@ export function Slider({
+ 
+   const handleValueChange = disabled
+     ? undefined
+-    : step != null && step > 0
+-      ? (v: number) => onValueChange(Math.round((v - min) / step) * step + min)
+-      : onValueChange;
++    : (v: number) => {
++        const nextValue = step != null && step > 0 ? Math.round((v - min) / step) * step + min : v;
++
++        lastValueRef.current = nextValue;
++        onValueChange?.(nextValue);
++      };
+ 
+   return (
+     <ComposeSlider
+@@ -36,6 +45,14 @@ export function Slider({
+       steps={steps}
+       enabled={!disabled}
+       modifiers={[...(modifiers ?? []), ...(testID ? [testIDModifier(testID)] : [])]}
++      colors={{
++        activeTrackColor: minimumTrackTintColor,
++        inactiveTrackColor: maximumTrackTintColor,
++        thumbColor: thumbTintColor,
++      }}
++      onValueChangeFinished={
++        onSlidingComplete === undefined ? undefined : () => onSlidingComplete(lastValueRef.current)
++      }
+     />
+   );
+ }
+diff --git a/src/universal/Slider/index.ios.tsx b/src/universal/Slider/index.ios.tsx
+index e491b4849d630d7bc2235dd181fb3642786d55fd..86bf1afc78fece65f7fbe58618e4ff9d51046134 100644
+--- a/src/universal/Slider/index.ios.tsx
++++ b/src/universal/Slider/index.ios.tsx
+@@ -1,5 +1,6 @@
++import { useRef } from 'react';
+ import { Slider as SwiftUISlider } from '@expo/ui/swift-ui';
+-import { disabled as disabledMod } from '@expo/ui/swift-ui/modifiers';
++import { disabled as disabledMod, tint as tintMod } from '@expo/ui/swift-ui/modifiers';
+ import type { ModifierConfig } from '@expo/ui/swift-ui/modifiers';
+ 
+ import type { SliderProps } from './types';
+@@ -7,21 +8,35 @@ import type { SliderProps } from './types';
+ export function Slider({
+   value,
+   onValueChange,
++  onSlidingComplete,
+   min = 0,
+   max = 1,
+   step,
+   disabled,
+   testID,
+   modifiers: extraModifiers,
++  minimumTrackTintColor,
+ }: SliderProps) {
++  const lastValueRef = useRef(value);
+   const modifiers: ModifierConfig[] = [];
+   if (disabled) modifiers.push(disabledMod(true));
++  if (minimumTrackTintColor !== undefined) modifiers.push(tintMod(minimumTrackTintColor as string));
+   if (extraModifiers) modifiers.push(...extraModifiers);
+ 
++  const handleValueChange = (nextValue: number) => {
++    lastValueRef.current = nextValue;
++    onValueChange?.(nextValue);
++  };
++
+   return (
+     <SwiftUISlider
+       value={value}
+-      onValueChange={onValueChange}
++      onValueChange={handleValueChange}
++      onEditingChanged={(isEditing) => {
++        if (!isEditing) {
++          onSlidingComplete?.(lastValueRef.current);
++        }
++      }}
+       min={min}
+       max={max}
+       step={step}
+diff --git a/src/universal/Slider/index.tsx b/src/universal/Slider/index.tsx
+index 89cc009986289efbae2daf2223cdc7bd316c7a8e..5fee365615fe956e964623ff5997cd58fe2deac4 100644
+--- a/src/universal/Slider/index.tsx
++++ b/src/universal/Slider/index.tsx
+@@ -1,4 +1,4 @@
+-import type { ComponentProps } from 'react';
++import { useRef, type ComponentProps, type CSSProperties } from 'react';
+ import { StyleSheet, unstable_createElement, View, type ViewProps } from 'react-native';
+ 
+ import type { SliderProps } from './types';
+@@ -15,7 +15,9 @@ const styles = StyleSheet.create({
+ });
+ 
+ const NativeSlider = (
+-  props: Omit<ComponentProps<'input'>, 'style' | 'type'> & { style?: ViewProps['style'] }
++  props: Omit<ComponentProps<'input'>, 'style' | 'type'> & {
++    style?: ViewProps['style'] | CSSProperties;
++  }
+ ) => unstable_createElement('input', { ...props, type: 'range' });
+ 
+ /**
+@@ -24,12 +26,23 @@ const NativeSlider = (
+ export function Slider({
+   value,
+   onValueChange,
++  onSlidingComplete,
+   min = 0,
+   max = 1,
+   step,
+   disabled = false,
+   testID,
++  minimumTrackTintColor,
+ }: SliderProps) {
++  const lastValueRef = useRef(value);
++  const handleValueChange = (nextValue: number) => {
++    lastValueRef.current = nextValue;
++    onValueChange?.(nextValue);
++  };
++  const handleSlidingComplete = () => {
++    onSlidingComplete?.(lastValueRef.current);
++  };
++
+   return (
+     <View style={styles.view}>
+       <NativeSlider
+@@ -38,9 +51,16 @@ export function Slider({
+         max={max}
+         step={step ?? 'any'}
+         disabled={disabled}
+-        onChange={(e) => onValueChange(parseFloat(e.target.value))}
++        onChange={(e) => handleValueChange(parseFloat(e.target.value))}
++        onPointerUp={handleSlidingComplete}
++        onTouchEnd={handleSlidingComplete}
+         data-testid={testID}
+-        style={styles.input}
++        style={{
++          ...(StyleSheet.flatten(styles.input) as CSSProperties),
++          ...(minimumTrackTintColor !== undefined && {
++            accentColor: minimumTrackTintColor as string,
++          }),
++        }}
+       />
+     </View>
+   );
+diff --git a/src/universal/Slider/types.ts b/src/universal/Slider/types.ts
+index 8c425c8b32821ad0b026f7dbfec213930fc8c57f..a0e76690fa00dab90bf3c044514fc62fe4fefb50 100644
+--- a/src/universal/Slider/types.ts
++++ b/src/universal/Slider/types.ts
+@@ -1,3 +1,4 @@
++import type { ColorValue } from 'react-native';
+ import type { ModifierConfig } from '../../types';
+ 
+ /**
+@@ -12,7 +13,12 @@ export interface SliderProps {
+   /**
+    * Called when the user changes the slider value.
+    */
+-  onValueChange: (value: number) => void;
++  onValueChange?: (value: number) => void;
++
++  /**
++   * Called when the user finishes changing the slider value.
++   */
++  onSlidingComplete?: (value: number) => void;
+ 
+   /**
+    * Minimum value of the slider range.
+@@ -46,4 +52,21 @@ export interface SliderProps {
+    * from `@expo/ui/swift-ui/modifiers` or `@expo/ui/jetpack-compose/modifiers`.
+    */
+   modifiers?: ModifierConfig[];
++
++  /**
++   * Color of the track before the thumb.
++   */
++  minimumTrackTintColor?: ColorValue;
++
++  /**
++   * Color of the track after the thumb.
++   * @platform android
++   */
++  maximumTrackTintColor?: ColorValue;
++
++  /**
++   * Color of the thumb.
++   * @platform android
++   */
++  thumbTintColor?: ColorValue;
+ }

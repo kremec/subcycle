@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android"],
+  "apple": {
+    "modules": ["SubcycleRemindersModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.subcyclereminders.SubcycleRemindersModule"]
+  }
+}

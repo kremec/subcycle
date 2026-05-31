@@ -1,0 +1,93 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "close": "Close",
+    "days": {
+      "one": "{{count}} day",
+      "other": "{{count}} days"
+    },
+    "loading": "Loading ...",
+    "notAvailable": "N/A",
+    "save": "Save"
+  },
+  "calendar": {
+    "cycleStatus": {
+      "menstruationLeft": "of menstruation left",
+      "untilNextMenstruation": "until next menstruation",
+      "noMenstruationEvents": "No menstruation events"
+    },
+    "edit": {
+      "eventsTitle": "Events for {{date}}",
+      "predictionsTitle": "Predictions for {{date}}",
+      "dayOfCycle": "{{day}} day of cycle",
+      "light": "Light",
+      "moderate": "Moderate",
+      "heavy": "Heavy",
+      "spotting": "Spotting",
+      "ovulation": "Ovulation",
+      "pill": "Pill"
+    },
+    "symptoms": {
+      "title": "Symptoms for {{date}}"
+    }
+  },
+  "navigation": {
+    "calendar": "Calendar",
+    "partner": "Partner",
+    "settings": "Settings",
+    "stats": "Stats"
+  },
+  "ordinal": {
+    "one": "{{count}}st",
+    "two": "{{count}}nd",
+    "few": "{{count}}rd",
+    "other": "{{count}}th"
+  },
+  "partner": {
+    "addInsight": "Add insight",
+    "dayInCycle": "{{day}} day in cycle",
+    "description": "Description",
+    "delete": "Delete",
+    "editInsight": "Edit insight",
+    "editInsights": "Edit insights",
+    "name": "Name",
+    "noInsightsFound": "No insights found",
+    "startDayInCycle": "Start day in cycle",
+    "todayInsights": "Today's insights"
+  },
+  "settings": {
+    "addReminder": "Add reminder",
+    "dailyNotifications": "Daily notifications",
+    "editReminder": "Edit reminder",
+    "exportData": "Export data",
+    "importData": "Import data",
+    "menstrualCyclePrediction": "Menstrual cycle prediction",
+    "menstruationReminders": "Menstruation reminders",
+    "noPredictions": "No predictions",
+    "notificationMessage": "Notification message",
+    "notificationMessagePlaceholder": "Leave empty to use the default message.",
+    "notificationTime": "Notification time",
+    "reminderRuleAtTime": "{{rule}} at {{time}}",
+    "numberOfMonthsForPrediction": "Number of months for prediction",
+    "partnerMode": "Partner mode",
+    "partnerModeDescription": "Show insights based on day of cycle",
+    "pillReminders": "Pill reminders",
+    "predictionMonths": {
+      "one": "{{count}} month",
+      "other": "{{count}} months"
+    },
+    "reminderRule": {
+      "zero": "On the day",
+      "one": "{{count}} day before",
+      "other": "{{count}} days before"
+    },
+    "tooLittlePredictionInfo": "Too little information to set notifications based on predictions.",
+    "useDefaultReminderMessage": "Use the default reminder message.",
+    "notificationsBeforePredictedMenstruation": "Notifications before predicted menstruation"
+  },
+  "stats": {
+    "averageCycleLength": "Average cycle length",
+    "averageHeavyPeriodLength": "Average heavy period length",
+    "averagePeriodLength": "Average period length"
+  }
+}

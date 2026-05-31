@@ -1,0 +1,3 @@
+[hook "subcycle-quality"]
+  event = pre-commit
+  command = sh .githooks/pre-commit
