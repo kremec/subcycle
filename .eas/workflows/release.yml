@@ -1,0 +1,22 @@
+name: Production Android Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_android:
+    name: Build Production Android
+    type: build
+    params:
+      platform: android
+      profile: production
+
+  submit_android:
+    name: Submit Production Android
+    type: submit
+    needs: [build_android]
+    params:
+      build_id: ${{ needs.build_android.outputs.build_id }}
+      profile: production
