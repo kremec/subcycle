@@ -12,7 +12,9 @@ export function useSymptomsQuery(): { data: Symptoms[]; error?: Error } {
   );
 
   return {
-    data: query.data.map((row) => mapSymptomsRowToSymptoms(row)),
+    data: query.data
+      .map((row) => mapSymptomsRowToSymptoms(row))
+      .filter((symptoms): symptoms is Symptoms => symptoms !== null),
     error: query.error,
   };
 }

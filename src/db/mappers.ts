@@ -8,6 +8,7 @@ import {
 } from "@/types";
 
 const UNIX_EPOCH = new Date(1970, 0, 1, 12, 0, 0, 0);
+type PersistedDate = number | string | null;
 
 function toEpochDay(date: Date): number {
   return differenceInCalendarDays(
@@ -16,12 +17,26 @@ function toEpochDay(date: Date): number {
   );
 }
 
-function fromEpochDay(epochDay: number): Date {
-  return addDays(UNIX_EPOCH, epochDay);
+function fromEpochDay(epochDay: number): Date | null {
+  const date = addDays(UNIX_EPOCH, epochDay);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function fromPersistedDate(value: PersistedDate): Date | null {
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? fromEpochDay(value) : null;
+  }
+
+  if (typeof value === "string") {
+    const epochDay = Number(value);
+    return Number.isFinite(epochDay) ? fromEpochDay(epochDay) : null;
+  }
+
+  return null;
 }
 
 export type EventRow = {
-  date: number;
+  date: PersistedDate;
   menstruationLight: number;
   menstruationModerate: number;
   menstruationHeavy: number;
@@ -31,7 +46,7 @@ export type EventRow = {
 };
 
 export type SymptomsRow = {
-  date: number;
+  date: PersistedDate;
   symptomsIntestinalProblems: number;
   symptomsAppetiteChanges: number;
   symptomsBloating: number;
@@ -67,9 +82,14 @@ export type PartnerInsightRow = {
   description: string;
 };
 
-export function mapEventRowToEvent(row: EventRow): Event {
+export function mapEventRowToEvent(row: EventRow): Event | null {
+  const date = fromPersistedDate(row.date);
+  if (!date) {
+    return null;
+  }
+
   return {
-    date: fromEpochDay(row.date),
+    date,
     menstruationLight: Boolean(row.menstruationLight),
     menstruationModerate: Boolean(row.menstruationModerate),
     menstruationHeavy: Boolean(row.menstruationHeavy),
@@ -80,8 +100,11 @@ export function mapEventRowToEvent(row: EventRow): Event {
   };
 }
 
-export function mapSymptomsRowToSymptoms(row: SymptomsRow): Symptoms {
-  const date = fromEpochDay(row.date);
+export function mapSymptomsRowToSymptoms(row: SymptomsRow): Symptoms | null {
+  const date = fromPersistedDate(row.date);
+  if (!date) {
+    return null;
+  }
 
   return {
     ...createDefaultSymptoms(date),

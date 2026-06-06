@@ -12,7 +12,9 @@ export function useEventsQuery(): { data: Event[]; error?: Error } {
   );
 
   return {
-    data: query.data.map((row) => mapEventRowToEvent(row)),
+    data: query.data
+      .map((row) => mapEventRowToEvent(row))
+      .filter((event): event is Event => event !== null),
     error: query.error,
   };
 }
