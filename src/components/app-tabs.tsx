@@ -17,6 +17,7 @@ export const AppTabs: FC = () => {
 
   return (
     <NativeTabs
+      backBehavior="history"
       backgroundColor={theme.colors.background}
       indicatorColor={theme.colors.backgroundElement}
       rippleColor="transparent"
