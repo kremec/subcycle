@@ -20,6 +20,14 @@ export const useSettingsStore = create(
       },
     })),
     {
+      merge: (persistedState, currentState) => ({
+        ...currentState,
+        ...(persistedState as Partial<typeof currentState>),
+        settings: {
+          ...createDefaultSettings(),
+          ...(persistedState as Partial<typeof currentState>)?.settings,
+        },
+      }),
       name: "subcycle.settings",
       storage: createJSONStorage(() => localStorage),
     },

@@ -2,6 +2,7 @@ import { type FC } from "react";
 
 import { AppRoot } from "@/components/app-root";
 import { AppStatusBar } from "@/components/app-status-bar";
+import "@/db/automatic-database-backup";
 import { ThemeProvider } from "@/theme/provider";
 
 const RootLayout: FC = () => {

@@ -34,6 +34,7 @@ export default {
   },
   plugins: [
     "expo-router",
+    "expo-background-task",
     "expo-sharing",
     "expo-localization",
     "expo-sqlite",

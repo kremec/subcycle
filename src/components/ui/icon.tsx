@@ -12,6 +12,7 @@ import {
   IconChartBar,
   IconChartBubble,
   IconChartRadar,
+  IconCheck,
   IconCompass,
   IconDroplet,
   IconDropletHalfFilled,
@@ -20,6 +21,7 @@ import {
   IconEgg,
   IconFileExport,
   IconFileImport,
+  IconFolder,
   IconIceCream2,
   IconMoodAngry,
   IconMoodAnnoyed,
@@ -33,6 +35,7 @@ import {
   IconPlus,
   IconPoo,
   IconReload,
+  IconRepeat,
   IconRipple,
   IconRun,
   IconSettings2,
@@ -61,6 +64,7 @@ const icons = {
   "chart-bar": IconChartBar,
   "chart-bubble": IconChartBubble,
   "chart-radar": IconChartRadar,
+  check: IconCheck,
   compass: IconCompass,
   droplet: IconDroplet,
   "droplet-half": IconDropletHalfFilled,
@@ -69,6 +73,7 @@ const icons = {
   egg: IconEgg,
   "file-export": IconFileExport,
   "file-import": IconFileImport,
+  folder: IconFolder,
   "ice-cream-2": IconIceCream2,
   "mood-angry": IconMoodAngry,
   "mood-annoyed": IconMoodAnnoyed,
@@ -82,6 +87,7 @@ const icons = {
   plus: IconPlus,
   poo: IconPoo,
   reload: IconReload,
+  repeat: IconRepeat,
   ripple: IconRipple,
   run: IconRun,
   "settings-2": IconSettings2,
@@ -108,7 +114,7 @@ export const Icon: FC<AppIconProps> = (props) => {
     <Component
       {...iconProps}
       fill={filled ? iconProps.color : "transparent"}
-      strokeWidth={filled ? 0 : strokeWidth ?? 1.8}
+      strokeWidth={filled ? 0 : (strokeWidth ?? 1.8)}
     />
   );
 };
