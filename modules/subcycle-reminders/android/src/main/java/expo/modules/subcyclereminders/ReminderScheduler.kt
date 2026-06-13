@@ -207,12 +207,16 @@ class ReminderScheduler(private val context: Context) {
     }
 
     private fun showPillNotification(schedule: PillSchedule) {
+        val today = LocalDate.now().toString()
+        if (PillEventStore.isPillMarkedForDate(context, today)) {
+            return
+        }
+
         createChannel(
             CHANNEL_PILL,
             "Pill reminders"
         )
 
-        val today = LocalDate.now().toString()
         val notificationId = requestCode(schedule.id)
         val notificationBuilder = NotificationCompat.Builder(context, CHANNEL_PILL)
             .setSmallIcon(R.drawable.pill)
