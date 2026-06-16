@@ -50,7 +50,7 @@ export async function backupDatabaseToDirectory(
       `subcycle-backup-${new Date().toISOString().replaceAll(":", "-")}.db`,
       "application/vnd.sqlite3",
     );
-    await sourceFile.copy(destinationFile);
+    await sourceFile.copy(destinationFile, { overwrite: true });
   } finally {
     backupDb.closeSync();
     try {
