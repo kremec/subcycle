@@ -3,7 +3,7 @@ const IS_DEV = process.env.APP_VARIANT === "development";
 export default {
   name: IS_DEV ? "subcycle (DEV)" : "subcycle",
   slug: "subcycle",
-  version: "6.0.2",
+  version: "6.0.3",
   orientation: "portrait",
   icon: "./assets/icon.png",
   scheme: "subcycle",
