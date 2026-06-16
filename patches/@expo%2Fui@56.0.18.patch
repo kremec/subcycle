@@ -20,7 +20,7 @@ index 98749050812c63417c046f8c1ab9b68c0518901d..4c420e4beae02bf7ce14b2fde0de2d1d
      /**
       * Minimum value of the slider range.
       * @default 0
-@@ -38,5 +43,19 @@ export interface SliderProps {
+@@ -38,4 +43,18 @@ export interface SliderProps {
       * from `@expo/ui/swift-ui/modifiers` or `@expo/ui/jetpack-compose/modifiers`.
       */
      modifiers?: ModifierConfig[];
@@ -39,7 +39,6 @@ index 98749050812c63417c046f8c1ab9b68c0518901d..4c420e4beae02bf7ce14b2fde0de2d1d
 +     */
 +    thumbTintColor?: ColorValue;
  }
- //# sourceMappingURL=types.d.ts.map
 diff --git a/src/universal/Slider/index.android.tsx b/src/universal/Slider/index.android.tsx
 index f12eb5d88b358d55307536a82fab6b0c14b6c29d..90ec5e4a99bb3a6d85ddb226f4dfe5c7dfd25d3a 100644
 --- a/src/universal/Slider/index.android.tsx
