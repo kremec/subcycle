@@ -1,6 +1,7 @@
 import { differenceInCalendarDays, set } from "date-fns";
 import { eq } from "drizzle-orm";
 
+import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
 import { db } from "@/db/client";
 import { mapSymptomsToRow } from "@/db/mappers";
 import { symptomsTable } from "@/db/schema";
@@ -29,10 +30,12 @@ export async function upsertSymptoms(symptoms: Symptoms): Promise<void> {
       target: symptomsTable.date,
       set: values,
     });
+  backupDatabaseAfterWrite();
 }
 
 export async function deleteSymptomsByDate(date: Date): Promise<void> {
   await db.delete(symptomsTable).where(eq(symptomsTable.date, toEpochDay(date)));
+  backupDatabaseAfterWrite();
 }
 
 export async function replaceAllSymptoms(symptomsList: Symptoms[]): Promise<void> {
@@ -40,4 +43,5 @@ export async function replaceAllSymptoms(symptomsList: Symptoms[]): Promise<void
   for (const symptoms of symptomsList) {
     await upsertSymptoms(symptoms);
   }
+  backupDatabaseAfterWrite();
 }

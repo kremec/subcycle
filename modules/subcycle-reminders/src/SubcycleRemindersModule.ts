@@ -20,6 +20,10 @@ declare class SubcycleRemindersModule extends NativeModule<SubcycleRemindersModu
   replaceMenstruationSchedules(
     schedules: MenstruationNotificationSchedule[],
   ): Promise<void>;
+  setAutomaticBackupSettings(
+    enabled: boolean,
+    directoryUri: string | null,
+  ): Promise<void>;
 }
 
 // This call loads the native module object from the JSI.

@@ -18,6 +18,7 @@ final class ReminderCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
     if response.actionIdentifier == pillActionIdentifier {
       let date = PillEventStore.currentDateString()
       PillEventStore.markPillForDate(date)
+      AutomaticDatabaseBackup.run()
       let payload: [String: Any] = [
         "type": "check-pill",
         "date": date
@@ -204,6 +205,10 @@ public class SubcycleRemindersModule: Module {
         )
         center.add(request)
       }
+    }
+
+    AsyncFunction("setAutomaticBackupSettings") { (enabled: Bool, directoryUri: String?) in
+      AutomaticBackupStore.save(enabled: enabled, directoryUri: directoryUri)
     }
 
   }

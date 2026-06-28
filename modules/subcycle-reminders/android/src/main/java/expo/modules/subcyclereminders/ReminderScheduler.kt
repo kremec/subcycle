@@ -96,6 +96,7 @@ class ReminderScheduler(private val context: Context) {
         }
 
         PillEventStore.markPillForDate(context, date)
+        AutomaticDatabaseBackup.run(context)
         ReminderEventEmitter.emit?.invoke(
             mapOf(
                 "type" to "check-pill",

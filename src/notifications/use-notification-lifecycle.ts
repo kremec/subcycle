@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 
+import { syncAutomaticBackupSettings } from "@/db/automatic-database-backup";
 import { useEventsQuery } from "@/db/queries/use-events-query";
 import { getMenstruationPredictions } from "@/domain/predictions/get-menstruation-predictions";
 import { buildMenstruationSchedules } from "@/notifications/build-menstruation-schedules";
@@ -18,7 +19,13 @@ export function useNotificationLifecycle() {
     pillNotificationTimes,
     pillNotificationsEnabled,
     predictionTimespan,
+    automaticBackupsEnabled,
+    automaticBackupDirectoryUri,
   } = settings;
+
+  useEffect(() => {
+    void syncAutomaticBackupSettings();
+  }, [automaticBackupsEnabled, automaticBackupDirectoryUri]);
 
   useEffect(() => {
     const subscription = NativeReminders.addListener(

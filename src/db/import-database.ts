@@ -7,6 +7,7 @@ import {
   openDatabaseSync,
 } from "expo-sqlite";
 
+import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
 import { expoDb } from "@/db/client";
 
 const IMPORT_DB_NAME = "subcycle-import.db";
@@ -64,6 +65,7 @@ export async function importLatestNativeDatabase(): Promise<void> {
       destDatabase: expoDb,
     });
     await notifyLiveQueriesChanged();
+    backupDatabaseAfterWrite();
   } finally {
     importDb.closeSync();
     try {

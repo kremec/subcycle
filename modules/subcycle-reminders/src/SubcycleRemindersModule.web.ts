@@ -39,6 +39,11 @@ class SubcycleRemindersModule
   async replaceMenstruationSchedules(
     _schedules: MenstruationNotificationSchedule[],
   ): Promise<void> {}
+
+  async setAutomaticBackupSettings(
+    _enabled: boolean,
+    _directoryUri: string | null,
+  ): Promise<void> {}
 }
 
 export default new SubcycleRemindersModule();

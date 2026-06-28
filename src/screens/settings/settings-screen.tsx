@@ -1,7 +1,7 @@
 import { type FC } from "react";
 
 import { Screen } from "@/components/ui";
-import { DataSettingsSection } from "@/screens/settings/components/data-settings-section";
+import { BackupsSection } from "@/screens/settings/components/backups-section";
 import { MenstruationRemindersSettingsSection } from "@/screens/settings/components/menstruation-reminders-settings-section";
 import { PartnerModeSettingsSection } from "@/screens/settings/components/partner-mode-settings-section";
 import { PillRemindersSettingsSection } from "@/screens/settings/components/pill-reminders-settings-section";
@@ -18,7 +18,7 @@ const SettingsScreen: FC = () => {
 
       <PartnerModeSettingsSection />
 
-      <DataSettingsSection />
+      <BackupsSection />
     </Screen>
   );
 };

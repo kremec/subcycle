@@ -104,6 +104,10 @@ class SubcycleRemindersModule : Module() {
             }
             ReminderScheduler(context).replaceMenstruationSchedules(mapped)
         }.runOnQueue(moduleScope)
+
+        AsyncFunction("setAutomaticBackupSettings") { enabled: Boolean, directoryUri: String? ->
+            AutomaticBackupStore.save(context, enabled, directoryUri)
+        }.runOnQueue(moduleScope)
     }
 
     private fun notificationsGranted(): Boolean {

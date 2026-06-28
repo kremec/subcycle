@@ -1,6 +1,7 @@
 import { differenceInCalendarDays, set } from "date-fns";
 import { eq } from "drizzle-orm";
 
+import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
 import { db } from "@/db/client";
 import { mapEventToRow } from "@/db/mappers";
 import { eventsTable } from "@/db/schema";
@@ -29,10 +30,12 @@ export async function upsertEvent(event: Event): Promise<void> {
       target: eventsTable.date,
       set: values,
     });
+  backupDatabaseAfterWrite();
 }
 
 export async function deleteEventByDate(date: Date): Promise<void> {
   await db.delete(eventsTable).where(eq(eventsTable.date, toEpochDay(date)));
+  backupDatabaseAfterWrite();
 }
 
 export async function markPillForDate(date: Date): Promise<void> {
@@ -58,6 +61,7 @@ export async function markPillForDate(date: Date): Promise<void> {
     .insert(eventsTable)
     .values(values)
     .onConflictDoUpdate({ target: eventsTable.date, set: values });
+  backupDatabaseAfterWrite();
 }
 
 export async function replaceAllEvents(events: Event[]): Promise<void> {
@@ -65,4 +69,5 @@ export async function replaceAllEvents(events: Event[]): Promise<void> {
   for (const event of events) {
     await upsertEvent(event);
   }
+  backupDatabaseAfterWrite();
 }
