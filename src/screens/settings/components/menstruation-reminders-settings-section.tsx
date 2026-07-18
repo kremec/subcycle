@@ -16,7 +16,7 @@ import {
 import { useEventsQuery } from "@/db/queries/use-events-query";
 import { getMaxMenstruationNotificationDays } from "@/domain/notifications/get-max-menstruation-notification-days";
 import { compareTimesAsc, getCurrentTime } from "@/domain/time";
-import { useReminderPermissions } from "@/notifications/use-reminder-permissions";
+import { ensureReminderPermissions } from "@/notifications/ensure-reminder-permissions";
 import { SettingsSectionCard } from "@/screens/settings/components/settings-section-card";
 import { TimePickerDialog } from "@/screens/settings/components/time-picker-dialog";
 import { useSettingsStore } from "@/stores/settings-store";
@@ -31,7 +31,6 @@ export const MenstruationRemindersSettingsSection: FC = () => {
   const t = useT();
   const { data: events } = useEventsQuery();
   const { settings, updateSettings } = useSettingsStore();
-  const ensureReminderPermissions = useReminderPermissions();
   const maxRuleDay = getMaxMenstruationNotificationDays(events) ?? 0;
 
   const sortedRules = settings.menstruationNotifications.sort(

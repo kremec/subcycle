@@ -36,6 +36,10 @@ class SubcycleRemindersModule : Module() {
             ReminderEventEmitter.emit = null
         }
 
+        AsyncFunction("appendDebugLog") { line: String ->
+            LocalLog.appendLine(context, line)
+        }.runOnQueue(moduleScope)
+
         AsyncFunction("getPermissionsStatus") {
             mapOf("granted" to notificationsGranted())
         }.runOnQueue(moduleScope)

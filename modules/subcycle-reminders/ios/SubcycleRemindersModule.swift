@@ -17,13 +17,14 @@ final class ReminderCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
   ) {
     if response.actionIdentifier == pillActionIdentifier {
       let date = PillEventStore.currentDateString()
-      PillEventStore.markPillForDate(date)
-      AutomaticDatabaseBackup.run()
-      let payload: [String: Any] = [
-        "type": "check-pill",
-        "date": date
-      ]
-      onReminderAction?(payload)
+      if PillEventStore.markPillForDate(date) {
+        AutomaticDatabaseBackup.run()
+        let payload: [String: Any] = [
+          "type": "check-pill",
+          "date": date
+        ]
+        onReminderAction?(payload)
+      }
     }
     completionHandler()
   }
@@ -41,6 +42,13 @@ public class SubcycleRemindersModule: Module {
       ReminderCenterDelegate.shared.onReminderAction = { payload in
         self.sendEvent("reminderAction", payload)
       }
+      center.getDeliveredNotifications { notifications in
+        LocalLog.append(
+          category: "ios.notification",
+          event: "delivered-snapshot",
+          payload: ["count": notifications.count]
+        )
+      }
       let action = UNNotificationAction(
         identifier: pillActionIdentifier,
         title: "Check pill for today",
@@ -53,6 +61,10 @@ public class SubcycleRemindersModule: Module {
         options: []
       )
       center.setNotificationCategories([category])
+    }
+
+    AsyncFunction("appendDebugLog") { (line: String) in
+      LocalLog.appendLine(line)
     }
 
     AsyncFunction("getPermissionsStatus") { (promise: Promise) in
@@ -96,6 +108,11 @@ public class SubcycleRemindersModule: Module {
     }
 
     AsyncFunction("replacePillSchedules") { (schedules: [[String: Any]], promise: Promise) in
+      LocalLog.append(
+        category: "ios.scheduler",
+        event: "replace-pill-schedules-requested",
+        payload: ["count": schedules.count]
+      )
       let center = UNUserNotificationCenter.current()
       center.getNotificationSettings { settings in
         if let existing = UserDefaults.standard.array(forKey: pillSchedulesKey) as? [String] {
@@ -139,6 +156,17 @@ public class SubcycleRemindersModule: Module {
             if schedulingError == nil {
               schedulingError = error
             }
+            if let error {
+              LocalLog.append(
+                level: "error",
+                category: "ios.scheduler",
+                event: "pill-schedule-failed",
+                payload: [
+                  "name": String(describing: type(of: error)),
+                  "message": error.localizedDescription
+                ]
+              )
+            }
             dispatchGroup.leave()
           }
         }
@@ -155,6 +183,11 @@ public class SubcycleRemindersModule: Module {
     }
 
     AsyncFunction("replaceMenstruationSchedules") { (schedules: [[String: Any]]) in
+      LocalLog.append(
+        category: "ios.scheduler",
+        event: "replace-menstruation-schedules-requested",
+        payload: ["count": schedules.count]
+      )
       let center = UNUserNotificationCenter.current()
       if let existing = UserDefaults.standard.array(forKey: menstruationSchedulesKey) as? [String] {
         center.removePendingNotificationRequests(withIdentifiers: existing)
@@ -203,7 +236,20 @@ public class SubcycleRemindersModule: Module {
           content: content,
           trigger: UNCalendarNotificationTrigger(dateMatching: triggerComponents, repeats: false)
         )
-        center.add(request)
+        center.add(request) { error in
+          if let error {
+            LocalLog.append(
+              level: "error",
+              category: "ios.scheduler",
+              event: "menstruation-schedule-failed",
+              payload: [
+                "name": String(describing: type(of: error)),
+                "message": error.localizedDescription
+              ]
+            )
+            return
+          }
+        }
       }
     }
 

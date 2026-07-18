@@ -10,6 +10,7 @@ import type {
 } from './SubcycleReminders.types';
 
 declare class SubcycleRemindersModule extends NativeModule<SubcycleRemindersModuleEvents> {
+  appendDebugLog(line: string): Promise<void>;
   getPermissionsStatus(): Promise<ReminderPermissionStatus>;
   requestPermissions(): Promise<ReminderPermissionStatus>;
   getExactAlarmStatus(): Promise<ExactAlarmStatus>;

@@ -5,6 +5,7 @@ import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
 import { db } from "@/db/client";
 import { mapEventToRow } from "@/db/mappers";
 import { eventsTable } from "@/db/schema";
+import { logError, logInfo } from "@/logging/logger";
 import { type Event, hasAnyEventFlags } from "@/types";
 
 const UNIX_EPOCH = new Date(1970, 0, 1, 12, 0, 0, 0);
@@ -16,12 +17,7 @@ function toEpochDay(date: Date): number {
   );
 }
 
-export async function upsertEvent(event: Event): Promise<void> {
-  if (!hasAnyEventFlags(event)) {
-    await deleteEventByDate(event.date);
-    return;
-  }
-
+async function saveEvent(event: Event): Promise<void> {
   const values = mapEventToRow(event);
   await db
     .insert(eventsTable)
@@ -33,9 +29,38 @@ export async function upsertEvent(event: Event): Promise<void> {
   backupDatabaseAfterWrite();
 }
 
+export async function upsertEvent(event: Event): Promise<void> {
+  if (!hasAnyEventFlags(event)) {
+    await deleteEventByDate(event.date);
+    return;
+  }
+
+  try {
+    await saveEvent(event);
+    logInfo("db.event", "upsert");
+  } catch (error) {
+    logError(
+      "db.event",
+      "upsert-failed",
+      error instanceof Error ? error : String(error),
+    );
+    throw error;
+  }
+}
+
 export async function deleteEventByDate(date: Date): Promise<void> {
-  await db.delete(eventsTable).where(eq(eventsTable.date, toEpochDay(date)));
-  backupDatabaseAfterWrite();
+  try {
+    await db.delete(eventsTable).where(eq(eventsTable.date, toEpochDay(date)));
+    backupDatabaseAfterWrite();
+    logInfo("db.event", "delete");
+  } catch (error) {
+    logError(
+      "db.event",
+      "delete-failed",
+      error instanceof Error ? error : String(error),
+    );
+    throw error;
+  }
 }
 
 export async function markPillForDate(date: Date): Promise<void> {
@@ -65,9 +90,22 @@ export async function markPillForDate(date: Date): Promise<void> {
 }
 
 export async function replaceAllEvents(events: Event[]): Promise<void> {
-  await db.delete(eventsTable);
-  for (const event of events) {
-    await upsertEvent(event);
+  try {
+    await db.delete(eventsTable);
+    for (const event of events) {
+      if (hasAnyEventFlags(event)) {
+        await saveEvent(event);
+      }
+    }
+    backupDatabaseAfterWrite();
+    logInfo("db.event", "replace-all", { count: events.length });
+  } catch (error) {
+    logError(
+      "db.event",
+      "replace-all-failed",
+      error instanceof Error ? error : String(error),
+      { count: events.length },
+    );
+    throw error;
   }
-  backupDatabaseAfterWrite();
 }

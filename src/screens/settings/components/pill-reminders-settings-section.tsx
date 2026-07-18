@@ -10,7 +10,7 @@ import {
   Switch,
 } from "@/components/ui";
 import { compareTimesAsc, getCurrentTime } from "@/domain/time";
-import { useReminderPermissions } from "@/notifications/use-reminder-permissions";
+import { ensureReminderPermissions } from "@/notifications/ensure-reminder-permissions";
 import { SettingsSectionCard } from "@/screens/settings/components/settings-section-card";
 import { TimePickerDialog } from "@/screens/settings/components/time-picker-dialog";
 import { useSettingsStore } from "@/stores/settings-store";
@@ -24,8 +24,6 @@ export const PillRemindersSettingsSection: FC = () => {
   const theme = useTheme();
   const t = useT();
   const { settings, updateSettings } = useSettingsStore();
-  const ensureReminderPermissions = useReminderPermissions();
-
   const sortedTimes = settings.pillNotificationTimes.sort((left, right) =>
     compareTimesAsc(left, right),
   );

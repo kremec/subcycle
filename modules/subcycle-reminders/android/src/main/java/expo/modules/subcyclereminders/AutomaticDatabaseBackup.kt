@@ -14,7 +14,13 @@ object AutomaticDatabaseBackup {
     fun run(context: Context) {
         try {
             backup(context)
-        } catch (_: Exception) {
+        } catch (exception: Exception) {
+            LocalLog.error(
+                context,
+                "android.backup",
+                "failed",
+                exception
+            )
         }
     }
 
@@ -23,30 +29,50 @@ object AutomaticDatabaseBackup {
             return
         }
 
-        val directoryUri = AutomaticBackupStore.directoryUri(context) ?: return
-        val directory = DocumentFile.fromTreeUri(context, Uri.parse(directoryUri)) ?: return
+        val directoryUri = AutomaticBackupStore.directoryUri(context)
+            ?: return LocalLog.error(context, "android.backup", "directory-not-configured")
+        val directory = DocumentFile.fromTreeUri(context, Uri.parse(directoryUri))
+            ?: return LocalLog.error(context, "android.backup", "directory-unavailable")
         val name = backupName()
         val destination = directory.findFile(name)
             ?: directory.createFile(MIME_TYPE, name)
-            ?: return
+            ?: return LocalLog.error(context, "android.backup", "file-create-failed")
 
-        checkpointDatabase(context)
+        LocalLog.info(
+            context,
+            "android.backup",
+            "start"
+        )
+        val checkpointSucceeded = checkpointDatabase(context)
+        if (!checkpointSucceeded) {
+            return
+        }
 
-        context.contentResolver.openOutputStream(destination.uri, "wt")?.use { output ->
+        val output = context.contentResolver.openOutputStream(destination.uri, "wt")
+            ?: return LocalLog.error(context, "android.backup", "file-open-failed")
+        output.use { stream ->
             databaseFile(context).inputStream().use { input ->
-                input.copyTo(output)
+                input.copyTo(stream)
             }
         }
+        LocalLog.info(
+            context,
+            "android.backup",
+            "complete"
+        )
     }
 
-    private fun checkpointDatabase(context: Context) {
-        val database = runCatching {
+    private fun checkpointDatabase(context: Context): Boolean {
+        val database = try {
             SQLiteDatabase.openDatabase(
                 databaseFile(context).path,
                 null,
                 SQLiteDatabase.OPEN_READWRITE
             )
-        }.getOrNull() ?: return
+        } catch (exception: Exception) {
+            LocalLog.error(context, "android.backup", "database-open-failed", exception)
+            return false
+        }
 
         try {
             database.rawQuery("PRAGMA wal_checkpoint(FULL)", emptyArray<String>()).use {
@@ -55,6 +81,7 @@ object AutomaticDatabaseBackup {
         } finally {
             database.close()
         }
+        return true
     }
 
     private fun backupName(): String {

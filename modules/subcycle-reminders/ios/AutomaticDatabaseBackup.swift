@@ -6,9 +6,13 @@ enum AutomaticDatabaseBackup {
 
   static func run() {
     guard
-      AutomaticBackupStore.isEnabled,
-      let directory = AutomaticBackupStore.directoryUrl()
+      AutomaticBackupStore.isEnabled
     else {
+      return
+    }
+
+    guard let directory = AutomaticBackupStore.directoryUrl() else {
+      LocalLog.append(level: "error", category: "ios.backup", event: "directory-unavailable")
       return
     }
 
@@ -23,13 +27,30 @@ enum AutomaticDatabaseBackup {
       .appendingPathComponent("subcycle-automatic-backup.db")
     let destination = directory.appendingPathComponent(backupName())
 
+    LocalLog.append(
+      category: "ios.backup",
+      event: "start"
+    )
     try? FileManager.default.removeItem(at: tempFile)
     guard backupDatabase(to: tempFile) else {
       return
     }
 
     try? FileManager.default.removeItem(at: destination)
-    try? FileManager.default.copyItem(at: tempFile, to: destination)
+    do {
+      try FileManager.default.copyItem(at: tempFile, to: destination)
+      LocalLog.append(
+        category: "ios.backup",
+        event: "complete"
+      )
+    } catch {
+      LocalLog.append(
+        level: "error",
+        category: "ios.backup",
+        event: "copy-to-destination-failed",
+        payload: ["message": error.localizedDescription]
+      )
+    }
     try? FileManager.default.removeItem(at: tempFile)
   }
 
@@ -43,6 +64,7 @@ enum AutomaticDatabaseBackup {
 
     guard sqlite3_open_v2(sourceFile.path, &source, SQLITE_OPEN_READWRITE, nil) == SQLITE_OK else {
       sqlite3_close(source)
+      LocalLog.append(level: "error", category: "ios.backup", event: "source-open-failed")
       return false
     }
 
@@ -59,6 +81,7 @@ enum AutomaticDatabaseBackup {
       nil
     ) == SQLITE_OK else {
       sqlite3_close(target)
+      LocalLog.append(level: "error", category: "ios.backup", event: "target-open-failed")
       return false
     }
 
@@ -67,12 +90,17 @@ enum AutomaticDatabaseBackup {
     }
 
     guard let backup = sqlite3_backup_init(target, "main", source, "main") else {
+      LocalLog.append(level: "error", category: "ios.backup", event: "backup-init-failed")
       return false
     }
 
     let stepResult = sqlite3_backup_step(backup, -1)
     let finishResult = sqlite3_backup_finish(backup)
-    return stepResult == SQLITE_DONE && finishResult == SQLITE_OK
+    let succeeded = stepResult == SQLITE_DONE && finishResult == SQLITE_OK
+    if !succeeded {
+      LocalLog.append(level: "error", category: "ios.backup", event: "database-copy-failed")
+    }
+    return succeeded
   }
 
   private static func backupName() -> String {

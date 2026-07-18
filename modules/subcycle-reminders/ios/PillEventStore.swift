@@ -4,7 +4,7 @@ import SQLite3
 enum PillEventStore {
   private static let databaseName = "subcycle.db"
 
-  static func markPillForDate(_ date: String) {
+  static func markPillForDate(_ date: String) -> Bool {
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-MM-dd"
     formatter.locale = Locale(identifier: "en_US_POSIX")
@@ -14,7 +14,12 @@ enum PillEventStore {
       let localDate = formatter.date(from: date),
       let unixEpoch = formatter.date(from: "1970-01-01")
     else {
-      return
+      LocalLog.append(
+        level: "warn",
+        category: "ios.pill-event-store",
+        event: "mark-invalid-date"
+      )
+      return false
     }
 
     let databaseFile = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -35,7 +40,12 @@ enum PillEventStore {
       nil
     ) == SQLITE_OK else {
       sqlite3_close(database)
-      return
+      LocalLog.append(
+        level: "error",
+        category: "ios.pill-event-store",
+        event: "mark-open-failed"
+      )
+      return false
     }
 
     defer {
@@ -54,7 +64,12 @@ enum PillEventStore {
       &statement,
       nil
     ) == SQLITE_OK else {
-      return
+      LocalLog.append(
+        level: "error",
+        category: "ios.pill-event-store",
+        event: "mark-prepare-failed"
+      )
+      return false
     }
 
     defer {
@@ -62,7 +77,20 @@ enum PillEventStore {
     }
 
     sqlite3_bind_int64(statement, 1, sqlite3_int64(epochDay))
-    sqlite3_step(statement)
+    if sqlite3_step(statement) == SQLITE_DONE {
+      LocalLog.append(
+        category: "ios.pill-event-store",
+        event: "mark-complete"
+      )
+      return true
+    } else {
+      LocalLog.append(
+        level: "error",
+        category: "ios.pill-event-store",
+        event: "mark-failed"
+      )
+      return false
+    }
   }
 
   static func currentDateString() -> String {

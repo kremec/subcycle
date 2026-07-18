@@ -12,6 +12,8 @@ import type {
 class SubcycleRemindersModule
   extends NativeModule<SubcycleRemindersModuleEvents>
 {
+  async appendDebugLog(_line: string): Promise<void> {}
+
   async getPermissionsStatus(): Promise<ReminderPermissionStatus> {
     return { granted: false };
   }

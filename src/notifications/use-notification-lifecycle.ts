@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { syncAutomaticBackupSettings } from "@/db/automatic-database-backup";
 import { useEventsQuery } from "@/db/queries/use-events-query";
 import { getMenstruationPredictions } from "@/domain/predictions/get-menstruation-predictions";
+import { logError } from "@/logging/logger";
 import { buildMenstruationSchedules } from "@/notifications/build-menstruation-schedules";
 import { buildPillSchedules } from "@/notifications/build-pill-schedules";
 import { handleNotificationAction } from "@/notifications/handle-notification-action";
@@ -57,15 +58,20 @@ export function useNotificationLifecycle() {
       predictedMenstruationEvents,
     );
 
-    const replacePillSchedulesPromise =
-      NativeReminders.replacePillSchedules(pillSchedules);
-    const replaceMenstruationSchedulesPromise =
-      NativeReminders.replaceMenstruationSchedules(menstruationSchedules);
-
-    Promise.all([
-      replacePillSchedulesPromise,
-      replaceMenstruationSchedulesPromise,
-    ]);
+    void Promise.all([
+      NativeReminders.replacePillSchedules(pillSchedules),
+      NativeReminders.replaceMenstruationSchedules(menstruationSchedules),
+    ]).catch((error) => {
+      logError(
+        "notification.lifecycle",
+        "replace-schedules-failed",
+        error instanceof Error ? error : String(error),
+        {
+          menstruationScheduleCount: menstruationSchedules.length,
+          pillScheduleCount: pillSchedules.length,
+        },
+      );
+    });
   }, [
     events,
     predictionTimespan,

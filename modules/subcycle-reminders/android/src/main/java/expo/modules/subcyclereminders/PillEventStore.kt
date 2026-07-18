@@ -12,13 +12,21 @@ object PillEventStore {
     fun isPillMarkedForDate(context: Context, date: String): Boolean {
         val epochDay = toEpochDay(date) ?: return false
 
-        val database = runCatching {
+        val database = try {
             SQLiteDatabase.openDatabase(
                 databaseFile(context).path,
                 null,
                 SQLiteDatabase.OPEN_READONLY
             )
-        }.getOrNull() ?: return false
+        } catch (exception: Exception) {
+            LocalLog.error(
+                context,
+                "android.pill-event-store",
+                "is-marked-failed",
+                exception
+            )
+            return false
+        }
 
         return try {
             database.rawQuery(
@@ -27,7 +35,13 @@ object PillEventStore {
             ).use { cursor ->
                 cursor.moveToFirst() && cursor.getInt(0) == 1
             }
-        } catch (_: Exception) {
+        } catch (exception: Exception) {
+            LocalLog.error(
+                context,
+                "android.pill-event-store",
+                "is-marked-failed",
+                exception
+            )
             false
         } finally {
             database.close()
@@ -37,13 +51,21 @@ object PillEventStore {
     fun markPillForDate(context: Context, date: String) {
         val epochDay = toEpochDay(date) ?: return
 
-        val database = runCatching {
+        val database = try {
             SQLiteDatabase.openDatabase(
                 databaseFile(context).path,
                 null,
                 SQLiteDatabase.OPEN_READWRITE
             )
-        }.getOrNull() ?: return
+        } catch (exception: Exception) {
+            LocalLog.error(
+                context,
+                "android.pill-event-store",
+                "mark-failed",
+                exception
+            )
+            throw exception
+        }
 
         try {
             database.execSQL(
@@ -54,6 +76,19 @@ object PillEventStore {
                 """.trimIndent(),
                 arrayOf(epochDay)
             )
+            LocalLog.info(
+                context,
+                "android.pill-event-store",
+                "mark-complete"
+            )
+        } catch (exception: Exception) {
+            LocalLog.error(
+                context,
+                "android.pill-event-store",
+                "mark-failed",
+                exception
+            )
+            throw exception
         } finally {
             database.close()
         }

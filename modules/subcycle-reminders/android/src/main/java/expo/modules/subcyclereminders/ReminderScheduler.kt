@@ -35,6 +35,12 @@ class ReminderScheduler(private val context: Context) {
         context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     fun replacePillSchedules(schedules: List<PillSchedule>) {
+        LocalLog.info(
+            context,
+            "android.scheduler",
+            "replace-pill-schedules-requested",
+            mapOf("count" to schedules.size)
+        )
         cancelPillSchedules()
         ReminderStore.savePillSchedules(context, schedules)
         schedules.forEach { schedule ->
@@ -43,6 +49,12 @@ class ReminderScheduler(private val context: Context) {
     }
 
     fun replaceMenstruationSchedules(schedules: List<MenstruationSchedule>) {
+        LocalLog.info(
+            context,
+            "android.scheduler",
+            "replace-menstruation-schedules-requested",
+            mapOf("count" to schedules.size)
+        )
         cancelMenstruationSchedules()
         ReminderStore.saveMenstruationSchedules(context, schedules)
         schedules.forEach { schedule ->
@@ -65,15 +77,32 @@ class ReminderScheduler(private val context: Context) {
     }
 
     fun restoreAllSchedules() {
-        ReminderStore.getPillSchedules(context).forEach { schedule ->
+        val pillSchedules = ReminderStore.getPillSchedules(context)
+        val menstruationSchedules = ReminderStore.getMenstruationSchedules(context)
+        LocalLog.info(
+            context,
+            "android.scheduler",
+            "restore-all-schedules",
+            mapOf(
+                "pillScheduleCount" to pillSchedules.size,
+                "menstruationScheduleCount" to menstruationSchedules.size
+            )
+        )
+        pillSchedules.forEach { schedule ->
             schedulePillAlarm(schedule, fromTime = System.currentTimeMillis())
         }
-        ReminderStore.getMenstruationSchedules(context).forEach { schedule ->
+        menstruationSchedules.forEach { schedule ->
             scheduleMenstruationAlarm(schedule)
         }
     }
 
     fun onPillAlarmTriggered(id: String) {
+        LocalLog.info(
+            context,
+            "android.scheduler",
+            "pill-alarm-triggered",
+            mapOf("id" to id)
+        )
         val schedule = ReminderStore.getPillSchedules(context).find { it.id == id } ?: return
         showPillNotification(schedule)
         schedulePillAlarm(schedule, fromTime = System.currentTimeMillis() + 60_000L)
@@ -210,6 +239,11 @@ class ReminderScheduler(private val context: Context) {
     private fun showPillNotification(schedule: PillSchedule) {
         val today = LocalDate.now().toString()
         if (PillEventStore.isPillMarkedForDate(context, today)) {
+            LocalLog.info(
+                context,
+                "android.notification",
+                "pill-skipped-already-marked"
+            )
             return
         }
 
@@ -243,6 +277,17 @@ class ReminderScheduler(private val context: Context) {
             ) == android.content.pm.PackageManager.PERMISSION_GRANTED
         ) {
             NotificationManagerCompat.from(context).notify(notificationId, notification)
+            LocalLog.info(
+                context,
+                "android.notification",
+                "pill-posted"
+            )
+        } else {
+            LocalLog.warning(
+                context,
+                "android.notification",
+                "pill-blocked-no-permission"
+            )
         }
     }
 
@@ -282,6 +327,17 @@ class ReminderScheduler(private val context: Context) {
             ) == android.content.pm.PackageManager.PERMISSION_GRANTED
         ) {
             NotificationManagerCompat.from(context).notify(notificationId, notification)
+            LocalLog.info(
+                context,
+                "android.notification",
+                "menstruation-posted"
+            )
+        } else {
+            LocalLog.warning(
+                context,
+                "android.notification",
+                "menstruation-blocked-no-permission"
+            )
         }
     }
 

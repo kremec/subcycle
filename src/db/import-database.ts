@@ -9,6 +9,7 @@ import {
 
 import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
 import { expoDb } from "@/db/client";
+import { logError, logInfo } from "@/logging/logger";
 
 const IMPORT_DB_NAME = "subcycle-import.db";
 
@@ -41,37 +42,49 @@ export async function importLatestNativeDatabase(): Promise<void> {
     return;
   }
 
+  logInfo("db.import", "start");
+
   try {
     await deleteDatabaseAsync(IMPORT_DB_NAME, defaultDatabaseDirectory);
   } catch {
     // Ignore missing temp import DB.
   }
 
-  const importPath = `${defaultDatabaseDirectory}/${IMPORT_DB_NAME}`;
-  await FileSystem.copyAsync({
-    from: pickedUri,
-    to: `file://${importPath}`,
-  });
-
-  const importDb = openDatabaseSync(
-    IMPORT_DB_NAME,
-    { useNewConnection: true },
-    defaultDatabaseDirectory,
-  );
-
   try {
-    await backupDatabaseAsync({
-      sourceDatabase: importDb,
-      destDatabase: expoDb,
+    const importPath = `${defaultDatabaseDirectory}/${IMPORT_DB_NAME}`;
+    await FileSystem.copyAsync({
+      from: pickedUri,
+      to: `file://${importPath}`,
     });
-    await notifyLiveQueriesChanged();
-    backupDatabaseAfterWrite();
-  } finally {
-    importDb.closeSync();
+
+    const importDb = openDatabaseSync(
+      IMPORT_DB_NAME,
+      { useNewConnection: true },
+      defaultDatabaseDirectory,
+    );
+
     try {
-      await deleteDatabaseAsync(IMPORT_DB_NAME, defaultDatabaseDirectory);
-    } catch {
-      // Ignore cleanup failures for temp imports.
+      await backupDatabaseAsync({
+        sourceDatabase: importDb,
+        destDatabase: expoDb,
+      });
+      await notifyLiveQueriesChanged();
+      backupDatabaseAfterWrite();
+      logInfo("db.import", "complete");
+    } finally {
+      importDb.closeSync();
+      try {
+        await deleteDatabaseAsync(IMPORT_DB_NAME, defaultDatabaseDirectory);
+      } catch {
+        // Ignore cleanup failures for temp imports.
+      }
     }
+  } catch (error) {
+    logError(
+      "db.import",
+      "failed",
+      error instanceof Error ? error : String(error),
+    );
+    throw error;
   }
 }
