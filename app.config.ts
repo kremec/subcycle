@@ -4,6 +4,12 @@ export default {
   name: IS_DEV ? "subcycle (DEV)" : "subcycle",
   slug: "subcycle",
   version: "6.0.3",
+  runtimeVersion: {
+    policy: "fingerprint",
+  },
+  updates: {
+    url: "https://u.expo.dev/48d6445a-942c-474d-be16-5d46d6f25603",
+  },
   orientation: "portrait",
   icon: "./assets/icon.png",
   scheme: "subcycle",

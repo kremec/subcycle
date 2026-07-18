@@ -37,6 +37,7 @@
     "expo-sharing": "~56.0.22",
     "expo-splash-screen": "~56.0.13",
     "expo-sqlite": "~56.0.5",
+    "expo-updates": "~56.0.22",
     "i18n-js": "^4.5.3",
     "make-plural": "^8.1.0",
     "react": "19.2.3",
