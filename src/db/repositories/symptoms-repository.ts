@@ -19,13 +19,10 @@ function toEpochDay(date: Date): number {
 
 async function saveSymptoms(symptoms: Symptoms): Promise<void> {
   const values = mapSymptomsToRow(symptoms);
-  await db
-    .insert(symptomsTable)
-    .values(values)
-    .onConflictDoUpdate({
-      target: symptomsTable.date,
-      set: values,
-    });
+  await db.insert(symptomsTable).values(values).onConflictDoUpdate({
+    target: symptomsTable.date,
+    set: values,
+  });
   backupDatabaseAfterWrite();
 }
 
@@ -65,7 +62,9 @@ export async function deleteSymptomsByDate(date: Date): Promise<void> {
   }
 }
 
-export async function replaceAllSymptoms(symptomsList: Symptoms[]): Promise<void> {
+export async function replaceAllSymptoms(
+  symptomsList: Symptoms[],
+): Promise<void> {
   try {
     await db.delete(symptomsTable);
     for (const symptoms of symptomsList) {

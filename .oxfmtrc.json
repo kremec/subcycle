@@ -1,0 +1,39 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 80,
+  "sortImports": {
+    "internalPattern": ["@/", "@drizzle/"],
+    "customGroups": [
+      {
+        "groupName": "react",
+        "elementNamePattern": [
+          "react",
+          "react/**",
+          "react-native",
+          "react-native/**"
+        ],
+        "modifiers": ["value"]
+      },
+      {
+        "groupName": "expo",
+        "elementNamePattern": ["expo", "expo-*", "expo-*/**"],
+        "modifiers": ["value"]
+      },
+      {
+        "groupName": "modules",
+        "elementNamePattern": ["@modules/**"]
+      }
+    ],
+    "groups": [
+      "type-import",
+      "react",
+      "expo",
+      ["builtin", "external"],
+      "internal",
+      "modules",
+      ["parent", "sibling", "index"],
+      "style",
+      "unknown"
+    ]
+  }
+}

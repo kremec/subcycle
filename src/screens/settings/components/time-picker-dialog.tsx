@@ -1,6 +1,7 @@
-import { DateTimePicker } from "@expo/ui/community/datetime-picker";
 import { type FC, useState } from "react";
 import { Platform, View } from "react-native";
+
+import { DateTimePicker } from "@expo/ui/community/datetime-picker";
 
 import { Button, Dialog, Stack, Typography } from "@/components/ui";
 import { createTime, timeToDate } from "@/domain/time";

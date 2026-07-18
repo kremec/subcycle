@@ -1,5 +1,6 @@
 import { type FC, type PropsWithChildren } from "react";
 import { Platform, ScrollView, View } from "react-native";
+
 import { SafeAreaView, type Edge } from "react-native-safe-area-context";
 
 import { useTheme } from "@/theme/use-theme";

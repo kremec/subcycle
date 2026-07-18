@@ -1,6 +1,7 @@
-import { differenceInCalendarDays, startOfDay } from "date-fns";
 import { Fragment, type FC } from "react";
 import { View } from "react-native";
+
+import { differenceInCalendarDays, startOfDay } from "date-fns";
 
 import { Typography } from "@/components/ui";
 import { getEventPeriods } from "@/domain/events/get-event-periods";

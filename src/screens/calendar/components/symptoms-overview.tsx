@@ -1,6 +1,7 @@
-import { format } from "date-fns";
 import { type FC } from "react";
 import { ScrollView, View } from "react-native";
+
+import { format } from "date-fns";
 
 import { Card, Icon, IconButton, Typography } from "@/components/ui";
 import { symptomGroups } from "@/domain/symptom-groups";

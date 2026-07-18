@@ -1,4 +1,4 @@
-import { NativeModule, requireNativeModule } from 'expo';
+import { NativeModule, requireNativeModule } from "expo";
 
 import type {
   BatteryOptimizationStatus,
@@ -7,7 +7,7 @@ import type {
   PillNotificationSchedule,
   ReminderPermissionStatus,
   SubcycleRemindersModuleEvents,
-} from './SubcycleReminders.types';
+} from "./SubcycleReminders.types";
 
 declare class SubcycleRemindersModule extends NativeModule<SubcycleRemindersModuleEvents> {
   appendDebugLog(line: string): Promise<void>;
@@ -28,4 +28,6 @@ declare class SubcycleRemindersModule extends NativeModule<SubcycleRemindersModu
 }
 
 // This call loads the native module object from the JSI.
-export default requireNativeModule<SubcycleRemindersModule>('SubcycleReminders');
+export default requireNativeModule<SubcycleRemindersModule>(
+  "SubcycleReminders",
+);

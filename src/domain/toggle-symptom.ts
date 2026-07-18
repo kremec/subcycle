@@ -7,10 +7,7 @@ const libidoKeys: SymptomsKey[] = [
   "libidoVeryHigh",
 ];
 
-export function toggleSymptom(
-  symptoms: Symptoms,
-  key: SymptomsKey,
-): Symptoms {
+export function toggleSymptom(symptoms: Symptoms, key: SymptomsKey): Symptoms {
   const next = {
     ...symptoms,
     [key]: !symptoms[key],

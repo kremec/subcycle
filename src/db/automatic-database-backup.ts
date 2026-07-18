@@ -1,4 +1,5 @@
-import { format } from "date-fns";
+import { Platform } from "react-native";
+
 import { Directory, File } from "expo-file-system";
 import * as FileSystem from "expo-file-system/legacy";
 import {
@@ -7,7 +8,8 @@ import {
   deleteDatabaseAsync,
   openDatabaseSync,
 } from "expo-sqlite";
-import { Platform } from "react-native";
+
+import { format } from "date-fns";
 
 import { expoDb } from "@/db/client";
 import { logError, logInfo } from "@/logging/logger";

@@ -1,9 +1,4 @@
-import {
-  createContext,
-  type FC,
-  type ReactNode,
-  useContext,
-} from "react";
+import { createContext, type FC, type ReactNode, useContext } from "react";
 import { useColorScheme } from "react-native";
 
 import { palette, type ThemeColors, type ThemeName } from "@/theme/palette";
@@ -47,7 +42,9 @@ export const ThemeProvider: FC<ThemeProviderProps> = (props) => {
     layout,
   };
 
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+  );
 };
 
 export function useThemeContext(): ThemeContextValue {

@@ -1,6 +1,7 @@
-import { isSameDay, set as setDateTime } from "date-fns";
 import { type FC, useState } from "react";
 import { View } from "react-native";
+
+import { isSameDay, set as setDateTime } from "date-fns";
 
 import { Screen } from "@/components/ui";
 import { useEventsQuery } from "@/db/queries/use-events-query";

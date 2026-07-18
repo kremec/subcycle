@@ -1,6 +1,7 @@
-import { format } from "date-fns";
 import { type FC, useState } from "react";
 import { View } from "react-native";
+
+import { format } from "date-fns";
 
 import { Button, Dialog, Icon, Stack, Typography } from "@/components/ui";
 import { EventToggleButton } from "@/screens/calendar/components/event-toggle-button";

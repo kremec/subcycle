@@ -1,3 +1,5 @@
+import { type ComponentType, type FC } from "react";
+
 import {
   IconAlarm,
   IconArrowBadgeDown,
@@ -46,8 +48,6 @@ import {
   IconUserHeart,
   IconX,
 } from "@tabler/icons-react-native";
-import { type ComponentType, type FC } from "react";
-
 import type { IconProps } from "@tabler/icons-react-native";
 
 const icons = {

@@ -1,6 +1,7 @@
-import { Directory } from "expo-file-system";
 import { type FC } from "react";
 import { View } from "react-native";
+
+import { Directory } from "expo-file-system";
 
 import { Button, Icon, Stack, Switch } from "@/components/ui";
 import {

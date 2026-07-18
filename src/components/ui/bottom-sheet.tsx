@@ -1,11 +1,7 @@
-import {
-  BottomSheet,
-  RNHostView,
-  ScrollView,
-  type SnapPoint,
-} from "@expo/ui";
 import { type FC, type PropsWithChildren } from "react";
 import { View } from "react-native";
+
+import { BottomSheet, RNHostView, ScrollView, type SnapPoint } from "@expo/ui";
 
 interface BottomSheetProps {
   visible: boolean;

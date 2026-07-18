@@ -19,13 +19,10 @@ function toEpochDay(date: Date): number {
 
 async function saveEvent(event: Event): Promise<void> {
   const values = mapEventToRow(event);
-  await db
-    .insert(eventsTable)
-    .values(values)
-    .onConflictDoUpdate({
-      target: eventsTable.date,
-      set: values,
-    });
+  await db.insert(eventsTable).values(values).onConflictDoUpdate({
+    target: eventsTable.date,
+    set: values,
+  });
   backupDatabaseAfterWrite();
 }
 

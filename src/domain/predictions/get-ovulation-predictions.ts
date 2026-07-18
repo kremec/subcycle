@@ -2,11 +2,7 @@ import { compareAsc, differenceInCalendarDays } from "date-fns";
 
 import { getEventPeriods } from "@/domain/events/get-event-periods";
 import { getAverageCycleLength } from "@/domain/stats/get-average-cycle-length";
-import {
-  isMenstruationEvent,
-  isOvulationEvent,
-  type Event,
-} from "@/types";
+import { isMenstruationEvent, isOvulationEvent, type Event } from "@/types";
 
 export function getOvulationPredictions(
   events: Event[],
@@ -36,7 +32,9 @@ export function getOvulationPredictions(
       .sort((left, right) => compareAsc(left.date, right.date))[0];
 
     if (ovulationEvent) {
-      offsets.push(differenceInCalendarDays(ovulationEvent.date, currentPeriodStart));
+      offsets.push(
+        differenceInCalendarDays(ovulationEvent.date, currentPeriodStart),
+      );
     }
   }
 
@@ -53,7 +51,8 @@ export function getOvulationPredictions(
   }
 
   const predicted: Event[] = [];
-  let lastCycleStart = menstruationPeriods[menstruationPeriods.length - 1].start;
+  let lastCycleStart =
+    menstruationPeriods[menstruationPeriods.length - 1].start;
   for (let index = 0; index < predictionPeriod; index += 1) {
     lastCycleStart = new Date(
       lastCycleStart.getFullYear(),

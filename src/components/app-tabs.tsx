@@ -1,5 +1,6 @@
-import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { type FC } from "react";
+
+import { NativeTabs } from "expo-router/unstable-native-tabs";
 
 import { useNotificationLifecycle } from "@/notifications/use-notification-lifecycle";
 import { useSettingsStore } from "@/stores/settings-store";

@@ -9,9 +9,7 @@ import type {
   SubcycleRemindersModuleEvents,
 } from "./SubcycleReminders.types";
 
-class SubcycleRemindersModule
-  extends NativeModule<SubcycleRemindersModuleEvents>
-{
+class SubcycleRemindersModule extends NativeModule<SubcycleRemindersModuleEvents> {
   async appendDebugLog(_line: string): Promise<void> {}
 
   async getPermissionsStatus(): Promise<ReminderPermissionStatus> {

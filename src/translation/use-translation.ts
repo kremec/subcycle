@@ -1,4 +1,5 @@
 import { getLocales } from "expo-localization";
+
 import {
   I18n,
   useMakePlural as createPluralizer,

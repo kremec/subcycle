@@ -30,7 +30,9 @@ export function getPredictions(
       dayInPredictedPeriod < Math.round(averageEventPeriodLength);
       dayInPredictedPeriod += 1
     ) {
-      predictedDates.push(addDays(lastEventPeriodStartDate, dayInPredictedPeriod));
+      predictedDates.push(
+        addDays(lastEventPeriodStartDate, dayInPredictedPeriod),
+      );
     }
   }
 

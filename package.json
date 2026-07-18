@@ -1,7 +1,8 @@
 {
   "name": "subcycle",
-  "main": "expo-router/entry",
   "version": "6.0.0",
+  "private": true,
+  "main": "expo-router/entry",
   "scripts": {
     "start:staging": "APP_VARIANT=development expo start",
     "start:prod": "expo start",
@@ -12,7 +13,9 @@
     "eas:build:local": "eas build --platform android --profile preview --local",
     "eas:build": "eas build --platform android",
     "eas:submit": "eas submit --platform android",
-    "lint": "expo lint",
+    "lint": "oxlint src",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "check": "tsc --noEmit",
     "prepare": "git config --local include.path ../.githooks/.gitconfig"
   },
@@ -50,13 +53,10 @@
     "@types/react": "~19.2.2",
     "babel-plugin-inline-import": "^3.0.0",
     "drizzle-kit": "^0.31.10",
-    "eslint": "^9.0.0",
-    "eslint-config-expo": "~56.0.4",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-react-compiler": "^19.1.0-rc.2",
+    "oxfmt": "^0.59.0",
+    "oxlint": "^1.74.0",
     "typescript": "~6.0.3"
   },
-  "private": true,
   "patchedDependencies": {
     "@expo/ui@56.0.22": "patches/@expo%2Fui@56.0.22.patch"
   }

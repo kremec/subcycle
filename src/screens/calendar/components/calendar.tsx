@@ -1,6 +1,7 @@
-import { addDays, format, isSameDay } from "date-fns";
 import { type FC, useRef } from "react";
 import { Pressable } from "react-native";
+
+import { addDays, format, isSameDay } from "date-fns";
 import { CalendarList, type DateData } from "react-native-calendars";
 
 import { Typography } from "@/components/ui";

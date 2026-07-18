@@ -1,10 +1,11 @@
+import { type FC } from "react";
+import { type StyleProp, type ViewStyle } from "react-native";
+
 import {
   Host,
   Slider as ExpoSlider,
   type SliderProps as ExpoSliderProps,
 } from "@expo/ui";
-import { type FC } from "react";
-import { type StyleProp, type ViewStyle } from "react-native";
 
 import { useTheme } from "@/theme/use-theme";
 

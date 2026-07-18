@@ -5,8 +5,16 @@ export const symptomGroups: SymptomGroupDefinition[] = [
     name: "Symptoms",
     colorToken: "symptomsSymptoms",
     types: [
-      { key: "symptomsIntestinalProblems", label: "Intestinal\nproblems", icon: "poo" },
-      { key: "symptomsAppetiteChanges", label: "Appetite\nchanges", icon: "tools-kitchen-2" },
+      {
+        key: "symptomsIntestinalProblems",
+        label: "Intestinal\nproblems",
+        icon: "poo",
+      },
+      {
+        key: "symptomsAppetiteChanges",
+        label: "Appetite\nchanges",
+        icon: "tools-kitchen-2",
+      },
       { key: "symptomsBloating", label: "Bloating", icon: "balloon" },
       { key: "symptomsChills", label: "Chills", icon: "snowflake" },
       { key: "symptomsCramps", label: "Cramps", icon: "bolt" },
@@ -29,10 +37,20 @@ export const symptomGroups: SymptomGroupDefinition[] = [
     name: "Libido",
     colorToken: "symptomsLibido",
     types: [
-      { key: "libidoVeryLow", label: "Very low", icon: "arrow-badge-down", filled: true },
+      {
+        key: "libidoVeryLow",
+        label: "Very low",
+        icon: "arrow-badge-down",
+        filled: true,
+      },
       { key: "libidoLow", label: "Low", icon: "arrow-badge-down" },
       { key: "libidoHigh", label: "High", icon: "arrow-badge-up" },
-      { key: "libidoVeryHigh", label: "Very high", icon: "arrow-badge-up", filled: true },
+      {
+        key: "libidoVeryHigh",
+        label: "Very high",
+        icon: "arrow-badge-up",
+        filled: true,
+      },
     ],
   },
   {
