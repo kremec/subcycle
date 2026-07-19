@@ -1,7 +1,4 @@
-import { Platform } from "react-native";
-
 import { Directory, File } from "expo-file-system";
-import * as FileSystem from "expo-file-system/legacy";
 import {
   backupDatabaseAsync,
   defaultDatabaseDirectory,
@@ -35,35 +32,15 @@ async function performDatabaseBackup(directoryUri: string): Promise<void> {
   const name = `subcycle-auto-${format(new Date(), "yyyy-MM-dd")}.db`;
   const sourceUri = `file://${defaultDatabaseDirectory}/${tempBackupDbName}`;
 
-  if (Platform.OS === "android") {
-    const backup = await FileSystem.readAsStringAsync(sourceUri, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
-    const files =
-      await FileSystem.StorageAccessFramework.readDirectoryAsync(directoryUri);
-    const destination =
-      files.find((uri) => decodeURIComponent(uri).endsWith(`/${name}`)) ??
-      (await FileSystem.StorageAccessFramework.createFileAsync(
-        directoryUri,
-        name,
-        BACKUP_MIME_TYPE,
-      ));
+  const directory = new Directory(directoryUri);
+  const destination =
+    directory
+      .list()
+      .find(
+        (entry): entry is File => entry instanceof File && entry.name === name,
+      ) ?? directory.createFile(name, BACKUP_MIME_TYPE);
 
-    await FileSystem.writeAsStringAsync(destination, backup, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
-  } else {
-    const directory = new Directory(directoryUri);
-    const destination =
-      directory
-        .list()
-        .find(
-          (entry): entry is File =>
-            entry instanceof File && entry.name === name,
-        ) ?? directory.createFile(name, BACKUP_MIME_TYPE);
-
-    await new File(sourceUri).copy(destination, { overwrite: true });
-  }
+  await new File(sourceUri).copy(destination, { overwrite: true });
 
   await backupDb.closeAsync();
   await deleteDatabaseAsync(tempBackupDbName, defaultDatabaseDirectory);
