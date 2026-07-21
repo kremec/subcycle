@@ -1,10 +1,7 @@
 import Foundation
 
 enum LocalLog {
-  private static let directoryName = "logs"
   private static let fileName = "subcycle.log"
-  private static let previousFileName = "subcycle.previous.log"
-  private static let maxBytes = 2 * 1024 * 1024
   private static let lock = NSLock()
 
   static func appendLine(_ line: String) {
@@ -12,11 +9,6 @@ enum LocalLog {
     defer { lock.unlock() }
     do {
       let file = try logFile()
-      try FileManager.default.createDirectory(
-        at: file.deletingLastPathComponent(),
-        withIntermediateDirectories: true
-      )
-      rotateIfNeeded(file)
       let data = Data((line.hasSuffix("\n") ? line : "\(line)\n").utf8)
 
       if FileManager.default.fileExists(atPath: file.path),
@@ -57,28 +49,7 @@ enum LocalLog {
     }
   }
 
-  private static func rotateIfNeeded(_ file: URL) {
-    guard
-      let attributes = try? FileManager.default.attributesOfItem(atPath: file.path),
-      let size = attributes[.size] as? Int,
-      size >= maxBytes
-    else {
-      return
-    }
-
-    let previous = file.deletingLastPathComponent().appendingPathComponent(previousFileName)
-    try? FileManager.default.removeItem(at: previous)
-    try? FileManager.default.moveItem(at: file, to: previous)
-  }
-
   private static func logFile() throws -> URL {
-    return try FileManager.default.url(
-      for: .documentDirectory,
-      in: .userDomainMask,
-      appropriateFor: nil,
-      create: true
-    )
-    .appendingPathComponent(directoryName, isDirectory: true)
-    .appendingPathComponent(fileName)
+    return try AppStorage.logsDirectory().appendingPathComponent(fileName)
   }
 }

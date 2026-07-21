@@ -6,17 +6,12 @@ import java.io.File
 import java.time.Instant
 
 object LocalLog {
-    private const val LOG_DIRECTORY = "logs"
     private const val LOG_FILE = "subcycle.log"
-    private const val PREVIOUS_LOG_FILE = "subcycle.previous.log"
-    private const val MAX_BYTES = 2 * 1024 * 1024L
 
     @Synchronized
     fun appendLine(context: Context, line: String) {
         runCatching {
             val file = logFile(context)
-            file.parentFile?.mkdirs()
-            rotateIfNeeded(file)
             file.appendText(if (line.endsWith("\n")) line else "$line\n", Charsets.UTF_8)
         }
     }
@@ -79,20 +74,7 @@ object LocalLog {
         }
     }
 
-    private fun rotateIfNeeded(file: File) {
-        if (!file.exists() || file.length() < MAX_BYTES) {
-            return
-        }
-
-        val previous = File(file.parentFile, PREVIOUS_LOG_FILE)
-        if (previous.exists()) {
-            previous.delete()
-        }
-        file.renameTo(previous)
-    }
-
     private fun logFile(context: Context): File {
-        val root = context.getExternalFilesDir(null) ?: context.filesDir
-        return File(File(root, LOG_DIRECTORY), LOG_FILE)
+        return File(AppStorage.logsDirectory(context), LOG_FILE)
     }
 }

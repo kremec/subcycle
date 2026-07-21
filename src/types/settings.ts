@@ -13,8 +13,6 @@ export type Settings = {
   menstruationNotificationsEnabled: boolean;
   menstruationNotifications: MenstruationNotification[];
   partnerMode: boolean;
-  automaticBackupsEnabled: boolean;
-  automaticBackupDirectoryUri: string | null;
 };
 
 export function createDefaultSettings(): Settings {
@@ -25,7 +23,5 @@ export function createDefaultSettings(): Settings {
     menstruationNotificationsEnabled: false,
     menstruationNotifications: [],
     partnerMode: false,
-    automaticBackupsEnabled: false,
-    automaticBackupDirectoryUri: null,
   };
 }

@@ -67,6 +67,10 @@ public class SubcycleRemindersModule: Module {
       LocalLog.appendLine(line)
     }
 
+    AsyncFunction("getBackupDirectoryUri") { () throws -> String in
+      try AppStorage.backupsDirectory().absoluteString
+    }
+
     AsyncFunction("getPermissionsStatus") { (promise: Promise) in
       UNUserNotificationCenter.current().getNotificationSettings { settings in
         promise.resolve(self.permissionStatusPayload(settings))
@@ -252,11 +256,6 @@ public class SubcycleRemindersModule: Module {
         }
       }
     }
-
-    AsyncFunction("setAutomaticBackupSettings") { (enabled: Bool, directoryUri: String?) in
-      AutomaticBackupStore.save(enabled: enabled, directoryUri: directoryUri)
-    }
-
   }
 
   private func permissionStatusPayload(_ settings: UNNotificationSettings) -> [String: Any] {

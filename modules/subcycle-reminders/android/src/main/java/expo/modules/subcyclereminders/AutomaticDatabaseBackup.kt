@@ -2,14 +2,11 @@ package expo.modules.subcyclereminders
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import android.net.Uri
-import androidx.documentfile.provider.DocumentFile
 import java.io.File
 import java.time.LocalDate
 
 object AutomaticDatabaseBackup {
     private const val DATABASE_NAME = "subcycle.db"
-    private const val MIME_TYPE = "application/vnd.sqlite3"
 
     fun run(context: Context) {
         try {
@@ -25,18 +22,7 @@ object AutomaticDatabaseBackup {
     }
 
     private fun backup(context: Context) {
-        if (!AutomaticBackupStore.isEnabled(context)) {
-            return
-        }
-
-        val directoryUri = AutomaticBackupStore.directoryUri(context)
-            ?: return LocalLog.error(context, "android.backup", "directory-not-configured")
-        val directory = DocumentFile.fromTreeUri(context, Uri.parse(directoryUri))
-            ?: return LocalLog.error(context, "android.backup", "directory-unavailable")
-        val name = backupName()
-        val destination = directory.findFile(name)
-            ?: directory.createFile(MIME_TYPE, name)
-            ?: return LocalLog.error(context, "android.backup", "file-create-failed")
+        val destination = File(AppStorage.backupsDirectory(context), backupName())
 
         LocalLog.info(
             context,
@@ -48,9 +34,7 @@ object AutomaticDatabaseBackup {
             return
         }
 
-        val output = context.contentResolver.openOutputStream(destination.uri, "wt")
-            ?: return LocalLog.error(context, "android.backup", "file-open-failed")
-        output.use { stream ->
+        destination.outputStream().use { stream ->
             databaseFile(context).inputStream().use { input ->
                 input.copyTo(stream)
             }
@@ -85,7 +69,7 @@ object AutomaticDatabaseBackup {
     }
 
     private fun backupName(): String {
-        return "subcycle-auto-${LocalDate.now()}.db"
+        return "subcycle-checkpoint_automatic_${LocalDate.now()}.db"
     }
 
     private fun databaseFile(context: Context): File {

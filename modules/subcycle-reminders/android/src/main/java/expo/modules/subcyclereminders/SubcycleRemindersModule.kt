@@ -40,6 +40,10 @@ class SubcycleRemindersModule : Module() {
             LocalLog.appendLine(context, line)
         }.runOnQueue(moduleScope)
 
+        AsyncFunction("getBackupDirectoryUri") {
+            Uri.fromFile(AppStorage.backupsDirectory(context)).toString()
+        }.runOnQueue(moduleScope)
+
         AsyncFunction("getPermissionsStatus") {
             mapOf("granted" to notificationsGranted())
         }.runOnQueue(moduleScope)
@@ -107,10 +111,6 @@ class SubcycleRemindersModule : Module() {
                 )
             }
             ReminderScheduler(context).replaceMenstruationSchedules(mapped)
-        }.runOnQueue(moduleScope)
-
-        AsyncFunction("setAutomaticBackupSettings") { enabled: Boolean, directoryUri: String? ->
-            AutomaticBackupStore.save(context, enabled, directoryUri)
         }.runOnQueue(moduleScope)
     }
 

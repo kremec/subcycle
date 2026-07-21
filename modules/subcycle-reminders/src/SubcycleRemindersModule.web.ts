@@ -1,4 +1,5 @@
 import { NativeModule } from "expo";
+import { Paths } from "expo-file-system";
 
 import type {
   BatteryOptimizationStatus,
@@ -11,6 +12,10 @@ import type {
 
 class SubcycleRemindersModule extends NativeModule<SubcycleRemindersModuleEvents> {
   async appendDebugLog(_line: string): Promise<void> {}
+
+  async getBackupDirectoryUri(): Promise<string> {
+    return Paths.join(Paths.document, "backups");
+  }
 
   async getPermissionsStatus(): Promise<ReminderPermissionStatus> {
     return { granted: false };
@@ -38,11 +43,6 @@ class SubcycleRemindersModule extends NativeModule<SubcycleRemindersModuleEvents
 
   async replaceMenstruationSchedules(
     _schedules: MenstruationNotificationSchedule[],
-  ): Promise<void> {}
-
-  async setAutomaticBackupSettings(
-    _enabled: boolean,
-    _directoryUri: string | null,
   ): Promise<void> {}
 }
 

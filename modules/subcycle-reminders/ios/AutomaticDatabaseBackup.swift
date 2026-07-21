@@ -5,22 +5,9 @@ enum AutomaticDatabaseBackup {
   private static let databaseName = "subcycle.db"
 
   static func run() {
-    guard
-      AutomaticBackupStore.isEnabled
-    else {
-      return
-    }
-
-    guard let directory = AutomaticBackupStore.directoryUrl() else {
+    guard let directory = try? AppStorage.backupsDirectory() else {
       LocalLog.append(level: "error", category: "ios.backup", event: "directory-unavailable")
       return
-    }
-
-    let accessed = directory.startAccessingSecurityScopedResource()
-    defer {
-      if accessed {
-        directory.stopAccessingSecurityScopedResource()
-      }
     }
 
     let tempFile = FileManager.default.temporaryDirectory
@@ -108,6 +95,6 @@ enum AutomaticDatabaseBackup {
     formatter.dateFormat = "yyyy-MM-dd"
     formatter.locale = Locale(identifier: "en_US_POSIX")
     formatter.timeZone = .current
-    return "subcycle-auto-\(formatter.string(from: Date())).db"
+    return "subcycle-checkpoint_automatic_\(formatter.string(from: Date())).db"
   }
 }

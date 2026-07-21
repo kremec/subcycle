@@ -11,6 +11,7 @@ import type {
 
 declare class SubcycleRemindersModule extends NativeModule<SubcycleRemindersModuleEvents> {
   appendDebugLog(line: string): Promise<void>;
+  getBackupDirectoryUri(): Promise<string>;
   getPermissionsStatus(): Promise<ReminderPermissionStatus>;
   requestPermissions(): Promise<ReminderPermissionStatus>;
   getExactAlarmStatus(): Promise<ExactAlarmStatus>;
@@ -20,10 +21,6 @@ declare class SubcycleRemindersModule extends NativeModule<SubcycleRemindersModu
   replacePillSchedules(schedules: PillNotificationSchedule[]): Promise<void>;
   replaceMenstruationSchedules(
     schedules: MenstruationNotificationSchedule[],
-  ): Promise<void>;
-  setAutomaticBackupSettings(
-    enabled: boolean,
-    directoryUri: string | null,
   ): Promise<void>;
 }
 
