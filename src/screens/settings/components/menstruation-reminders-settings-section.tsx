@@ -19,14 +19,13 @@ import { SettingsSectionCard } from "@/screens/settings/components/settings-sect
 import { TimePickerDialog } from "@/screens/settings/components/time-picker-dialog";
 import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
-import { useT } from "@/translation/use-translation";
+import { t } from "@/translation/use-translation";
 import { formatHourMinute, type MenstruationNotification } from "@/types";
 
 type RuleTarget = { index?: number } | null;
 
 export const MenstruationRemindersSettingsSection: FC = () => {
   const theme = useTheme();
-  const t = useT();
   const { data: events } = useEventsQuery();
   const { settings, updateSettings } = useSettingsStore();
   const maxRuleDay = getMaxMenstruationNotificationDays(events) ?? 0;

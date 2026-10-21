@@ -6,10 +6,9 @@ import { getAverageCycleLength } from "@/domain/stats/get-average-cycle-length";
 import { getAverageHeavyPeriodLength } from "@/domain/stats/get-average-heavy-period-length";
 import { getAveragePeriodLength } from "@/domain/stats/get-average-period-length";
 import { StatCard } from "@/screens/stats/components/stat-card";
-import { useT } from "@/translation/use-translation";
+import { t } from "@/translation/use-translation";
 
 const StatsScreen: FC = () => {
-  const t = useT();
   const { data: events } = useEventsQuery();
 
   function formatDays(value: number | null): string {

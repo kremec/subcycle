@@ -9,7 +9,7 @@ import { IconButton } from "@/components/ui/icon-button";
 import { Typography } from "@/components/ui/typography";
 import { symptomGroups } from "@/domain/symptom-groups";
 import { useTheme } from "@/theme/use-theme";
-import { useT } from "@/translation/use-translation";
+import { t } from "@/translation/use-translation";
 import type { Symptoms } from "@/types";
 
 interface SymptomsOverviewProps {
@@ -21,7 +21,6 @@ interface SymptomsOverviewProps {
 export const SymptomsOverview: FC<SymptomsOverviewProps> = (props) => {
   const { selectedDate, symptoms, onPressEdit } = props;
   const theme = useTheme();
-  const t = useT();
 
   return (
     <Card style={{ marginBottom: 2 }}>

@@ -21,12 +21,11 @@ import { getOvulationPredictions } from "@/domain/predictions/get-ovulation-pred
 import { PartnerInsightDialog } from "@/screens/partner/components/partner-insight-dialog";
 import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
-import { formatOrdinal, useT } from "@/translation/use-translation";
+import { formatOrdinal, t } from "@/translation/use-translation";
 import { createDefaultPartnerInsight, type PartnerInsight } from "@/types";
 
 const PartnerScreen: FC = () => {
   const theme = useTheme();
-  const t = useT();
   const [mode, setMode] = useState<"view" | "edit">("view");
   const [editingInsight, setEditingInsight] = useState<PartnerInsight | null>(
     null,

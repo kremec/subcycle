@@ -9,7 +9,7 @@ import { symptomGroups } from "@/domain/symptom-groups";
 import { toggleSymptom } from "@/domain/toggle-symptom";
 import { SymptomCard } from "@/screens/calendar/components/symptom-card";
 import { useTheme } from "@/theme/use-theme";
-import { useT } from "@/translation/use-translation";
+import { t } from "@/translation/use-translation";
 import type { Symptoms } from "@/types";
 
 interface SymptomsEditSheetProps {
@@ -22,7 +22,6 @@ interface SymptomsEditSheetProps {
 export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
   const { visible, symptoms, onClose, onChange } = props;
   const theme = useTheme();
-  const t = useT();
   const tokenToColor = {
     symptomsSymptoms: theme.colors.symptomsSymptoms,
     symptomsDischarge: theme.colors.symptomsDischarge,

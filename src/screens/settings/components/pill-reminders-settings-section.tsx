@@ -13,14 +13,13 @@ import { SettingsSectionCard } from "@/screens/settings/components/settings-sect
 import { TimePickerDialog } from "@/screens/settings/components/time-picker-dialog";
 import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
-import { useT } from "@/translation/use-translation";
+import { t } from "@/translation/use-translation";
 import { formatHourMinute } from "@/types";
 
 type PickerTarget = { index?: number } | null;
 
 export const PillRemindersSettingsSection: FC = () => {
   const theme = useTheme();
-  const t = useT();
   const { settings, updateSettings } = useSettingsStore();
   const sortedTimes = settings.pillNotificationTimes.sort((left, right) =>
     compareTimesAsc(left, right),

@@ -5,11 +5,10 @@ import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { useNotificationLifecycle } from "@/notifications/use-notification-lifecycle";
 import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
-import { useT } from "@/translation/use-translation";
+import { t } from "@/translation/use-translation";
 
 export const AppTabs: FC = () => {
   const theme = useTheme();
-  const t = useT();
   const {
     settings: { partnerMode },
   } = useSettingsStore();

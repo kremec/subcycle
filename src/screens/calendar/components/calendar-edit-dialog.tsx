@@ -10,7 +10,7 @@ import { Stack } from "@/components/ui/stack";
 import { Typography } from "@/components/ui/typography";
 import { EventToggleButton } from "@/screens/calendar/components/event-toggle-button";
 import { useTheme } from "@/theme/use-theme";
-import { formatOrdinal, useT } from "@/translation/use-translation";
+import { formatOrdinal, t } from "@/translation/use-translation";
 import { createDefaultEvent, hasAnyEventFlags, type Event } from "@/types";
 
 interface CalendarEditDialogProps {
@@ -24,7 +24,6 @@ interface CalendarEditDialogProps {
 export const CalendarEditDialog: FC<CalendarEditDialogProps> = (props) => {
   const { visible, selectedEvent, dayInCycle, onClose, onSave } = props;
   const theme = useTheme();
-  const t = useT();
   const [draft, setDraft] = useState<Event | null>(selectedEvent);
 
   if (!draft) {

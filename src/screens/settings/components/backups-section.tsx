@@ -8,11 +8,10 @@ import { exportDatabase } from "@/db/export-database";
 import { importLatestNativeDatabase } from "@/db/import-database";
 import { SettingsSectionCard } from "@/screens/settings/components/settings-section-card";
 import { useTheme } from "@/theme/use-theme";
-import { useT } from "@/translation/use-translation";
+import { t } from "@/translation/use-translation";
 
 export const BackupsSection: FC = () => {
   const theme = useTheme();
-  const t = useT();
 
   return (
     <Stack gap={theme.spacing.sm}>

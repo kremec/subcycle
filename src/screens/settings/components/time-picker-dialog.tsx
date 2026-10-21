@@ -9,7 +9,7 @@ import { Stack } from "@/components/ui/stack";
 import { Typography } from "@/components/ui/typography";
 import { createTime, timeToDate } from "@/domain/time";
 import { useTheme } from "@/theme/use-theme";
-import { useT } from "@/translation/use-translation";
+import { t } from "@/translation/use-translation";
 import { formatHourMinute, type Time } from "@/types";
 
 interface TimePickerDialogProps {
@@ -22,7 +22,6 @@ interface TimePickerDialogProps {
 export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
   const { visible, value, onClose, onSave } = props;
   const theme = useTheme();
-  const t = useT();
   const [draftValue, setDraftValue] = useState<Time | null>(null);
   const selectedValue = draftValue ?? value;
 

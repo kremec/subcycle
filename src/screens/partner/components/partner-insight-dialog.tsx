@@ -8,7 +8,7 @@ import { NumberField } from "@/components/ui/number-field";
 import { Stack } from "@/components/ui/stack";
 import { Typography } from "@/components/ui/typography";
 import { useTheme } from "@/theme/use-theme";
-import { useT } from "@/translation/use-translation";
+import { t } from "@/translation/use-translation";
 import { createDefaultPartnerInsight, type PartnerInsight } from "@/types";
 
 interface PartnerInsightDialogProps {
@@ -22,7 +22,6 @@ interface PartnerInsightDialogProps {
 export const PartnerInsightDialog: FC<PartnerInsightDialogProps> = (props) => {
   const { visible, insight, onClose, onDelete, onSave } = props;
   const theme = useTheme();
-  const t = useT();
   const [draft, setDraft] = useState<PartnerInsight>(
     insight ?? createDefaultPartnerInsight(),
   );
