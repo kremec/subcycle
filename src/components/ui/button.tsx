@@ -1,4 +1,4 @@
-import { type FC, type PropsWithChildren, type ReactNode } from "react";
+import { type FC, type ReactNode } from "react";
 import { Pressable, View } from "react-native";
 
 import { Typography } from "@/components/ui/typography";
@@ -7,13 +7,14 @@ import { useTheme } from "@/theme/use-theme";
 type ButtonVariant = "solid" | "outline" | "ghost";
 
 interface ButtonProps {
+  children: string;
   onPress?: () => void;
   variant?: ButtonVariant;
   disabled?: boolean;
   leftAccessory?: ReactNode;
 }
 
-export const Button: FC<PropsWithChildren<ButtonProps>> = (props) => {
+export const Button: FC<ButtonProps> = (props) => {
   const {
     children,
     onPress,
@@ -22,24 +23,23 @@ export const Button: FC<PropsWithChildren<ButtonProps>> = (props) => {
     leftAccessory,
   } = props;
   const theme = useTheme();
-  const colors =
-    variant === "solid"
-      ? {
-          background: theme.colors.accent,
-          border: theme.colors.accent,
-          text: theme.colors.surface,
-        }
-      : variant === "outline"
-        ? {
-            background: "transparent",
-            border: theme.colors.border,
-            text: theme.colors.text,
-          }
-        : {
-            background: "transparent",
-            border: "transparent",
-            text: theme.colors.text,
-          };
+  const colors = {
+    solid: {
+      background: theme.colors.accent,
+      border: theme.colors.accent,
+      text: theme.colors.surface,
+    },
+    outline: {
+      background: "transparent",
+      border: theme.colors.border,
+      text: theme.colors.text,
+    },
+    ghost: {
+      background: "transparent",
+      border: "transparent",
+      text: theme.colors.text,
+    },
+  }[variant];
 
   return (
     <Pressable
@@ -64,13 +64,9 @@ export const Button: FC<PropsWithChildren<ButtonProps>> = (props) => {
         }}
       >
         {leftAccessory}
-        {typeof children === "string" ? (
-          <Typography variant="bodyStrong" color={colors.text}>
-            {children}
-          </Typography>
-        ) : (
-          children
-        )}
+        <Typography variant="bodyStrong" color={colors.text}>
+          {children}
+        </Typography>
       </View>
     </Pressable>
   );

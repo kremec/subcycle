@@ -1,5 +1,5 @@
 import { type FC, type PropsWithChildren } from "react";
-import { Pressable, type PressableProps } from "react-native";
+import { Pressable, type StyleProp, type ViewStyle } from "react-native";
 
 import { useTheme } from "@/theme/use-theme";
 
@@ -7,7 +7,7 @@ interface IconButtonProps {
   onPress?: () => void;
   onLongPress?: () => void;
   disabled?: boolean;
-  style?: PressableProps["style"];
+  style?: StyleProp<ViewStyle>;
 }
 
 export const IconButton: FC<PropsWithChildren<IconButtonProps>> = (props) => {
@@ -18,7 +18,7 @@ export const IconButton: FC<PropsWithChildren<IconButtonProps>> = (props) => {
       onPress={onPress}
       onLongPress={onLongPress}
       disabled={disabled}
-      style={(state) => [
+      style={({ pressed }) => [
         {
           alignItems: "center",
           justifyContent: "center",
@@ -28,9 +28,9 @@ export const IconButton: FC<PropsWithChildren<IconButtonProps>> = (props) => {
           width: 42,
           height: 42,
           backgroundColor: theme.colors.surface,
-          opacity: state.pressed ? 0.55 : 1,
+          opacity: pressed ? 0.55 : 1,
         },
-        typeof style === "function" ? style(state) : style,
+        style,
       ]}
     >
       {children}

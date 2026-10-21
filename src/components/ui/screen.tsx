@@ -15,11 +15,10 @@ export const Screen: FC<PropsWithChildren<ScreenProps>> = (props) => {
   const theme = useTheme();
   const contentStyle = {
     width: "100%" as const,
-    maxWidth: theme.layout.screenMaxWidth,
+    maxWidth: 820,
     alignSelf: "center" as const,
     paddingHorizontal: theme.spacing.lg,
     paddingTop: theme.spacing.md,
-    paddingBottom: theme.layout.bottomInset,
     gap: theme.spacing.lg,
   };
 

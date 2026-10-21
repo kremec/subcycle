@@ -9,9 +9,7 @@ import { t } from "@/translation/use-translation";
 
 export const AppTabs: FC = () => {
   const theme = useTheme();
-  const {
-    settings: { partnerMode },
-  } = useSettingsStore();
+  const partnerMode = useSettingsStore((state) => state.settings.partnerMode);
 
   useNotificationLifecycle();
 

@@ -196,7 +196,6 @@ export const MenstruationRemindersSettingsSection: FC = () => {
           </Typography>
           <Stack gap={theme.spacing.sm}>
             <Slider
-              style={{ width: "100%" }}
               min={0}
               max={Math.max(maxRuleDay, ruleDay)}
               step={1}

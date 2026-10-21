@@ -4,15 +4,11 @@ export const palette = {
     backgroundElement: "#F4F1EF",
     backgroundSelected: "#ECE6E2",
     surface: "#FFFFFF",
-    surfaceMuted: "#F8E9E1",
     text: "#201815",
     textSecondary: "#6F625D",
     border: "#E3C4B7",
     accent: "#B02E00",
     accentSoft: "#FFD8C8",
-    secondary: "#177FD8",
-    success: "#2E8B57",
-    danger: "#C43D2B",
     errorSurface: "#FAE8E6",
     calendarMenstruationLight: "#F08080",
     calendarMenstruationModerate: "#D00000",
@@ -31,15 +27,11 @@ export const palette = {
     backgroundElement: "#121212",
     backgroundSelected: "#1D1D1D",
     surface: "#161616",
-    surfaceMuted: "#221A19",
     text: "#FFF6F3",
     textSecondary: "#D0B8AF",
     border: "#5D433D",
     accent: "#FFB499",
     accentSoft: "#5B2411",
-    secondary: "#8CC8FF",
-    success: "#7FD3A2",
-    danger: "#FF9A8C",
     errorSurface: "#3A201F",
     calendarMenstruationLight: "#F08080",
     calendarMenstruationModerate: "#D00000",
@@ -56,4 +48,3 @@ export const palette = {
 } as const;
 
 export type ThemeName = keyof typeof palette;
-export type ThemeColors = (typeof palette)[ThemeName];
