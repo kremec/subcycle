@@ -5,7 +5,6 @@ import { DateTimePicker } from "@expo/ui/community/datetime-picker";
 
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
-import { Stack } from "@/components/ui/stack";
 import { Typography } from "@/components/ui/typography";
 import { timeToDate } from "@/domain/time";
 import { useTheme } from "@/theme/use-theme";
@@ -59,7 +58,7 @@ export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
 
   return (
     <Dialog visible={visible} onClose={handleClose}>
-      <Stack gap={theme.spacing.md}>
+      <View style={{ gap: theme.spacing.md }}>
         <Typography variant="titleSmall">
           {t("settings.notificationTime")}
         </Typography>
@@ -82,7 +81,7 @@ export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
             }}
           />
         )}
-        <Stack direction="row" gap={theme.spacing.sm}>
+        <View style={{ flexDirection: "row", gap: theme.spacing.sm }}>
           <View style={{ flex: 1 }}>
             <Button variant="ghost" onPress={handleClose}>
               {t("common.cancel")}
@@ -93,8 +92,8 @@ export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
               {t("common.save")}
             </Button>
           </View>
-        </Stack>
-      </Stack>
+        </View>
+      </View>
     </Dialog>
   );
 };

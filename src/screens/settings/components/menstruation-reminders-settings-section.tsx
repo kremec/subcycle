@@ -8,7 +8,6 @@ import { Icon } from "@/components/ui/icon";
 import { IconButton } from "@/components/ui/icon-button";
 import { ListRow } from "@/components/ui/list-row";
 import { Slider } from "@/components/ui/slider";
-import { Stack } from "@/components/ui/stack";
 import { Switch } from "@/components/ui/switch";
 import { Typography } from "@/components/ui/typography";
 import { useEventsQuery } from "@/db/repositories/events-repository";
@@ -71,7 +70,7 @@ export const MenstruationRemindersSettingsSection: FC = () => {
         }
       >
         {settings.menstruationNotificationsEnabled && (
-          <Stack gap={theme.spacing.md}>
+          <View style={{ gap: theme.spacing.md }}>
             {sortedRules.map((rule, index) => {
               return (
                 <ListRow
@@ -110,7 +109,7 @@ export const MenstruationRemindersSettingsSection: FC = () => {
                 />
               );
             })}
-          </Stack>
+          </View>
         )}
 
         {showAddButton && (
@@ -181,13 +180,13 @@ export const MenstruationRemindersSettingsSection: FC = () => {
         visible={ruleTarget !== null && !pickingTime}
         onClose={() => setRuleTarget(null)}
       >
-        <Stack gap={theme.spacing.md}>
+        <View style={{ gap: theme.spacing.md }}>
           <Typography variant="titleSmall">
             {ruleTarget?.rule === undefined
               ? t("settings.addReminder")
               : t("settings.editReminder")}
           </Typography>
-          <Stack gap={theme.spacing.sm}>
+          <View style={{ gap: theme.spacing.sm }}>
             <Slider
               min={0}
               max={Math.max(maxRuleDay, ruleDay)}
@@ -202,7 +201,7 @@ export const MenstruationRemindersSettingsSection: FC = () => {
             >
               {t("settings.reminderRule", { count: ruleDay })}
             </Typography>
-          </Stack>
+          </View>
           <Field
             multiline
             textAlignVertical="top"
@@ -212,7 +211,7 @@ export const MenstruationRemindersSettingsSection: FC = () => {
             onChangeText={setRuleMessage}
             placeholder={t("settings.notificationMessagePlaceholder")}
           />
-          <Stack direction="row" gap={theme.spacing.sm}>
+          <View style={{ flexDirection: "row", gap: theme.spacing.sm }}>
             <View style={{ flex: 1 }}>
               <Button variant="ghost" onPress={() => setRuleTarget(null)}>
                 {t("common.cancel")}
@@ -223,8 +222,8 @@ export const MenstruationRemindersSettingsSection: FC = () => {
                 {t("common.save")}
               </Button>
             </View>
-          </Stack>
-        </Stack>
+          </View>
+        </View>
       </Dialog>
     </Fragment>
   );

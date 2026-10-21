@@ -4,7 +4,6 @@ import { View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
-import { Stack } from "@/components/ui/stack";
 import { Typography } from "@/components/ui/typography";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
@@ -24,7 +23,7 @@ export const PartnerInsightDialog: FC<PartnerInsightDialogProps> = (props) => {
 
   return (
     <Dialog visible onClose={onClose}>
-      <Stack gap={theme.spacing.md}>
+      <View style={{ gap: theme.spacing.md }}>
         <Typography variant="title">
           {insight.dayInCycle === 1 && !insight.name && !insight.description
             ? t("partner.addInsight")
@@ -58,7 +57,7 @@ export const PartnerInsightDialog: FC<PartnerInsightDialogProps> = (props) => {
             }))
           }
         />
-        <Stack direction="row" gap={theme.spacing.sm}>
+        <View style={{ flexDirection: "row", gap: theme.spacing.sm }}>
           <View style={{ flex: 1 }}>
             <Button
               variant="outline"
@@ -70,8 +69,8 @@ export const PartnerInsightDialog: FC<PartnerInsightDialogProps> = (props) => {
           <View style={{ flex: 1 }}>
             <Button onPress={() => onSave(draft)}>{t("common.save")}</Button>
           </View>
-        </Stack>
-      </Stack>
+        </View>
+      </View>
     </Dialog>
   );
 };

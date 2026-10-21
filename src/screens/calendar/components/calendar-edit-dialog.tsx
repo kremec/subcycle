@@ -6,7 +6,6 @@ import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Icon } from "@/components/ui/icon";
-import { Stack } from "@/components/ui/stack";
 import { Typography } from "@/components/ui/typography";
 import { EventToggleButton } from "@/screens/calendar/components/event-toggle-button";
 import { useTheme } from "@/theme/use-theme";
@@ -88,7 +87,7 @@ export const CalendarEditDialog: FC<CalendarEditDialogProps> = (props) => {
 
   return (
     <Dialog visible onClose={onClose}>
-      <Stack gap={theme.spacing.md}>
+      <View style={{ gap: theme.spacing.md }}>
         <View>
           <Typography variant="title">
             {t(
@@ -107,7 +106,7 @@ export const CalendarEditDialog: FC<CalendarEditDialogProps> = (props) => {
           )}
         </View>
 
-        <Stack gap={theme.spacing.sm}>
+        <View style={{ gap: theme.spacing.sm }}>
           {flowToggles.map((toggle) => (
             <EventToggleButton
               key={toggle.key}
@@ -125,7 +124,7 @@ export const CalendarEditDialog: FC<CalendarEditDialogProps> = (props) => {
               onPress={() => toggleExclusive(toggle.key)}
             />
           ))}
-        </Stack>
+        </View>
 
         <EventToggleButton
           label={t("calendar.edit.ovulation")}
@@ -143,7 +142,7 @@ export const CalendarEditDialog: FC<CalendarEditDialogProps> = (props) => {
           onPress={() => setDraft({ ...draft, pill: !draft.pill })}
         />
 
-        <Stack direction="row" gap={theme.spacing.sm}>
+        <View style={{ flexDirection: "row", gap: theme.spacing.sm }}>
           <View style={{ flex: 1 }}>
             <Button variant="ghost" onPress={onClose}>
               {t("common.close")}
@@ -152,8 +151,8 @@ export const CalendarEditDialog: FC<CalendarEditDialogProps> = (props) => {
           <View style={{ flex: 1 }}>
             <Button onPress={save}>{t("common.save")}</Button>
           </View>
-        </Stack>
-      </Stack>
+        </View>
+      </View>
     </Dialog>
   );
 };

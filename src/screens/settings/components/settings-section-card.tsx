@@ -3,7 +3,6 @@ import { View } from "react-native";
 
 import { Card } from "@/components/ui/card";
 import { Icon, type IconName } from "@/components/ui/icon";
-import { Stack } from "@/components/ui/stack";
 import { Typography } from "@/components/ui/typography";
 import { useTheme } from "@/theme/use-theme";
 
@@ -22,7 +21,7 @@ export const SettingsSectionCard: FC<
 
   return (
     <Card>
-      <Stack gap={theme.spacing.lg}>
+      <View style={{ gap: theme.spacing.lg }}>
         <View
           style={{
             flexDirection: "row",
@@ -49,7 +48,7 @@ export const SettingsSectionCard: FC<
           {right}
         </View>
         {children && <View>{children}</View>}
-      </Stack>
+      </View>
     </Card>
   );
 };
