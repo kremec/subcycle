@@ -32,7 +32,3 @@ export function fromEpochDay(epochDay: number | string | null): Date | null {
     ? addDays(UNIX_EPOCH, day)
     : null;
 }
-
-export function createTime(hour: number, minute: number): Time {
-  return { hour, minute };
-}

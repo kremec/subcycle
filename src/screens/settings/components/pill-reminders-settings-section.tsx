@@ -14,16 +14,14 @@ import { TimePickerDialog } from "@/screens/settings/components/time-picker-dial
 import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
-import { formatHourMinute } from "@/types";
+import { formatHourMinute, type Time } from "@/types";
 
-type PickerTarget = { index?: number } | null;
+type PickerTarget = { time?: Time } | null;
 
 export const PillRemindersSettingsSection: FC = () => {
   const theme = useTheme();
   const { settings, updateSettings } = useSettingsStore();
-  const sortedTimes = settings.pillNotificationTimes.sort((left, right) =>
-    compareTimesAsc(left, right),
-  );
+  const sortedTimes = settings.pillNotificationTimes.toSorted(compareTimesAsc);
   const showSwitch =
     settings.pillNotificationsEnabled ||
     settings.pillNotificationTimes.length > 0;
@@ -32,11 +30,6 @@ export const PillRemindersSettingsSection: FC = () => {
     settings.pillNotificationTimes.length === 0;
 
   const [pickerTarget, setPickerTarget] = useState<PickerTarget>(null);
-  const pickerValue =
-    pickerTarget?.index === undefined
-      ? getCurrentTime()
-      : (settings.pillNotificationTimes[pickerTarget.index] ??
-        getCurrentTime());
 
   return (
     <Fragment>
@@ -66,19 +59,17 @@ export const PillRemindersSettingsSection: FC = () => {
                   key={`${time.hour}-${time.minute}-${index}`}
                   title={t("settings.notificationTime")}
                   description={formatHourMinute(time)}
-                  onPress={() => setPickerTarget({ index })}
+                  onPress={() => setPickerTarget({ time })}
                   right={
                     <IconButton
                       onPress={() =>
                         updateSettings({
                           pillNotificationTimes:
                             settings.pillNotificationTimes.filter(
-                              (_, itemIndex) => itemIndex !== index,
+                              (item) => item !== time,
                             ),
                           pillNotificationsEnabled:
-                            settings.pillNotificationTimes.length - 1 > 0
-                              ? settings.pillNotificationsEnabled
-                              : false,
+                            settings.pillNotificationTimes.length > 1,
                         })
                       }
                     >
@@ -113,23 +104,17 @@ export const PillRemindersSettingsSection: FC = () => {
 
       <TimePickerDialog
         visible={pickerTarget !== null}
-        value={pickerValue}
+        value={pickerTarget?.time ?? getCurrentTime()}
         onClose={() => setPickerTarget(null)}
         onSave={(time) => {
-          if (pickerTarget === null) {
-            return;
-          }
-
-          const nextTimes = settings.pillNotificationTimes.slice();
-          if (pickerTarget.index === undefined) {
-            nextTimes.push(time);
-          } else {
-            nextTimes[pickerTarget.index] = time;
-          }
-
+          const editedTime = pickerTarget?.time;
           updateSettings({
             pillNotificationsEnabled: true,
-            pillNotificationTimes: nextTimes,
+            pillNotificationTimes: editedTime
+              ? settings.pillNotificationTimes.map((item) =>
+                  item === editedTime ? time : item,
+                )
+              : [...settings.pillNotificationTimes, time],
           });
           ensureReminderPermissions();
 

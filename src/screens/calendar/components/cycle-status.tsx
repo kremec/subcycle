@@ -35,7 +35,7 @@ export const CycleStatus: FC<CycleStatusProps> = (props) => {
         paddingBottom: theme.spacing.lg,
       }}
     >
-      {days ? (
+      {days !== null ? (
         <Fragment>
           <Typography variant="display" style={{ textAlign: "center" }}>
             {t("common.days", { count: days })}

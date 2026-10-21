@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Stack } from "@/components/ui/stack";
 import { Typography } from "@/components/ui/typography";
-import { createTime, timeToDate } from "@/domain/time";
+import { timeToDate } from "@/domain/time";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
 import { formatHourMinute, type Time } from "@/types";
@@ -46,7 +46,10 @@ export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
         positiveButton={{ label: t("common.save") }}
         negativeButton={{ label: t("common.cancel") }}
         onValueChange={(_, nextValue) => {
-          handleSave(createTime(nextValue.getHours(), nextValue.getMinutes()));
+          handleSave({
+            hour: nextValue.getHours(),
+            minute: nextValue.getMinutes(),
+          });
         }}
         onDismiss={handleClose}
       />
@@ -71,9 +74,10 @@ export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
             themeVariant={theme.themeName}
             accentColor={theme.colors.accent}
             onValueChange={(_, nextValue) => {
-              setDraftValue(
-                createTime(nextValue.getHours(), nextValue.getMinutes()),
-              );
+              setDraftValue({
+                hour: nextValue.getHours(),
+                minute: nextValue.getMinutes(),
+              });
             }}
           />
         )}

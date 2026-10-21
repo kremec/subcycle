@@ -2,8 +2,7 @@ import { type FC } from "react";
 
 import { Screen } from "@/components/ui/screen";
 import { useEventsQuery } from "@/db/repositories/events-repository";
-import { getAverageCycleLength } from "@/domain/cycle";
-import { getAveragePeriodLength } from "@/domain/cycle";
+import { getAverageCycleLength, getAveragePeriodLength } from "@/domain/cycle";
 import { StatCard } from "@/screens/stats/components/stat-card";
 import { t } from "@/translation/use-translation";
 
@@ -11,12 +10,9 @@ const StatsScreen: FC = () => {
   const { data: events } = useEventsQuery();
 
   function formatDays(value: number | null): string {
-    if (value === null || Number.isNaN(value)) {
-      return t("common.notAvailable");
-    }
-
-    const days = Math.trunc(value);
-    return t("common.days", { count: days });
+    return value === null
+      ? t("common.notAvailable")
+      : t("common.days", { count: Math.trunc(value) });
   }
 
   return (

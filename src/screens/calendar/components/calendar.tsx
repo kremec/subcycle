@@ -132,14 +132,7 @@ export const Calendar: FC<CalendarProps> = (props) => {
       renderHeader={(date) => (
         <Pressable
           onPress={() => {
-            const now = new Date();
-            const today = new Date(
-              now.getFullYear(),
-              now.getMonth(),
-              now.getDate(),
-              12,
-            );
-
+            const today = new Date();
             onPressToday(today);
             calendarRef.current?.scrollToMonth?.(getKey(today));
           }}
