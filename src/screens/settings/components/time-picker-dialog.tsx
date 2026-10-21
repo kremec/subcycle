@@ -36,7 +36,8 @@ export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
   }
 
   if (Platform.OS === "android") {
-    return visible ? (
+    if (!visible) return null;
+    return (
       <DateTimePicker
         value={timeToDate(value)}
         mode="time"
@@ -53,7 +54,7 @@ export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
         }}
         onDismiss={handleClose}
       />
-    ) : null;
+    );
   }
 
   return (

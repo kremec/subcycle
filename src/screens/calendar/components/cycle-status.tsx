@@ -35,7 +35,7 @@ export const CycleStatus: FC<CycleStatusProps> = (props) => {
         paddingBottom: theme.spacing.lg,
       }}
     >
-      {days !== null ? (
+      {days !== null && (
         <Fragment>
           <Typography variant="display" style={{ textAlign: "center" }}>
             {t("common.days", { count: days })}
@@ -46,7 +46,8 @@ export const CycleStatus: FC<CycleStatusProps> = (props) => {
               : t("calendar.cycleStatus.untilNextMenstruation")}
           </Typography>
         </Fragment>
-      ) : (
+      )}
+      {days === null && (
         <Typography
           variant="bodySmall"
           color={theme.colors.textSecondary}

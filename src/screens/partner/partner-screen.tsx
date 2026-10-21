@@ -70,31 +70,31 @@ const PartnerScreen: FC = () => {
         ]}
       />
 
-      {mode === "view" &&
-        (todayInsight && currentDayInCycle ? (
-          <Card>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginVertical: theme.spacing.sm,
-              }}
-            >
-              <Typography variant="title">{todayInsight.name}</Typography>
-              <Badge>
-                {t("partner.dayInCycle", {
-                  day: formatOrdinal(currentDayInCycle),
-                })}
-              </Badge>
-            </View>
-            <Typography>{todayInsight.description}</Typography>
-          </Card>
-        ) : (
-          <Typography variant="titleSmall" style={{ textAlign: "center" }}>
-            {t("partner.noInsightsFound")}
-          </Typography>
-        ))}
+      {mode === "view" && todayInsight && !!currentDayInCycle && (
+        <Card>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginVertical: theme.spacing.sm,
+            }}
+          >
+            <Typography variant="title">{todayInsight.name}</Typography>
+            <Badge>
+              {t("partner.dayInCycle", {
+                day: formatOrdinal(currentDayInCycle),
+              })}
+            </Badge>
+          </View>
+          <Typography>{todayInsight.description}</Typography>
+        </Card>
+      )}
+      {mode === "view" && (!todayInsight || !currentDayInCycle) && (
+        <Typography variant="titleSmall" style={{ textAlign: "center" }}>
+          {t("partner.noInsightsFound")}
+        </Typography>
+      )}
 
       {mode === "edit" && (
         <Fragment>
