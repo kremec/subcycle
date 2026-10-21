@@ -4,7 +4,7 @@ import { useColorScheme } from "react-native";
 import { palette, type ThemeColors, type ThemeName } from "@/theme/palette";
 import { fonts, layout, radius, spacing, typography } from "@/theme/tokens";
 
-type ThemeContextValue = {
+interface ThemeContextValue {
   themeName: ThemeName;
   colors: ThemeColors;
   spacing: typeof spacing;
@@ -12,7 +12,7 @@ type ThemeContextValue = {
   typography: typeof typography;
   fonts: typeof fonts;
   layout: typeof layout;
-};
+}
 
 const ThemeContext = createContext<ThemeContextValue>({
   themeName: "light",

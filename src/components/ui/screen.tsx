@@ -1,21 +1,18 @@
 import { type FC, type PropsWithChildren } from "react";
-import { Platform, ScrollView, View } from "react-native";
+import { ScrollView, type StyleProp, View, type ViewStyle } from "react-native";
 
-import { SafeAreaView, type Edge } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import { useTheme } from "@/theme/use-theme";
 
 interface ScreenProps {
   scroll?: boolean;
+  style?: StyleProp<ViewStyle>;
 }
 
 export const Screen: FC<PropsWithChildren<ScreenProps>> = (props) => {
-  const { children, scroll = false } = props;
+  const { children, scroll = false, style } = props;
   const theme = useTheme();
-  const safeAreaEdges: Edge[] =
-    Platform.OS === "ios"
-      ? ["top", "left", "right", "bottom"]
-      : ["top", "left", "right"];
   const contentStyle = {
     width: "100%" as const,
     maxWidth: theme.layout.screenMaxWidth,
@@ -27,33 +24,35 @@ export const Screen: FC<PropsWithChildren<ScreenProps>> = (props) => {
   };
 
   return (
-    <SafeAreaView
-      edges={safeAreaEdges}
-      style={{
-        flex: 1,
-        backgroundColor: theme.colors.background,
-      }}
-    >
-      {scroll ? (
-        <ScrollView
-          contentContainerStyle={contentStyle}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
-          {children}
-        </ScrollView>
-      ) : (
-        <View
-          style={[
-            contentStyle,
-            {
-              flex: 1,
-            },
-          ]}
-        >
-          {children}
-        </View>
-      )}
-    </SafeAreaView>
+    <SafeAreaProvider>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: theme.colors.background,
+        }}
+      >
+        {scroll ? (
+          <ScrollView
+            contentContainerStyle={[contentStyle, style]}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            {children}
+          </ScrollView>
+        ) : (
+          <View
+            style={[
+              contentStyle,
+              {
+                flex: 1,
+              },
+              style,
+            ]}
+          >
+            {children}
+          </View>
+        )}
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 };

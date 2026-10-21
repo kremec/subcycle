@@ -4,7 +4,7 @@ import { Pressable } from "react-native";
 import { addDays, format, isSameDay } from "date-fns";
 import { CalendarList, type DateData } from "react-native-calendars";
 
-import { Typography } from "@/components/ui";
+import { Typography } from "@/components/ui/typography";
 import { CalendarDay } from "@/screens/calendar/components/calendar-day";
 import { useTheme } from "@/theme/use-theme";
 import {

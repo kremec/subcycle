@@ -1,14 +1,12 @@
 import { Fragment, type FC, useState } from "react";
 import { View } from "react-native";
 
-import {
-  Button,
-  Icon,
-  IconButton,
-  ListRow,
-  Stack,
-  Switch,
-} from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
+import { IconButton } from "@/components/ui/icon-button";
+import { ListRow } from "@/components/ui/list-row";
+import { Stack } from "@/components/ui/stack";
+import { Switch } from "@/components/ui/switch";
 import { compareTimesAsc, getCurrentTime } from "@/domain/time";
 import { ensureReminderPermissions } from "@/notifications/ensure-reminder-permissions";
 import { SettingsSectionCard } from "@/screens/settings/components/settings-section-card";

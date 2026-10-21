@@ -3,7 +3,8 @@ import { ScrollView, View } from "react-native";
 
 import { format } from "date-fns";
 
-import { BottomSheet, Typography } from "@/components/ui";
+import { BottomSheet } from "@/components/ui/bottom-sheet";
+import { Typography } from "@/components/ui/typography";
 import { symptomGroups } from "@/domain/symptom-groups";
 import { toggleSymptom } from "@/domain/toggle-symptom";
 import { SymptomCard } from "@/screens/calendar/components/symptom-card";
@@ -31,7 +32,7 @@ export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
   };
 
   return (
-    <BottomSheet visible={visible} onClose={onClose} snapPoints={["full"]}>
+    <BottomSheet visible={visible} onClose={onClose}>
       <View style={{ gap: theme.spacing.lg, paddingBottom: theme.spacing.lg }}>
         <Typography variant="title">
           {t("calendar.symptoms.title", {

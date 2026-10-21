@@ -1,16 +1,14 @@
 import { Fragment, type FC, useState } from "react";
 import { ScrollView, View } from "react-native";
 
-import {
-  Screen,
-  Badge,
-  Button,
-  Card,
-  Icon,
-  ListRow,
-  SegmentedControl,
-  Typography,
-} from "@/components/ui";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Icon } from "@/components/ui/icon";
+import { ListRow } from "@/components/ui/list-row";
+import { Screen } from "@/components/ui/screen";
+import { SegmentedControl } from "@/components/ui/segmented-control";
+import { Typography } from "@/components/ui/typography";
 import { useEventsQuery } from "@/db/queries/use-events-query";
 import { usePartnerInsightsQuery } from "@/db/queries/use-partner-insights-query";
 import {

@@ -1,7 +1,9 @@
 import { type FC } from "react";
 import { View } from "react-native";
 
-import { Button, Icon, Stack } from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
+import { Stack } from "@/components/ui/stack";
 import { exportDatabase } from "@/db/export-database";
 import { importLatestNativeDatabase } from "@/db/import-database";
 import { SettingsSectionCard } from "@/screens/settings/components/settings-section-card";

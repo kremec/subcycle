@@ -3,7 +3,11 @@ import { View } from "react-native";
 
 import { format } from "date-fns";
 
-import { Button, Dialog, Icon, Stack, Typography } from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
+import { Icon } from "@/components/ui/icon";
+import { Stack } from "@/components/ui/stack";
+import { Typography } from "@/components/ui/typography";
 import { EventToggleButton } from "@/screens/calendar/components/event-toggle-button";
 import { useTheme } from "@/theme/use-theme";
 import { formatOrdinal, useT } from "@/translation/use-translation";

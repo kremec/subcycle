@@ -1,18 +1,16 @@
 import { Fragment, type FC, useState } from "react";
 import { View } from "react-native";
 
-import {
-  Button,
-  Dialog,
-  Icon,
-  IconButton,
-  ListRow,
-  Slider,
-  Stack,
-  Switch,
-  TextArea,
-  Typography,
-} from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
+import { Icon } from "@/components/ui/icon";
+import { IconButton } from "@/components/ui/icon-button";
+import { ListRow } from "@/components/ui/list-row";
+import { Slider } from "@/components/ui/slider";
+import { Stack } from "@/components/ui/stack";
+import { Switch } from "@/components/ui/switch";
+import { TextArea } from "@/components/ui/text-area";
+import { Typography } from "@/components/ui/typography";
 import { useEventsQuery } from "@/db/queries/use-events-query";
 import { getMaxMenstruationNotificationDays } from "@/domain/notifications/get-max-menstruation-notification-days";
 import { compareTimesAsc, getCurrentTime } from "@/domain/time";

@@ -3,7 +3,7 @@ import { View } from "react-native";
 
 import { isSameDay, set as setDateTime } from "date-fns";
 
-import { Screen } from "@/components/ui";
+import { Screen } from "@/components/ui/screen";
 import { useEventsQuery } from "@/db/queries/use-events-query";
 import { useSymptomsQuery } from "@/db/queries/use-symptoms-query";
 import { upsertEvent } from "@/db/repositories/events-repository";

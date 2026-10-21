@@ -3,7 +3,10 @@ import { ScrollView, View } from "react-native";
 
 import { format } from "date-fns";
 
-import { Card, Icon, IconButton, Typography } from "@/components/ui";
+import { Card } from "@/components/ui/card";
+import { Icon } from "@/components/ui/icon";
+import { IconButton } from "@/components/ui/icon-button";
+import { Typography } from "@/components/ui/typography";
 import { symptomGroups } from "@/domain/symptom-groups";
 import { useTheme } from "@/theme/use-theme";
 import { useT } from "@/translation/use-translation";

@@ -1,7 +1,7 @@
 import { type FC } from "react";
 import { Pressable, View } from "react-native";
 
-import { Typography } from "@/components/ui";
+import { Typography } from "@/components/ui/typography";
 import { EventGroupShape, type CalendarMarker } from "@/types";
 
 interface CalendarDayProps {

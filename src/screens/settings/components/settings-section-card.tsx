@@ -1,7 +1,10 @@
 import { type FC, type PropsWithChildren, type ReactNode } from "react";
 import { View } from "react-native";
 
-import { Card, Icon, Stack, Typography, type IconName } from "@/components/ui";
+import { Card } from "@/components/ui/card";
+import { Icon, type IconName } from "@/components/ui/icon";
+import { Stack } from "@/components/ui/stack";
+import { Typography } from "@/components/ui/typography";
 import { useTheme } from "@/theme/use-theme";
 
 interface SettingsSectionCardProps {

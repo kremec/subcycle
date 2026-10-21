@@ -3,7 +3,7 @@ import { View } from "react-native";
 
 import { differenceInCalendarDays, startOfDay } from "date-fns";
 
-import { Typography } from "@/components/ui";
+import { Typography } from "@/components/ui/typography";
 import { getEventPeriods } from "@/domain/events/get-event-periods";
 import { useTheme } from "@/theme/use-theme";
 import { useT } from "@/translation/use-translation";

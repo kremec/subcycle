@@ -3,7 +3,10 @@ import { Platform, View } from "react-native";
 
 import { DateTimePicker } from "@expo/ui/community/datetime-picker";
 
-import { Button, Dialog, Stack, Typography } from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
+import { Stack } from "@/components/ui/stack";
+import { Typography } from "@/components/ui/typography";
 import { createTime, timeToDate } from "@/domain/time";
 import { useTheme } from "@/theme/use-theme";
 import { useT } from "@/translation/use-translation";
