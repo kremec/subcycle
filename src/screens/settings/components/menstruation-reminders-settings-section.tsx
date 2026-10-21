@@ -1,12 +1,12 @@
 import { Fragment, type FC, useState } from "react";
 import { View } from "react-native";
 
+import { ListRow } from "@/components/list-row";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
 import { Icon } from "@/components/ui/icon";
 import { IconButton } from "@/components/ui/icon-button";
-import { ListRow } from "@/components/ui/list-row";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Typography } from "@/components/ui/typography";

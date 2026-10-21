@@ -1,10 +1,10 @@
 import { Fragment, type FC, useState } from "react";
 import { View } from "react-native";
 
+import { ListRow } from "@/components/list-row";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { IconButton } from "@/components/ui/icon-button";
-import { ListRow } from "@/components/ui/list-row";
 import { Switch } from "@/components/ui/switch";
 import { compareTimesAsc, getCurrentTime } from "@/domain/time";
 import { ensureReminderPermissions } from "@/notifications/ensure-reminder-permissions";
