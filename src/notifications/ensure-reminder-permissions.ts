@@ -27,11 +27,6 @@ export async function ensureReminderPermissions(): Promise<void> {
       await NativeReminders.openExactAlarmSettings();
     }
   } catch (error) {
-    logError(
-      "notification.permissions",
-      "ensure-failed",
-      error instanceof Error ? error : String(error),
-    );
-    throw error;
+    logError("notification.permissions", "ensure-failed", error);
   }
 }
