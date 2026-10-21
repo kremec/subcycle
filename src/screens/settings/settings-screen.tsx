@@ -1,6 +1,6 @@
 import { type FC } from "react";
 
-import { Screen } from "@/components/ui";
+import { Screen } from "@/components/ui/screen";
 import { BackupsSection } from "@/screens/settings/components/backups-section";
 import { MenstruationRemindersSettingsSection } from "@/screens/settings/components/menstruation-reminders-settings-section";
 import { PartnerModeSettingsSection } from "@/screens/settings/components/partner-mode-settings-section";

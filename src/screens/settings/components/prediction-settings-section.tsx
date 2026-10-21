@@ -1,14 +1,14 @@
 import { type FC } from "react";
 
-import { Slider, Typography } from "@/components/ui";
+import { Slider } from "@/components/ui/slider";
+import { Typography } from "@/components/ui/typography";
 import { SettingsSectionCard } from "@/screens/settings/components/settings-section-card";
 import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
-import { useT } from "@/translation/use-translation";
+import { t } from "@/translation/use-translation";
 
 export const PredictionSettingsSection: FC = () => {
   const theme = useTheme();
-  const t = useT();
   const {
     settings: { predictionTimespan },
     updateSettings,

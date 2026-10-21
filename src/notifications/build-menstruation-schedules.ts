@@ -1,6 +1,6 @@
 import { format, isFuture, set as setDateTime, subDays } from "date-fns";
 
-import { getEventPeriods } from "@/domain/events/get-event-periods";
+import { getEventPeriods } from "@/domain/cycle";
 import { toCalendarDate } from "@/domain/time";
 import {
   isMenstruationEvent,

@@ -3,13 +3,21 @@ import { ScrollView, View } from "react-native";
 
 import { format } from "date-fns";
 
-import { BottomSheet, Typography } from "@/components/ui";
+import { BottomSheet } from "@/components/ui/bottom-sheet";
+import { Typography } from "@/components/ui/typography";
 import { symptomGroups } from "@/domain/symptom-groups";
-import { toggleSymptom } from "@/domain/toggle-symptom";
 import { SymptomCard } from "@/screens/calendar/components/symptom-card";
 import { useTheme } from "@/theme/use-theme";
-import { useT } from "@/translation/use-translation";
-import type { Symptoms } from "@/types";
+import { t } from "@/translation/use-translation";
+import type { Symptoms, SymptomsKey } from "@/types";
+
+// Libido levels are mutually exclusive.
+const libidoKeys: SymptomsKey[] = [
+  "libidoVeryLow",
+  "libidoLow",
+  "libidoHigh",
+  "libidoVeryHigh",
+];
 
 interface SymptomsEditSheetProps {
   visible: boolean;
@@ -21,17 +29,19 @@ interface SymptomsEditSheetProps {
 export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
   const { visible, symptoms, onClose, onChange } = props;
   const theme = useTheme();
-  const t = useT();
-  const tokenToColor = {
-    symptomsSymptoms: theme.colors.symptomsSymptoms,
-    symptomsDischarge: theme.colors.symptomsDischarge,
-    symptomsLibido: theme.colors.symptomsLibido,
-    symptomsExercise: theme.colors.symptomsExercise,
-    symptomsMoods: theme.colors.symptomsMoods,
+
+  const toggle = (key: SymptomsKey) => {
+    const next = { ...symptoms, [key]: !symptoms[key] };
+    if (next[key] && libidoKeys.includes(key)) {
+      for (const libidoKey of libidoKeys) {
+        if (libidoKey !== key) next[libidoKey] = false;
+      }
+    }
+    onChange(next);
   };
 
   return (
-    <BottomSheet visible={visible} onClose={onClose} snapPoints={["full"]}>
+    <BottomSheet visible={visible} onClose={onClose}>
       <View style={{ gap: theme.spacing.lg, paddingBottom: theme.spacing.lg }}>
         <Typography variant="title">
           {t("calendar.symptoms.title", {
@@ -50,20 +60,17 @@ export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
               contentContainerStyle={{ paddingRight: theme.spacing.xs }}
             >
               <View style={{ flexDirection: "row" }}>
-                {group.types.map((symptom) => {
-                  const key = symptom.key;
-                  return (
-                    <SymptomCard
-                      key={symptom.key}
-                      icon={symptom.icon}
-                      text={symptom.label}
-                      backgroundColor={tokenToColor[group.colorToken]}
-                      filled={symptom.filled}
-                      selected={symptoms[key]}
-                      onPress={() => onChange(toggleSymptom(symptoms, key))}
-                    />
-                  );
-                })}
+                {group.types.map((symptom) => (
+                  <SymptomCard
+                    key={symptom.key}
+                    icon={symptom.icon}
+                    text={symptom.label}
+                    backgroundColor={theme.colors[group.colorToken]}
+                    filled={symptom.filled}
+                    selected={symptoms[symptom.key]}
+                    onPress={() => toggle(symptom.key)}
+                  />
+                ))}
               </View>
             </ScrollView>
           </View>

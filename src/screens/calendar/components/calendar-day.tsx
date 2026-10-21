@@ -1,7 +1,7 @@
 import { type FC } from "react";
 import { Pressable, View } from "react-native";
 
-import { Typography } from "@/components/ui";
+import { Typography } from "@/components/ui/typography";
 import { EventGroupShape, type CalendarMarker } from "@/types";
 
 interface CalendarDayProps {
@@ -20,19 +20,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
   const actualSingle = marker.actualGroup === EventGroupShape.SINGLE;
   const predictionSingle = marker.predictionGroup === EventGroupShape.SINGLE;
 
-  function getVisualShape(
-    group: CalendarMarker["actualGroup"],
-    date: Date,
-  ): {
-    marginLeft: number;
-    marginRight: number;
-    roundedLeft: boolean;
-    roundedRight: boolean;
-    borderTopLeftRadius: number;
-    borderBottomLeftRadius: number;
-    borderTopRightRadius: number;
-    borderBottomRightRadius: number;
-  } {
+  function getVisualShape(group: CalendarMarker["actualGroup"], date: Date) {
     const isFirstDayOfWeek = date.getDay() === 1;
     const isLastDayOfWeek = date.getDay() === 0;
     const isFirstDayOfMonth = date.getDate() === 1;
@@ -68,7 +56,6 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
       onPress={onPress}
       style={{
         width: "100%",
-        paddingVertical: 0,
         justifyContent: "center",
       }}
     >

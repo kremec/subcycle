@@ -1,24 +1,18 @@
 import { type FC } from "react";
 
 import { Screen } from "@/components/ui/screen";
-import { useEventsQuery } from "@/db/queries/use-events-query";
-import { getAverageCycleLength } from "@/domain/stats/get-average-cycle-length";
-import { getAverageHeavyPeriodLength } from "@/domain/stats/get-average-heavy-period-length";
-import { getAveragePeriodLength } from "@/domain/stats/get-average-period-length";
+import { useEventsQuery } from "@/db/repositories/events-repository";
+import { getAverageCycleLength, getAveragePeriodLength } from "@/domain/cycle";
 import { StatCard } from "@/screens/stats/components/stat-card";
-import { useT } from "@/translation/use-translation";
+import { t } from "@/translation/use-translation";
 
 const StatsScreen: FC = () => {
-  const t = useT();
   const { data: events } = useEventsQuery();
 
   function formatDays(value: number | null): string {
-    if (value === null || Number.isNaN(value)) {
-      return t("common.notAvailable");
-    }
-
-    const days = Math.trunc(value);
-    return t("common.days", { count: days });
+    return value === null
+      ? t("common.notAvailable")
+      : t("common.days", { count: Math.trunc(value) });
   }
 
   return (
@@ -37,7 +31,9 @@ const StatsScreen: FC = () => {
         icon="droplet"
         filled
         title={t("stats.averageHeavyPeriodLength")}
-        description={formatDays(getAverageHeavyPeriodLength(events))}
+        description={formatDays(
+          getAveragePeriodLength(events, (event) => event.menstruationHeavy),
+        )}
       />
     </Screen>
   );

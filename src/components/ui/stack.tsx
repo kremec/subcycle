@@ -4,7 +4,6 @@ import { View, type ViewProps } from "react-native";
 interface StackProps extends ViewProps {
   direction?: "row" | "column";
   gap?: number;
-  align?: ViewProps["style"];
 }
 
 export const Stack: FC<StackProps> = (props) => {

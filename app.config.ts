@@ -64,7 +64,7 @@ export default {
     [
       "expo-dev-client",
       {
-        addGeneratedScheme: !!IS_DEV,
+        addGeneratedScheme: IS_DEV,
       },
     ],
   ],

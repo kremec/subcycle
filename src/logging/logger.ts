@@ -1,8 +1,6 @@
 import NativeReminders from "@modules/subcycle-reminders";
 
-type LogLevel = "info" | "error";
-
-export type LogValue =
+type LogValue =
   | string
   | number
   | boolean
@@ -10,59 +8,37 @@ export type LogValue =
   | LogValue[]
   | { [key: string]: LogValue };
 
-export type LogPayload = { [key: string]: LogValue };
-
-interface LogEntry {
-  time: string;
-  source: "js";
-  level: LogLevel;
-  category: string;
-  event: string;
-  payload?: LogPayload;
-  error?: ReturnType<typeof serializeError>;
-}
+type LogPayload = { [key: string]: LogValue };
 
 let appendQueue: Promise<void> = Promise.resolve();
 
-function serializeError(error: Error | string) {
-  if (typeof error === "string") {
-    return {
-      message: error,
-      name: "Error",
-    };
-  }
-
-  return {
-    message: error.message,
-    name: error.name,
-    stack: error.stack,
-  };
-}
-
-function appendEntry(entry: LogEntry): void {
-  appendQueue = appendQueue
-    .then(() => NativeReminders.appendDebugLog(`${JSON.stringify(entry)}\n`))
-    .catch(() => {
-      // Logging must never break app behavior.
-    });
+function serializeError(error: unknown) {
+  return error instanceof Error
+    ? { message: error.message, name: error.name, stack: error.stack }
+    : { message: String(error), name: "Error" };
 }
 
 function log(
-  level: LogLevel,
+  level: "info" | "error",
   category: string,
   event: string,
   payload?: LogPayload,
-  error?: Error | string,
+  error?: unknown,
 ): void {
-  appendEntry({
+  const entry = {
     category,
-    error: error ? serializeError(error) : undefined,
+    error: error === undefined ? undefined : serializeError(error),
     event,
     level,
     payload,
     source: "js",
     time: new Date().toISOString(),
-  });
+  };
+  appendQueue = appendQueue
+    .then(() => NativeReminders.appendDebugLog(`${JSON.stringify(entry)}\n`))
+    .catch(() => {
+      // Logging must never break app behavior.
+    });
 }
 
 export function logInfo(
@@ -76,7 +52,7 @@ export function logInfo(
 export function logError(
   category: string,
   event: string,
-  error: Error | string,
+  error: unknown,
   payload?: LogPayload,
 ): void {
   log("error", category, event, payload, error);

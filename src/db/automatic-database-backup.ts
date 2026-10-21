@@ -46,11 +46,7 @@ export async function backupDatabaseAfterWrite(): Promise<void> {
     await performDatabaseBackup(createBackupName("automatic"));
     logInfo("db.backup", "complete");
   } catch (error) {
-    logError(
-      "db.backup",
-      "failed",
-      error instanceof Error ? error : String(error),
-    );
+    logError("db.backup", "failed", error);
   }
 }
 

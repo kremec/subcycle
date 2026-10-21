@@ -3,10 +3,13 @@ import { Platform, View } from "react-native";
 
 import { DateTimePicker } from "@expo/ui/community/datetime-picker";
 
-import { Button, Dialog, Stack, Typography } from "@/components/ui";
-import { createTime, timeToDate } from "@/domain/time";
+import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
+import { Stack } from "@/components/ui/stack";
+import { Typography } from "@/components/ui/typography";
+import { timeToDate } from "@/domain/time";
 import { useTheme } from "@/theme/use-theme";
-import { useT } from "@/translation/use-translation";
+import { t } from "@/translation/use-translation";
 import { formatHourMinute, type Time } from "@/types";
 
 interface TimePickerDialogProps {
@@ -19,7 +22,6 @@ interface TimePickerDialogProps {
 export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
   const { visible, value, onClose, onSave } = props;
   const theme = useTheme();
-  const t = useT();
   const [draftValue, setDraftValue] = useState<Time | null>(null);
   const selectedValue = draftValue ?? value;
 
@@ -44,7 +46,10 @@ export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
         positiveButton={{ label: t("common.save") }}
         negativeButton={{ label: t("common.cancel") }}
         onValueChange={(_, nextValue) => {
-          handleSave(createTime(nextValue.getHours(), nextValue.getMinutes()));
+          handleSave({
+            hour: nextValue.getHours(),
+            minute: nextValue.getMinutes(),
+          });
         }}
         onDismiss={handleClose}
       />
@@ -69,9 +74,10 @@ export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
             themeVariant={theme.themeName}
             accentColor={theme.colors.accent}
             onValueChange={(_, nextValue) => {
-              setDraftValue(
-                createTime(nextValue.getHours(), nextValue.getMinutes()),
-              );
+              setDraftValue({
+                hour: nextValue.getHours(),
+                minute: nextValue.getMinutes(),
+              });
             }}
           />
         )}
