@@ -16,7 +16,7 @@
     "lint": "oxlint src",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "check": "tsc --noEmit",
+    "check": "bun --check",
     "prepare": "git config --local include.path ../.githooks/.gitconfig"
   },
   "dependencies": {
@@ -56,8 +56,11 @@
     "babel-plugin-inline-import": "^3.0.0",
     "drizzle-kit": "^0.31.10",
     "oxfmt": "^0.59.0",
-    "oxlint": "^1.74.0",
+    "oxlint": "^1.80.0",
     "typescript": "~6.0.3"
+  },
+  "engines": {
+    "bun": ">=1.4.3"
   },
   "patchedDependencies": {
     "@expo/ui@57.0.25": "patches/@expo%2Fui@57.0.25.patch"
