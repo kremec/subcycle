@@ -11,7 +11,7 @@ import { Stack } from "@/components/ui/stack";
 import { Switch } from "@/components/ui/switch";
 import { TextArea } from "@/components/ui/text-area";
 import { Typography } from "@/components/ui/typography";
-import { useEventsQuery } from "@/db/queries/use-events-query";
+import { useEventsQuery } from "@/db/repositories/events-repository";
 import { getMaxMenstruationNotificationDays } from "@/domain/notifications/get-max-menstruation-notification-days";
 import { compareTimesAsc, getCurrentTime } from "@/domain/time";
 import { ensureReminderPermissions } from "@/notifications/ensure-reminder-permissions";

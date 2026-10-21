@@ -14,11 +14,10 @@ const EXPORT_DB_NAME = "subcycle-export.db";
 export async function exportDatabase(): Promise<void> {
   logInfo("db.export", "start");
 
-  try {
-    await deleteDatabaseAsync(EXPORT_DB_NAME, defaultDatabaseDirectory);
-  } catch {
-    // Ignore missing temp export DB.
-  }
+  // The temp export DB is usually missing.
+  await deleteDatabaseAsync(EXPORT_DB_NAME, defaultDatabaseDirectory).catch(
+    () => undefined,
+  );
 
   try {
     const exportDb = openDatabaseSync(
@@ -43,11 +42,7 @@ export async function exportDatabase(): Promise<void> {
       exportDb.closeSync();
     }
   } catch (error) {
-    logError(
-      "db.export",
-      "failed",
-      error instanceof Error ? error : String(error),
-    );
+    logError("db.export", "failed", error);
     throw error;
   }
 }

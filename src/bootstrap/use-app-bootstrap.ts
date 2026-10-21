@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Platform } from "react-native";
 
 import { migrate } from "drizzle-orm/expo-sqlite/migrator";
 
@@ -25,7 +24,7 @@ function hasPendingMigrations(): boolean {
 }
 
 async function migrateDatabase(): Promise<void> {
-  if (Platform.OS !== "web" && hasPendingMigrations()) {
+  if (hasPendingMigrations()) {
     await backupDatabaseBeforeMigration();
   }
   await migrate(db, migrations);
@@ -38,11 +37,7 @@ export function useAppBootstrap() {
     void migrateDatabase()
       .then(() => setReady(true))
       .catch((error) => {
-        logError(
-          "db.migration",
-          "failed",
-          error instanceof Error ? error : String(error),
-        );
+        logError("db.migration", "failed", error);
       });
   }, []);
 

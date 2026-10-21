@@ -44,11 +44,10 @@ export async function importLatestNativeDatabase(): Promise<void> {
 
   logInfo("db.import", "start");
 
-  try {
-    await deleteDatabaseAsync(IMPORT_DB_NAME, defaultDatabaseDirectory);
-  } catch {
-    // Ignore missing temp import DB.
-  }
+  // The temp import DB is usually missing.
+  await deleteDatabaseAsync(IMPORT_DB_NAME, defaultDatabaseDirectory).catch(
+    () => undefined,
+  );
 
   try {
     const importPath = `${defaultDatabaseDirectory}/${IMPORT_DB_NAME}`;
@@ -64,6 +63,14 @@ export async function importLatestNativeDatabase(): Promise<void> {
     );
 
     try {
+      // Don't replace the live data with a file that isn't a subcycle database.
+      if (
+        !importDb.getFirstSync(
+          "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'events'",
+        )
+      ) {
+        throw new Error("The selected file is not a subcycle database");
+      }
       await backupDatabaseAsync({
         sourceDatabase: importDb,
         destDatabase: expoDb,
@@ -73,18 +80,12 @@ export async function importLatestNativeDatabase(): Promise<void> {
       logInfo("db.import", "complete");
     } finally {
       importDb.closeSync();
-      try {
-        await deleteDatabaseAsync(IMPORT_DB_NAME, defaultDatabaseDirectory);
-      } catch {
-        // Ignore cleanup failures for temp imports.
-      }
+      await deleteDatabaseAsync(IMPORT_DB_NAME, defaultDatabaseDirectory).catch(
+        () => undefined,
+      );
     }
   } catch (error) {
-    logError(
-      "db.import",
-      "failed",
-      error instanceof Error ? error : String(error),
-    );
+    logError("db.import", "failed", error);
     throw error;
   }
 }

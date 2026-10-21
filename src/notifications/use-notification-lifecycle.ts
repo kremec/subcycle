@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { useEventsQuery } from "@/db/queries/use-events-query";
+import { useEventsQuery } from "@/db/repositories/events-repository";
 import { getMenstruationPredictions } from "@/domain/cycle";
 import { logError } from "@/logging/logger";
 import { buildMenstruationSchedules } from "@/notifications/build-menstruation-schedules";

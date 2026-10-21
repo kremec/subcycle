@@ -1,7 +1,7 @@
 import { type FC } from "react";
 
 import { Screen } from "@/components/ui/screen";
-import { useEventsQuery } from "@/db/queries/use-events-query";
+import { useEventsQuery } from "@/db/repositories/events-repository";
 import { getAverageCycleLength } from "@/domain/cycle";
 import { getAveragePeriodLength } from "@/domain/cycle";
 import { StatCard } from "@/screens/stats/components/stat-card";

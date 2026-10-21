@@ -9,8 +9,8 @@ import { ListRow } from "@/components/ui/list-row";
 import { Screen } from "@/components/ui/screen";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Typography } from "@/components/ui/typography";
-import { useEventsQuery } from "@/db/queries/use-events-query";
-import { usePartnerInsightsQuery } from "@/db/queries/use-partner-insights-query";
+import { useEventsQuery } from "@/db/repositories/events-repository";
+import { usePartnerInsightsQuery } from "@/db/repositories/partner-insights-repository";
 import {
   deletePartnerInsight,
   upsertPartnerInsight,
