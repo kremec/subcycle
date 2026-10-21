@@ -17,9 +17,7 @@
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "check": "bun --check",
-    "prepare": "git config --local include.path ../.githooks/.gitconfig",
-    "ui:sync": "bun scripts/sync-ui.ts",
-    "ui:check": "bun scripts/sync-ui.ts --check"
+    "prepare": "git config --local include.path ../.githooks/.gitconfig"
   },
   "dependencies": {
     "@expo/ui": "~57.0.25",
@@ -55,7 +53,6 @@
     "zustand": "^5.0.12"
   },
   "devDependencies": {
-    "@types/node": "^26.6.4",
     "@types/react": "~19.2.2",
     "babel-plugin-inline-import": "^3.0.0",
     "drizzle-kit": "^0.31.10",
