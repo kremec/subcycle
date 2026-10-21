@@ -45,7 +45,13 @@ const CalendarScreen: FC = () => {
   const [symptomsEditorVisible, setSymptomsEditorVisible] = useState(false);
 
   return (
-    <Screen>
+    <Screen
+      style={{
+        paddingHorizontal: theme.spacing.lg,
+        paddingTop: theme.spacing.md,
+        gap: theme.spacing.lg,
+      }}
+    >
       <View style={{ flex: 1, justifyContent: "space-between" }}>
         <CycleStatus events={allEvents} />
 

@@ -46,7 +46,13 @@ const PartnerScreen: FC = () => {
         ) ?? null);
 
   return (
-    <Screen>
+    <Screen
+      style={{
+        paddingHorizontal: theme.spacing.lg,
+        paddingTop: theme.spacing.md,
+        gap: theme.spacing.lg,
+      }}
+    >
       <SegmentedControl
         value={mode}
         onChange={setMode}

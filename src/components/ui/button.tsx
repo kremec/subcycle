@@ -1,16 +1,14 @@
 import { type FC, type ReactNode } from "react";
-import { Pressable, View } from "react-native";
+import { Pressable, type PressableProps, View } from "react-native";
 
 import { Typography } from "@/components/ui/typography";
 import { useTheme } from "@/theme/use-theme";
 
 type ButtonVariant = "solid" | "outline" | "ghost";
 
-interface ButtonProps {
+interface ButtonProps extends Omit<PressableProps, "children"> {
   children: string;
-  onPress?: () => void;
   variant?: ButtonVariant;
-  disabled?: boolean;
   leftAccessory?: ReactNode;
 }
 
@@ -21,6 +19,8 @@ export const Button: FC<ButtonProps> = (props) => {
     variant = "solid",
     disabled,
     leftAccessory,
+    style,
+    ...pressableProps
   } = props;
   const theme = useTheme();
   const colors = {
@@ -43,17 +43,22 @@ export const Button: FC<ButtonProps> = (props) => {
 
   return (
     <Pressable
+      accessibilityRole="button"
+      {...pressableProps}
       disabled={disabled}
       onPress={onPress}
-      style={{
-        borderRadius: theme.radius.full,
-        backgroundColor: colors.background,
-        borderColor: colors.border,
-        borderWidth: variant === "ghost" ? 0 : 1,
-        paddingHorizontal: theme.spacing.lg,
-        paddingVertical: theme.spacing.md,
-        opacity: disabled ? 0.45 : 1,
-      }}
+      style={(state) => [
+        {
+          borderRadius: theme.radius.full,
+          backgroundColor: colors.background,
+          borderColor: colors.border,
+          borderWidth: variant === "ghost" ? 0 : 1,
+          paddingHorizontal: theme.spacing.lg,
+          paddingVertical: theme.spacing.md,
+          opacity: disabled ? 0.45 : 1,
+        },
+        typeof style === "function" ? style(state) : style,
+      ]}
     >
       <View
         style={{

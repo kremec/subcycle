@@ -1,36 +1,41 @@
-import { type FC, type PropsWithChildren } from "react";
-import { Pressable, type StyleProp, type ViewStyle } from "react-native";
+import { type FC } from "react";
+import { Pressable, type PressableProps } from "react-native";
 
 import { useTheme } from "@/theme/use-theme";
 
-interface IconButtonProps {
-  onPress?: () => void;
-  onLongPress?: () => void;
-  disabled?: boolean;
-  style?: StyleProp<ViewStyle>;
+interface IconButtonProps extends PressableProps {
+  plain?: boolean;
+  size?: number;
 }
 
-export const IconButton: FC<PropsWithChildren<IconButtonProps>> = (props) => {
-  const { children, onPress, onLongPress, disabled, style } = props;
+export const IconButton: FC<IconButtonProps> = (props) => {
+  const {
+    children,
+    disabled,
+    plain,
+    size = 42,
+    style,
+    ...pressableProps
+  } = props;
   const theme = useTheme();
   return (
     <Pressable
-      onPress={onPress}
-      onLongPress={onLongPress}
+      accessibilityRole="button"
       disabled={disabled}
-      style={({ pressed }) => [
+      {...pressableProps}
+      style={(state) => [
         {
           alignItems: "center",
           justifyContent: "center",
           borderRadius: theme.radius.full,
-          borderWidth: 1,
+          borderWidth: plain ? 0 : 1,
           borderColor: theme.colors.border,
-          width: 42,
-          height: 42,
-          backgroundColor: theme.colors.surface,
-          opacity: pressed ? 0.55 : 1,
+          width: size,
+          height: size,
+          backgroundColor: plain ? "transparent" : theme.colors.surface,
+          opacity: state.pressed ? 0.55 : 1,
         },
-        style,
+        typeof style === "function" ? style(state) : style,
       ]}
     >
       {children}

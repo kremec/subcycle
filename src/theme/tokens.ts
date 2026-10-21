@@ -13,3 +13,5 @@ export const radius = {
   lg: 18,
   full: 999,
 } as const;
+
+export const typography = { bodyWeight: "500" } as const;
