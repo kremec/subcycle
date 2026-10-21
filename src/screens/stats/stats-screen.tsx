@@ -2,9 +2,8 @@ import { type FC } from "react";
 
 import { Screen } from "@/components/ui/screen";
 import { useEventsQuery } from "@/db/queries/use-events-query";
-import { getAverageCycleLength } from "@/domain/stats/get-average-cycle-length";
-import { getAverageHeavyPeriodLength } from "@/domain/stats/get-average-heavy-period-length";
-import { getAveragePeriodLength } from "@/domain/stats/get-average-period-length";
+import { getAverageCycleLength } from "@/domain/cycle";
+import { getAveragePeriodLength } from "@/domain/cycle";
 import { StatCard } from "@/screens/stats/components/stat-card";
 import { t } from "@/translation/use-translation";
 
@@ -36,7 +35,9 @@ const StatsScreen: FC = () => {
         icon="droplet"
         filled
         title={t("stats.averageHeavyPeriodLength")}
-        description={formatDays(getAverageHeavyPeriodLength(events))}
+        description={formatDays(
+          getAveragePeriodLength(events, (event) => event.menstruationHeavy),
+        )}
       />
     </Screen>
   );

@@ -48,10 +48,6 @@ export function isMenstruationEvent(event: Event): boolean {
   );
 }
 
-export function isHeavyMenstruationEvent(event: Event): boolean {
-  return event.menstruationHeavy;
-}
-
 export function isOvulationEvent(event: Event): boolean {
   return event.ovulation;
 }

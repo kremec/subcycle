@@ -1,4 +1,4 @@
-import { getAverageCycleLength } from "@/domain/stats/get-average-cycle-length";
+import { getAverageCycleLength } from "@/domain/cycle";
 import type { Event } from "@/types";
 
 export function getMaxMenstruationNotificationDays(

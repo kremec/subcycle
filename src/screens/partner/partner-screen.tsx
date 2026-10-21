@@ -15,9 +15,9 @@ import {
   deletePartnerInsight,
   upsertPartnerInsight,
 } from "@/db/repositories/partner-insights-repository";
-import { getDayInCycle } from "@/domain/events/get-day-in-cycle";
-import { getMenstruationPredictions } from "@/domain/predictions/get-menstruation-predictions";
-import { getOvulationPredictions } from "@/domain/predictions/get-ovulation-predictions";
+import { getDayInCycle } from "@/domain/cycle";
+import { getMenstruationPredictions } from "@/domain/cycle";
+import { getOvulationPredictions } from "@/domain/cycle";
 import { PartnerInsightDialog } from "@/screens/partner/components/partner-insight-dialog";
 import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";

@@ -4,7 +4,7 @@ import { View } from "react-native";
 import { differenceInCalendarDays, startOfDay } from "date-fns";
 
 import { Typography } from "@/components/ui/typography";
-import { getEventPeriods } from "@/domain/events/get-event-periods";
+import { getEventPeriods } from "@/domain/cycle";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
 import { isMenstruationEvent, type Event } from "@/types";
