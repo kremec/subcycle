@@ -1,8 +1,9 @@
 import { type FC } from "react";
 import { Pressable, View } from "react-native";
 
-import { Icon, Typography } from "@/components/ui";
+import { Icon } from "@/components/ui/icon";
 import type { IconName } from "@/components/ui/icon";
+import { Typography } from "@/components/ui/typography";
 import { useTheme } from "@/theme/use-theme";
 
 interface SymptomCardProps {

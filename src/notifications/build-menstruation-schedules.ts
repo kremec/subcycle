@@ -1,13 +1,10 @@
 import { format, isFuture, set as setDateTime, subDays } from "date-fns";
 
-import { getEventPeriods } from "@/domain/events/get-event-periods";
+import { getEventPeriods } from "@/domain/cycle";
 import { toCalendarDate } from "@/domain/time";
-import {
-  isMenstruationEvent,
-  type Event,
-  type Settings,
-  type Time,
-} from "@/types";
+import { isMenstruationEvent, type Event } from "@/types/event";
+import { type Settings } from "@/types/settings";
+import { type Time } from "@/types/time";
 
 import type { MenstruationNotificationSchedule } from "@modules/subcycle-reminders";
 

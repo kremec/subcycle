@@ -1,13 +1,12 @@
 import { type FC } from "react";
 import { ActivityIndicator, View } from "react-native";
 
-import { Typography } from "@/components/ui";
+import { Typography } from "@/components/ui/typography";
 import { useTheme } from "@/theme/use-theme";
-import { useT } from "@/translation/use-translation";
+import { t } from "@/translation/use-translation";
 
 export const AppLoadingScreen: FC = () => {
   const theme = useTheme();
-  const t = useT();
 
   return (
     <View

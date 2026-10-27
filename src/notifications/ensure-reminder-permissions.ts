@@ -25,13 +25,16 @@ export async function ensureReminderPermissions(): Promise<void> {
     if (exactAlarmStatus.available === false) {
       logInfo("notification.permissions", "exact-alarm-settings-open");
       await NativeReminders.openExactAlarmSettings();
+    } else if (permissions.granted) {
+      const batteryStatus =
+        await NativeReminders.getBatteryOptimizationStatus();
+
+      if (!batteryStatus.ignored) {
+        logInfo("notification.permissions", "battery-optimization-request");
+        await NativeReminders.openBatteryOptimizationSettings();
+      }
     }
   } catch (error) {
-    logError(
-      "notification.permissions",
-      "ensure-failed",
-      error instanceof Error ? error : String(error),
-    );
-    throw error;
+    logError("notification.permissions", "ensure-failed", error);
   }
 }

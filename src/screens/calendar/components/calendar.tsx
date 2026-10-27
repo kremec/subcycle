@@ -4,16 +4,11 @@ import { Pressable } from "react-native";
 import { addDays, format, isSameDay } from "date-fns";
 import { CalendarList, type DateData } from "react-native-calendars";
 
-import { Typography } from "@/components/ui";
+import { Typography } from "@/components/ui/typography";
 import { CalendarDay } from "@/screens/calendar/components/calendar-day";
 import { useTheme } from "@/theme/use-theme";
-import {
-  EventGroupShape,
-  EventKind,
-  getEventKind,
-  type CalendarMarker,
-  type Event,
-} from "@/types";
+import { EventGroupShape, type CalendarMarker } from "@/types/calendar-marker";
+import { EventKind, getEventKind, type Event } from "@/types/event";
 
 interface CalendarProps {
   events: Event[];
@@ -132,14 +127,7 @@ export const Calendar: FC<CalendarProps> = (props) => {
       renderHeader={(date) => (
         <Pressable
           onPress={() => {
-            const now = new Date();
-            const today = new Date(
-              now.getFullYear(),
-              now.getMonth(),
-              now.getDate(),
-              12,
-            );
-
+            const today = new Date();
             onPressToday(today);
             calendarRef.current?.scrollToMonth?.(getKey(today));
           }}
@@ -169,7 +157,7 @@ export const Calendar: FC<CalendarProps> = (props) => {
         dayTextColor: theme.colors.text,
         monthTextColor: theme.colors.text,
         todayTextColor: theme.colors.accent,
-        textDayHeaderFontSize: theme.typography.bodySmall,
+        textDayHeaderFontSize: 14,
         textMonthFontSize: 24,
         weekVerticalMargin: 2,
         textSectionTitleColor: theme.colors.textSecondary,
@@ -185,8 +173,8 @@ export const Calendar: FC<CalendarProps> = (props) => {
               marginBottom: 7,
               width: 32,
               textAlign: "center",
-              fontSize: theme.typography.bodySmall,
-              lineHeight: theme.typography.bodySmall + 4,
+              fontSize: 14,
+              lineHeight: 18,
               fontWeight: "500",
               color: theme.colors.textSecondary,
             },

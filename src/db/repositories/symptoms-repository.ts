@@ -1,86 +1,53 @@
-import { differenceInCalendarDays, set } from "date-fns";
 import { eq } from "drizzle-orm";
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
 import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
 import { db } from "@/db/client";
-import { mapSymptomsToRow } from "@/db/mappers";
 import { symptomsTable } from "@/db/schema";
+import { fromEpochDay, toEpochDay } from "@/domain/time";
 import { logError, logInfo } from "@/logging/logger";
-import { hasAnySymptoms, type Symptoms } from "@/types";
+import {
+  hasAnySymptoms,
+  mapSymptomsKeys,
+  type Symptoms,
+} from "@/types/symptoms";
 
-const UNIX_EPOCH = new Date(1970, 0, 1, 12, 0, 0, 0);
-
-function toEpochDay(date: Date): number {
-  return differenceInCalendarDays(
-    set(date, { hours: 12, minutes: 0, seconds: 0, milliseconds: 0 }),
-    UNIX_EPOCH,
+export function useSymptomsQuery(): { data: Symptoms[]; error?: Error } {
+  const query = useLiveQuery(
+    db.select().from(symptomsTable).orderBy(symptomsTable.date),
   );
-}
 
-async function saveSymptoms(symptoms: Symptoms): Promise<void> {
-  const values = mapSymptomsToRow(symptoms);
-  await db.insert(symptomsTable).values(values).onConflictDoUpdate({
-    target: symptomsTable.date,
-    set: values,
-  });
-  backupDatabaseAfterWrite();
+  return {
+    data: query.data.flatMap((row) => {
+      const date = fromEpochDay(row.date);
+      if (!date) return [];
+      return [{ date, ...mapSymptomsKeys((key) => Boolean(row[key])) }];
+    }),
+    error: query.error,
+  };
 }
 
 export async function upsertSymptoms(symptoms: Symptoms): Promise<void> {
-  if (!hasAnySymptoms(symptoms)) {
-    await deleteSymptomsByDate(symptoms.date);
-    return;
-  }
-
+  const action = hasAnySymptoms(symptoms) ? "upsert" : "delete";
   try {
-    await saveSymptoms(symptoms);
-    logInfo("db.symptoms", "upsert");
-  } catch (error) {
-    logError(
-      "db.symptoms",
-      "upsert-failed",
-      error instanceof Error ? error : String(error),
-    );
-    throw error;
-  }
-}
-
-export async function deleteSymptomsByDate(date: Date): Promise<void> {
-  try {
-    await db
-      .delete(symptomsTable)
-      .where(eq(symptomsTable.date, toEpochDay(date)));
-    backupDatabaseAfterWrite();
-    logInfo("db.symptoms", "delete");
-  } catch (error) {
-    logError(
-      "db.symptoms",
-      "delete-failed",
-      error instanceof Error ? error : String(error),
-    );
-    throw error;
-  }
-}
-
-export async function replaceAllSymptoms(
-  symptomsList: Symptoms[],
-): Promise<void> {
-  try {
-    await db.delete(symptomsTable);
-    for (const symptoms of symptomsList) {
-      if (hasAnySymptoms(symptoms)) {
-        await saveSymptoms(symptoms);
-      }
+    if (action === "upsert") {
+      const values = {
+        date: toEpochDay(symptoms.date),
+        ...mapSymptomsKeys((key) => Number(symptoms[key])),
+      };
+      await db
+        .insert(symptomsTable)
+        .values(values)
+        .onConflictDoUpdate({ target: symptomsTable.date, set: values });
+    } else {
+      await db
+        .delete(symptomsTable)
+        .where(eq(symptomsTable.date, toEpochDay(symptoms.date)));
     }
     backupDatabaseAfterWrite();
-    logInfo("db.symptoms", "replace-all", { count: symptomsList.length });
+    logInfo("db.symptoms", action);
   } catch (error) {
-    logError(
-      "db.symptoms",
-      "replace-all-failed",
-      error instanceof Error ? error : String(error),
-      { count: symptomsList.length },
-    );
+    logError("db.symptoms", `${action}-failed`, error);
     throw error;
   }
 }

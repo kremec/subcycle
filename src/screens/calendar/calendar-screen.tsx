@@ -1,16 +1,15 @@
 import { type FC, useState } from "react";
 import { View } from "react-native";
 
-import { isSameDay, set as setDateTime } from "date-fns";
+import { isSameDay } from "date-fns";
 
-import { Screen } from "@/components/ui";
-import { useEventsQuery } from "@/db/queries/use-events-query";
-import { useSymptomsQuery } from "@/db/queries/use-symptoms-query";
+import { Screen } from "@/components/ui/screen";
+import { useEventsQuery } from "@/db/repositories/events-repository";
 import { upsertEvent } from "@/db/repositories/events-repository";
+import { useSymptomsQuery } from "@/db/repositories/symptoms-repository";
 import { upsertSymptoms } from "@/db/repositories/symptoms-repository";
-import { getDayInCycle } from "@/domain/events/get-day-in-cycle";
-import { getMenstruationPredictions } from "@/domain/predictions/get-menstruation-predictions";
-import { getOvulationPredictions } from "@/domain/predictions/get-ovulation-predictions";
+import { getDayInCycle, withPredictions } from "@/domain/cycle";
+import { toCalendarDate } from "@/domain/time";
 import { Calendar } from "@/screens/calendar/components/calendar";
 import { CalendarEditDialog } from "@/screens/calendar/components/calendar-edit-dialog";
 import { CycleStatus } from "@/screens/calendar/components/cycle-status";
@@ -18,16 +17,8 @@ import { SymptomsEditSheet } from "@/screens/calendar/components/symptoms-edit-s
 import { SymptomsOverview } from "@/screens/calendar/components/symptoms-overview";
 import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
-import { createDefaultEvent, createDefaultSymptoms, type Event } from "@/types";
-
-function toCalendarDate(date: Date): Date {
-  return setDateTime(date, {
-    hours: 12,
-    minutes: 0,
-    seconds: 0,
-    milliseconds: 0,
-  });
-}
+import { createDefaultEvent, type Event } from "@/types/event";
+import { createDefaultSymptoms } from "@/types/symptoms";
 
 const CalendarScreen: FC = () => {
   const theme = useTheme();
@@ -44,16 +35,9 @@ const CalendarScreen: FC = () => {
     setSelectedDateState(toCalendarDate(date));
   };
 
-  const predictedEvents = [
-    ...getMenstruationPredictions(events, predictionTimespan),
-    ...getOvulationPredictions(events, predictionTimespan),
-  ];
-  const allEvents = [...events, ...predictedEvents];
+  const allEvents = withPredictions(events, predictionTimespan);
 
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
-  const editingDayInCycle = editingEvent
-    ? getDayInCycle(editingEvent.date, allEvents)
-    : null;
 
   const selectedSymptoms =
     symptoms.find((entry) => isSameDay(entry.date, selectedDate)) ??
@@ -62,7 +46,13 @@ const CalendarScreen: FC = () => {
   const [symptomsEditorVisible, setSymptomsEditorVisible] = useState(false);
 
   return (
-    <Screen>
+    <Screen
+      style={{
+        paddingHorizontal: theme.spacing.lg,
+        paddingTop: theme.spacing.md,
+        gap: theme.spacing.lg,
+      }}
+    >
       <View style={{ flex: 1, justifyContent: "space-between" }}>
         <CycleStatus events={allEvents} />
 
@@ -86,7 +76,6 @@ const CalendarScreen: FC = () => {
             />
           </View>
           <SymptomsOverview
-            selectedDate={selectedDate}
             symptoms={selectedSymptoms}
             onPressEdit={() => setSymptomsEditorVisible(true)}
           />
@@ -102,19 +91,17 @@ const CalendarScreen: FC = () => {
         }}
       />
 
-      <CalendarEditDialog
-        key={editingEvent?.date.toISOString() ?? "empty"}
-        visible={editingEvent !== null}
-        selectedEvent={editingEvent}
-        dayInCycle={editingDayInCycle}
-        onClose={() => {
-          setEditingEvent(null);
-        }}
-        onSave={(event) => {
-          upsertEvent(event);
-          setEditingEvent(null);
-        }}
-      />
+      {editingEvent && (
+        <CalendarEditDialog
+          event={editingEvent}
+          dayInCycle={getDayInCycle(editingEvent.date, allEvents)}
+          onClose={() => setEditingEvent(null)}
+          onSave={(event) => {
+            upsertEvent(event);
+            setEditingEvent(null);
+          }}
+        />
+      )}
     </Screen>
   );
 };

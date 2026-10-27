@@ -1,4 +1,4 @@
-import type { SymptomGroupDefinition } from "@/types";
+import type { SymptomGroupDefinition } from "@/types/symptom-definition";
 
 export const symptomGroups: SymptomGroupDefinition[] = [
   {

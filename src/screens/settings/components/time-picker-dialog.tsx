@@ -3,11 +3,13 @@ import { Platform, View } from "react-native";
 
 import { DateTimePicker } from "@expo/ui/community/datetime-picker";
 
-import { Button, Dialog, Stack, Typography } from "@/components/ui";
-import { createTime, timeToDate } from "@/domain/time";
+import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
+import { Typography } from "@/components/ui/typography";
+import { timeToDate } from "@/domain/time";
 import { useTheme } from "@/theme/use-theme";
-import { useT } from "@/translation/use-translation";
-import { formatHourMinute, type Time } from "@/types";
+import { t } from "@/translation/use-translation";
+import { formatHourMinute, type Time } from "@/types/time";
 
 interface TimePickerDialogProps {
   visible: boolean;
@@ -19,7 +21,6 @@ interface TimePickerDialogProps {
 export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
   const { visible, value, onClose, onSave } = props;
   const theme = useTheme();
-  const t = useT();
   const [draftValue, setDraftValue] = useState<Time | null>(null);
   const selectedValue = draftValue ?? value;
 
@@ -34,7 +35,8 @@ export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
   }
 
   if (Platform.OS === "android") {
-    return visible ? (
+    if (!visible) return null;
+    return (
       <DateTimePicker
         value={timeToDate(value)}
         mode="time"
@@ -44,16 +46,19 @@ export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
         positiveButton={{ label: t("common.save") }}
         negativeButton={{ label: t("common.cancel") }}
         onValueChange={(_, nextValue) => {
-          handleSave(createTime(nextValue.getHours(), nextValue.getMinutes()));
+          handleSave({
+            hour: nextValue.getHours(),
+            minute: nextValue.getMinutes(),
+          });
         }}
         onDismiss={handleClose}
       />
-    ) : null;
+    );
   }
 
   return (
     <Dialog visible={visible} onClose={handleClose}>
-      <Stack gap={theme.spacing.md}>
+      <View style={{ gap: theme.spacing.md }}>
         <Typography variant="titleSmall">
           {t("settings.notificationTime")}
         </Typography>
@@ -69,13 +74,14 @@ export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
             themeVariant={theme.themeName}
             accentColor={theme.colors.accent}
             onValueChange={(_, nextValue) => {
-              setDraftValue(
-                createTime(nextValue.getHours(), nextValue.getMinutes()),
-              );
+              setDraftValue({
+                hour: nextValue.getHours(),
+                minute: nextValue.getMinutes(),
+              });
             }}
           />
         )}
-        <Stack direction="row" gap={theme.spacing.sm}>
+        <View style={{ flexDirection: "row", gap: theme.spacing.sm }}>
           <View style={{ flex: 1 }}>
             <Button variant="ghost" onPress={handleClose}>
               {t("common.cancel")}
@@ -86,8 +92,8 @@ export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
               {t("common.save")}
             </Button>
           </View>
-        </Stack>
-      </Stack>
+        </View>
+      </View>
     </Dialog>
   );
 };

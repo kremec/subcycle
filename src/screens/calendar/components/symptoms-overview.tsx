@@ -3,28 +3,29 @@ import { ScrollView, View } from "react-native";
 
 import { format } from "date-fns";
 
-import { Card, Icon, IconButton, Typography } from "@/components/ui";
+import { Card } from "@/components/ui/card";
+import { Icon } from "@/components/ui/icon";
+import { IconButton } from "@/components/ui/icon-button";
+import { Typography } from "@/components/ui/typography";
 import { symptomGroups } from "@/domain/symptom-groups";
 import { useTheme } from "@/theme/use-theme";
-import { useT } from "@/translation/use-translation";
-import type { Symptoms } from "@/types";
+import { t } from "@/translation/use-translation";
+import type { Symptoms } from "@/types/symptoms";
 
 interface SymptomsOverviewProps {
-  selectedDate: Date;
   symptoms: Symptoms;
   onPressEdit: () => void;
 }
 
 export const SymptomsOverview: FC<SymptomsOverviewProps> = (props) => {
-  const { selectedDate, symptoms, onPressEdit } = props;
+  const { symptoms, onPressEdit } = props;
   const theme = useTheme();
-  const t = useT();
 
   return (
     <Card style={{ marginBottom: 2 }}>
       <Typography variant="titleSmall">
         {t("calendar.symptoms.title", {
-          date: format(selectedDate, "EEE, dd MMM"),
+          date: format(symptoms.date, "EEE, dd MMM"),
         })}
       </Typography>
       <View
@@ -50,13 +51,9 @@ export const SymptomsOverview: FC<SymptomsOverviewProps> = (props) => {
         >
           <View style={{ flexDirection: "row", gap: theme.spacing.xs }}>
             {symptomGroups.flatMap((group) =>
-              group.types.map((symptom) => {
-                const active = symptoms[symptom.key];
-                if (!active) {
-                  return null;
-                }
-
-                return (
+              group.types
+                .filter((symptom) => symptoms[symptom.key])
+                .map((symptom) => (
                   <Icon
                     key={symptom.key}
                     name={symptom.icon}
@@ -64,8 +61,7 @@ export const SymptomsOverview: FC<SymptomsOverviewProps> = (props) => {
                     color={theme.colors[group.colorToken]}
                     filled={symptom.filled}
                   />
-                );
-              }),
+                )),
             )}
           </View>
         </ScrollView>

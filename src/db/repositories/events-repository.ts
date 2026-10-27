@@ -1,108 +1,73 @@
-import { differenceInCalendarDays, set } from "date-fns";
 import { eq } from "drizzle-orm";
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
 import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
 import { db } from "@/db/client";
-import { mapEventToRow } from "@/db/mappers";
 import { eventsTable } from "@/db/schema";
+import { fromEpochDay, toEpochDay } from "@/domain/time";
 import { logError, logInfo } from "@/logging/logger";
-import { type Event, hasAnyEventFlags } from "@/types";
+import { type Event, hasAnyEventFlags } from "@/types/event";
 
-const UNIX_EPOCH = new Date(1970, 0, 1, 12, 0, 0, 0);
-
-function toEpochDay(date: Date): number {
-  return differenceInCalendarDays(
-    set(date, { hours: 12, minutes: 0, seconds: 0, milliseconds: 0 }),
-    UNIX_EPOCH,
+export function useEventsQuery(): { data: Event[]; error?: Error } {
+  const query = useLiveQuery(
+    db.select().from(eventsTable).orderBy(eventsTable.date),
   );
-}
 
-async function saveEvent(event: Event): Promise<void> {
-  const values = mapEventToRow(event);
-  await db.insert(eventsTable).values(values).onConflictDoUpdate({
-    target: eventsTable.date,
-    set: values,
-  });
-  backupDatabaseAfterWrite();
+  return {
+    data: query.data.flatMap((row) => {
+      const date = fromEpochDay(row.date);
+      if (!date) return [];
+      return [
+        {
+          date,
+          menstruationLight: Boolean(row.menstruationLight),
+          menstruationModerate: Boolean(row.menstruationModerate),
+          menstruationHeavy: Boolean(row.menstruationHeavy),
+          menstruationSpotting: Boolean(row.menstruationSpotting),
+          ovulation: Boolean(row.ovulation),
+          pill: Boolean(row.pill),
+          prediction: false,
+        },
+      ];
+    }),
+    error: query.error,
+  };
 }
 
 export async function upsertEvent(event: Event): Promise<void> {
-  if (!hasAnyEventFlags(event)) {
-    await deleteEventByDate(event.date);
-    return;
-  }
-
+  const action = hasAnyEventFlags(event) ? "upsert" : "delete";
   try {
-    await saveEvent(event);
-    logInfo("db.event", "upsert");
-  } catch (error) {
-    logError(
-      "db.event",
-      "upsert-failed",
-      error instanceof Error ? error : String(error),
-    );
-    throw error;
-  }
-}
-
-export async function deleteEventByDate(date: Date): Promise<void> {
-  try {
-    await db.delete(eventsTable).where(eq(eventsTable.date, toEpochDay(date)));
+    if (action === "upsert") {
+      const values = {
+        date: toEpochDay(event.date),
+        menstruationLight: Number(event.menstruationLight),
+        menstruationModerate: Number(event.menstruationModerate),
+        menstruationHeavy: Number(event.menstruationHeavy),
+        menstruationSpotting: Number(event.menstruationSpotting),
+        ovulation: Number(event.ovulation),
+        pill: Number(event.pill),
+      };
+      await db
+        .insert(eventsTable)
+        .values(values)
+        .onConflictDoUpdate({ target: eventsTable.date, set: values });
+    } else {
+      await db
+        .delete(eventsTable)
+        .where(eq(eventsTable.date, toEpochDay(event.date)));
+    }
     backupDatabaseAfterWrite();
-    logInfo("db.event", "delete");
+    logInfo("db.event", action);
   } catch (error) {
-    logError(
-      "db.event",
-      "delete-failed",
-      error instanceof Error ? error : String(error),
-    );
+    logError("db.event", `${action}-failed`, error);
     throw error;
   }
 }
 
 export async function markPillForDate(date: Date): Promise<void> {
-  const epochDay = toEpochDay(date);
-  const current = await db
-    .select()
-    .from(eventsTable)
-    .where(eq(eventsTable.date, epochDay))
-    .limit(1);
-
-  const event = current[0];
-  const values = {
-    date: epochDay,
-    menstruationLight: event?.menstruationLight ?? 0,
-    menstruationModerate: event?.menstruationModerate ?? 0,
-    menstruationHeavy: event?.menstruationHeavy ?? 0,
-    menstruationSpotting: event?.menstruationSpotting ?? 0,
-    ovulation: event?.ovulation ?? 0,
-    pill: 1,
-  };
-
   await db
     .insert(eventsTable)
-    .values(values)
-    .onConflictDoUpdate({ target: eventsTable.date, set: values });
+    .values({ date: toEpochDay(date), pill: 1 })
+    .onConflictDoUpdate({ target: eventsTable.date, set: { pill: 1 } });
   backupDatabaseAfterWrite();
-}
-
-export async function replaceAllEvents(events: Event[]): Promise<void> {
-  try {
-    await db.delete(eventsTable);
-    for (const event of events) {
-      if (hasAnyEventFlags(event)) {
-        await saveEvent(event);
-      }
-    }
-    backupDatabaseAfterWrite();
-    logInfo("db.event", "replace-all", { count: events.length });
-  } catch (error) {
-    logError(
-      "db.event",
-      "replace-all-failed",
-      error instanceof Error ? error : String(error),
-      { count: events.length },
-    );
-    throw error;
-  }
 }

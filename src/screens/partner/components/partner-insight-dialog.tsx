@@ -1,41 +1,29 @@
 import { type FC, useState } from "react";
 import { View } from "react-native";
 
-import {
-  Button,
-  Dialog,
-  Field,
-  NumberField,
-  Stack,
-  Typography,
-} from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
+import { Field } from "@/components/ui/field";
+import { Typography } from "@/components/ui/typography";
 import { useTheme } from "@/theme/use-theme";
-import { useT } from "@/translation/use-translation";
-import { createDefaultPartnerInsight, type PartnerInsight } from "@/types";
+import { t } from "@/translation/use-translation";
+import { type PartnerInsight } from "@/types/partner-insight";
 
 interface PartnerInsightDialogProps {
-  visible: boolean;
-  insight: PartnerInsight | null;
+  insight: PartnerInsight;
   onClose: () => void;
   onDelete: (dayInCycle: number) => void;
   onSave: (insight: PartnerInsight) => void;
 }
 
 export const PartnerInsightDialog: FC<PartnerInsightDialogProps> = (props) => {
-  const { visible, insight, onClose, onDelete, onSave } = props;
+  const { insight, onClose, onDelete, onSave } = props;
   const theme = useTheme();
-  const t = useT();
-  const [draft, setDraft] = useState<PartnerInsight>(
-    insight ?? createDefaultPartnerInsight(),
-  );
-
-  if (!insight) {
-    return null;
-  }
+  const [draft, setDraft] = useState(insight);
 
   return (
-    <Dialog visible={visible} onClose={onClose}>
-      <Stack gap={theme.spacing.md}>
+    <Dialog visible onClose={onClose}>
+      <View style={{ gap: theme.spacing.md }}>
         <Typography variant="title">
           {insight.dayInCycle === 1 && !insight.name && !insight.description
             ? t("partner.addInsight")
@@ -58,7 +46,8 @@ export const PartnerInsightDialog: FC<PartnerInsightDialogProps> = (props) => {
             minHeight: 88,
           }}
         />
-        <NumberField
+        <Field
+          keyboardType="number-pad"
           label={t("partner.startDayInCycle")}
           value={`${draft.dayInCycle}`}
           onChangeText={(value) =>
@@ -68,7 +57,7 @@ export const PartnerInsightDialog: FC<PartnerInsightDialogProps> = (props) => {
             }))
           }
         />
-        <Stack direction="row" gap={theme.spacing.sm}>
+        <View style={{ flexDirection: "row", gap: theme.spacing.sm }}>
           <View style={{ flex: 1 }}>
             <Button
               variant="outline"
@@ -80,8 +69,8 @@ export const PartnerInsightDialog: FC<PartnerInsightDialogProps> = (props) => {
           <View style={{ flex: 1 }}>
             <Button onPress={() => onSave(draft)}>{t("common.save")}</Button>
           </View>
-        </Stack>
-      </Stack>
+        </View>
+      </View>
     </Dialog>
   );
 };
