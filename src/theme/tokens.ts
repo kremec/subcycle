@@ -14,4 +14,12 @@ export const radius = {
   full: 999,
 } as const;
 
-export const typography = { bodyWeight: "500" } as const;
+export const typography = {
+  bodyWeight: "500",
+  display: 32,
+  title: 24,
+  titleSmall: 18,
+  body: 16,
+  bodySmall: 14,
+  caption: 12,
+} as const;
