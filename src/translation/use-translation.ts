@@ -1,3 +1,5 @@
+import { getLocales } from "expo-localization";
+
 import {
   I18n,
   useMakePlural as createPluralizer,
@@ -8,11 +10,15 @@ import { en as enPlural } from "make-plural";
 import en from "@/translation/locales/en.json";
 import type { TranslationKeys } from "@/translation/translation-keys";
 
-const i18n = new I18n({ en });
+const locale = getLocales()[0].languageTag;
+const i18n = new I18n({ en }, { locale, enableFallback: true });
 
-const ordinalI18n = new I18n({ en: { ordinal: en.ordinal } });
+const ordinalI18n = new I18n(
+  { en: { ordinal: en.ordinal } },
+  { locale, enableFallback: true },
+);
 ordinalI18n.pluralization.register(
-  "en",
+  "default",
   createPluralizer({ pluralizer: enPlural, includeZero: false, ordinal: true }),
 );
 
