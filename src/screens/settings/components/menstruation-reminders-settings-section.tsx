@@ -19,7 +19,8 @@ import { TimePickerDialog } from "@/screens/settings/components/time-picker-dial
 import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
-import { formatHourMinute, type MenstruationNotification } from "@/types";
+import { type MenstruationNotification } from "@/types/settings";
+import { formatHourMinute } from "@/types/time";
 
 type RuleTarget = { rule?: MenstruationNotification } | null;
 

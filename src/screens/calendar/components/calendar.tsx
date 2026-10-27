@@ -7,13 +7,8 @@ import { CalendarList, type DateData } from "react-native-calendars";
 import { Typography } from "@/components/ui/typography";
 import { CalendarDay } from "@/screens/calendar/components/calendar-day";
 import { useTheme } from "@/theme/use-theme";
-import {
-  EventGroupShape,
-  EventKind,
-  getEventKind,
-  type CalendarMarker,
-  type Event,
-} from "@/types";
+import { EventGroupShape, type CalendarMarker } from "@/types/calendar-marker";
+import { EventKind, getEventKind, type Event } from "@/types/event";
 
 interface CalendarProps {
   events: Event[];

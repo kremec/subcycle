@@ -2,7 +2,7 @@ import "expo-sqlite/localStorage/install";
 import { create } from "zustand";
 import { combine, createJSONStorage, persist } from "zustand/middleware";
 
-import { createDefaultSettings, type Settings } from "@/types";
+import { createDefaultSettings, type Settings } from "@/types/settings";
 
 export const useSettingsStore = create(
   persist(

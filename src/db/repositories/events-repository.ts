@@ -6,7 +6,7 @@ import { db } from "@/db/client";
 import { eventsTable } from "@/db/schema";
 import { fromEpochDay, toEpochDay } from "@/domain/time";
 import { logError, logInfo } from "@/logging/logger";
-import { type Event, hasAnyEventFlags } from "@/types";
+import { type Event, hasAnyEventFlags } from "@/types/event";
 
 export function useEventsQuery(): { data: Event[]; error?: Error } {
   const query = useLiveQuery(

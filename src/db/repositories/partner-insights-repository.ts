@@ -4,7 +4,7 @@ import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
 import { db } from "@/db/client";
 import { partnerInsightsTable } from "@/db/schema";
-import { type PartnerInsight } from "@/types";
+import { type PartnerInsight } from "@/types/partner-insight";
 
 export function usePartnerInsightsQuery(): {
   data: PartnerInsight[];

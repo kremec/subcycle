@@ -1,6 +1,6 @@
 import { addDays, differenceInCalendarDays, set } from "date-fns";
 
-import type { Time } from "@/types";
+import type { Time } from "@/types/time";
 
 const UNIX_EPOCH = new Date(1970, 0, 1, 12, 0, 0, 0);
 

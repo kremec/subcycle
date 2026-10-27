@@ -9,7 +9,7 @@ import { symptomGroups } from "@/domain/symptom-groups";
 import { SymptomCard } from "@/screens/calendar/components/symptom-card";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
-import type { Symptoms, SymptomsKey } from "@/types";
+import type { Symptoms, SymptomsKey } from "@/types/symptoms";
 
 // Libido levels are mutually exclusive.
 const libidoKeys: SymptomsKey[] = [

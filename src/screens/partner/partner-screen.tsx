@@ -20,7 +20,10 @@ import { PartnerInsightDialog } from "@/screens/partner/components/partner-insig
 import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
 import { formatOrdinal, t } from "@/translation/use-translation";
-import { createDefaultPartnerInsight, type PartnerInsight } from "@/types";
+import {
+  createDefaultPartnerInsight,
+  type PartnerInsight,
+} from "@/types/partner-insight";
 
 const PartnerScreen: FC = () => {
   const theme = useTheme();

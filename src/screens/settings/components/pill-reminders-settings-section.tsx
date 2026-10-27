@@ -13,7 +13,7 @@ import { TimePickerDialog } from "@/screens/settings/components/time-picker-dial
 import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
-import { formatHourMinute, type Time } from "@/types";
+import { formatHourMinute, type Time } from "@/types/time";
 
 type PickerTarget = { time?: Time } | null;
 

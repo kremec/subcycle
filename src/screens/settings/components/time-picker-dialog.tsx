@@ -9,7 +9,7 @@ import { Typography } from "@/components/ui/typography";
 import { timeToDate } from "@/domain/time";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
-import { formatHourMinute, type Time } from "@/types";
+import { formatHourMinute, type Time } from "@/types/time";
 
 interface TimePickerDialogProps {
   visible: boolean;

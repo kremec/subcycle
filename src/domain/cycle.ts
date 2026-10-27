@@ -1,6 +1,10 @@
 import { addDays, compareAsc, differenceInCalendarDays } from "date-fns";
 
-import { createDefaultEvent, isMenstruationEvent, type Event } from "@/types";
+import {
+  createDefaultEvent,
+  isMenstruationEvent,
+  type Event,
+} from "@/types/event";
 
 export type EventPeriod = {
   start: Date;

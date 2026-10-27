@@ -7,7 +7,7 @@ import { Typography } from "@/components/ui/typography";
 import { getEventPeriods } from "@/domain/cycle";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
-import { isMenstruationEvent, type Event } from "@/types";
+import { isMenstruationEvent, type Event } from "@/types/event";
 
 interface CycleStatusProps {
   events: Event[];

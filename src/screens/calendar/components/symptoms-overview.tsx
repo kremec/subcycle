@@ -10,7 +10,7 @@ import { Typography } from "@/components/ui/typography";
 import { symptomGroups } from "@/domain/symptom-groups";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
-import type { Symptoms } from "@/types";
+import type { Symptoms } from "@/types/symptoms";
 
 interface SymptomsOverviewProps {
   symptoms: Symptoms;

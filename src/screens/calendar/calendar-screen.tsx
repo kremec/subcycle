@@ -17,7 +17,8 @@ import { SymptomsEditSheet } from "@/screens/calendar/components/symptoms-edit-s
 import { SymptomsOverview } from "@/screens/calendar/components/symptoms-overview";
 import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
-import { createDefaultEvent, createDefaultSymptoms, type Event } from "@/types";
+import { createDefaultEvent, type Event } from "@/types/event";
+import { createDefaultSymptoms } from "@/types/symptoms";
 
 const CalendarScreen: FC = () => {
   const theme = useTheme();

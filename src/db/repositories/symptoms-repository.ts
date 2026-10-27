@@ -6,7 +6,11 @@ import { db } from "@/db/client";
 import { symptomsTable } from "@/db/schema";
 import { fromEpochDay, toEpochDay } from "@/domain/time";
 import { logError, logInfo } from "@/logging/logger";
-import { hasAnySymptoms, mapSymptomsKeys, type Symptoms } from "@/types";
+import {
+  hasAnySymptoms,
+  mapSymptomsKeys,
+  type Symptoms,
+} from "@/types/symptoms";
 
 export function useSymptomsQuery(): { data: Symptoms[]; error?: Error } {
   const query = useLiveQuery(

@@ -10,7 +10,11 @@ import { Typography } from "@/components/ui/typography";
 import { EventToggleButton } from "@/screens/calendar/components/event-toggle-button";
 import { useTheme } from "@/theme/use-theme";
 import { formatOrdinal, t } from "@/translation/use-translation";
-import { createDefaultEvent, hasAnyEventFlags, type Event } from "@/types";
+import {
+  createDefaultEvent,
+  hasAnyEventFlags,
+  type Event,
+} from "@/types/event";
 
 interface CalendarEditDialogProps {
   event: Event;

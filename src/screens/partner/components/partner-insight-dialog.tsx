@@ -7,7 +7,7 @@ import { Field } from "@/components/ui/field";
 import { Typography } from "@/components/ui/typography";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
-import { type PartnerInsight } from "@/types";
+import { type PartnerInsight } from "@/types/partner-insight";
 
 interface PartnerInsightDialogProps {
   insight: PartnerInsight;
