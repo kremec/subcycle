@@ -61,6 +61,7 @@ export const PillRemindersSettingsSection: FC = () => {
                   onPress={() => setPickerTarget({ time })}
                   right={
                     <IconButton
+                      accessibilityLabel={t("settings.deleteReminder")}
                       onPress={() =>
                         updateSettings({
                           pillNotificationTimes:

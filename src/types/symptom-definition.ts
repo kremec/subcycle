@@ -1,16 +1,9 @@
 import type { IconName } from "@/components/ui/icon";
+import type { TranslationKeys } from "@/translation/translation-keys";
 import type { SymptomsKey } from "@/types/symptoms";
-
-type SymptomGroupName =
-  | "Symptoms"
-  | "Discharge"
-  | "Libido"
-  | "Exercise"
-  | "Moods";
 
 type SymptomDefinition = {
   key: SymptomsKey;
-  label: string;
   icon: IconName;
   filled?: boolean;
 };
@@ -23,7 +16,7 @@ type SymptomColorToken =
   | "symptomsMoods";
 
 export type SymptomGroupDefinition = {
-  name: SymptomGroupName;
+  name: TranslationKeys;
   colorToken: SymptomColorToken;
   types: SymptomDefinition[];
 };

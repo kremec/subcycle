@@ -28,7 +28,44 @@
       "pill": "Pill"
     },
     "symptoms": {
-      "title": "Symptoms for {{date}}"
+      "title": "Symptoms for {{date}}",
+      "edit": "Edit symptoms",
+      "groups": {
+        "symptoms": "Symptoms",
+        "discharge": "Discharge",
+        "libido": "Libido",
+        "exercise": "Exercise",
+        "moods": "Moods"
+      },
+      "labels": {
+        "symptomsIntestinalProblems": "Intestinal\nproblems",
+        "symptomsAppetiteChanges": "Appetite\nchanges",
+        "symptomsBloating": "Bloating",
+        "symptomsChills": "Chills",
+        "symptomsCramps": "Cramps",
+        "symptomsDrySkin": "Dry skin",
+        "symptomsInsomnia": "Insomnia",
+        "symptomsNausea": "Nausea",
+        "dischargeWatery": "Watery",
+        "dischargeCreamy": "Creamy",
+        "dischargeSticky": "Sticky",
+        "dischargeDry": "Dry",
+        "libidoVeryLow": "Very low",
+        "libidoLow": "Low",
+        "libidoHigh": "High",
+        "libidoVeryHigh": "Very high",
+        "exerciseRunning": "Running",
+        "exerciseCycling": "Cycling",
+        "exerciseHiking": "Hiking",
+        "exerciseGym": "Gym",
+        "moodAngry": "Angry",
+        "moodHappy": "Happy",
+        "moodNeutral": "Neutral",
+        "moodSad": "Sad",
+        "moodAnnoyed": "Annoyed",
+        "moodSensitive": "Sensitive",
+        "moodIrritated": "Irritated"
+      }
     }
   },
   "navigation": {
@@ -85,7 +122,11 @@
     },
     "tooLittlePredictionInfo": "Too little information to set notifications based on predictions.",
     "useDefaultReminderMessage": "Use the default reminder message.",
-    "notificationsBeforePredictedMenstruation": "Notifications before predicted menstruation"
+    "notificationsBeforePredictedMenstruation": "Notifications before predicted menstruation",
+    "deleteReminder": "Delete reminder",
+    "exportTitle": "Export subcycle database",
+    "importFailed": "Could not import the database.",
+    "exportFailed": "Could not export the database."
   },
   "stats": {
     "averageCycleLength": "Average cycle length",

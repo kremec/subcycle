@@ -37,7 +37,10 @@ export const SymptomsOverview: FC<SymptomsOverviewProps> = (props) => {
           gap: theme.spacing.md,
         }}
       >
-        <IconButton onPress={onPressEdit}>
+        <IconButton
+          accessibilityLabel={t("calendar.symptoms.edit")}
+          onPress={onPressEdit}
+        >
           <Icon name="plus" color={theme.colors.text} size={20} />
         </IconButton>
 

@@ -50,7 +50,7 @@ export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
         </Typography>
         {symptomGroups.map((group) => (
           <View key={group.name} style={{ gap: theme.spacing.sm }}>
-            <Typography variant="titleSmall">{group.name}</Typography>
+            <Typography variant="titleSmall">{t(group.name)}</Typography>
             <ScrollView
               horizontal
               nestedScrollEnabled
@@ -64,7 +64,7 @@ export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
                   <SymptomCard
                     key={symptom.key}
                     icon={symptom.icon}
-                    text={symptom.label}
+                    text={t(`calendar.symptoms.labels.${symptom.key}`)}
                     backgroundColor={theme.colors[group.colorToken]}
                     filled={symptom.filled}
                     selected={symptoms[symptom.key]}

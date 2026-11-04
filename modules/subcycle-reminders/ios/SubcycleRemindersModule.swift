@@ -51,7 +51,7 @@ public class SubcycleRemindersModule: Module {
       }
       let action = UNNotificationAction(
         identifier: pillActionIdentifier,
-        title: "Check pill for today",
+        title: NSLocalizedString("Check pill for today", tableName: "SubcycleReminders", comment: "Pill reminder action"),
         options: []
       )
       let category = UNNotificationCategory(
@@ -144,7 +144,7 @@ public class SubcycleRemindersModule: Module {
 
           let content = UNMutableNotificationContent()
           content.title = "subcycle"
-          content.body = "Don't forget to take your pill."
+          content.body = NSLocalizedString("Don't forget to take your pill.", tableName: "SubcycleReminders", comment: "Pill reminder body")
           content.categoryIdentifier = pillCategoryIdentifier
           content.userInfo = ["date": PillEventStore.currentDateString()]
           self.configurePillNotificationContent(content, settings: settings)
@@ -225,10 +225,12 @@ public class SubcycleRemindersModule: Module {
         triggerComponents.minute = minute
 
         let daysBefore = schedule["daysBefore"] as? Int ?? 0
-        let message = schedule["customMessage"] as? String ??
-          (daysBefore == 0 ? "Menstruation coming today." :
-            daysBefore == 1 ? "Menstruation coming in 1 day." :
-            "Menstruation coming in \(daysBefore) days.")
+        let message = schedule["customMessage"] as? String ?? (daysBefore == 0
+          ? NSLocalizedString("Menstruation coming today.", tableName: "SubcycleReminders", comment: "Menstruation reminder for today")
+          : String.localizedStringWithFormat(
+            NSLocalizedString("Menstruation coming in %ld days.", tableName: "SubcycleReminders", comment: "Menstruation reminder in days"),
+            daysBefore
+          ))
 
         let content = UNMutableNotificationContent()
         content.title = "subcycle"

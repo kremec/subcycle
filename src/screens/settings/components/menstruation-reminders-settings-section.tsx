@@ -93,6 +93,7 @@ export const MenstruationRemindersSettingsSection: FC = () => {
                   }}
                   right={
                     <IconButton
+                      accessibilityLabel={t("settings.deleteReminder")}
                       onPress={() =>
                         updateSettings({
                           menstruationNotifications:
