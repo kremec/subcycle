@@ -15,7 +15,8 @@ import {
   deletePartnerInsight,
   upsertPartnerInsight,
 } from "@/db/repositories/partner-insights-repository";
-import { getDayInCycle, withPredictions } from "@/domain/cycle";
+import { getDayInCycle } from "@/domain/cycle";
+import { withPredictions } from "@/domain/cycle-predictions";
 import { PartnerInsightDialog } from "@/screens/partner/components/partner-insight-dialog";
 import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";

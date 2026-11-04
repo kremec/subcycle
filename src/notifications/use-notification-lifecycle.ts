@@ -6,7 +6,7 @@ import {
   markPillForDate,
   useEventsQuery,
 } from "@/db/repositories/events-repository";
-import { getMenstruationPredictions } from "@/domain/cycle";
+import { getMenstruationPredictions } from "@/domain/cycle-predictions";
 import { compareTimesAsc, toCalendarDate } from "@/domain/time";
 import { logError } from "@/logging/logger";
 import { buildMenstruationSchedules } from "@/notifications/build-menstruation-schedules";
