@@ -2,6 +2,7 @@ import { type FC } from "react";
 import { Pressable, View } from "react-native";
 
 import { Typography } from "@/components/ui/typography";
+import { typography } from "@/theme/tokens";
 import { EventGroupShape, type CalendarMarker } from "@/types/calendar-marker";
 
 interface CalendarDayProps {
@@ -113,7 +114,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
           color={marker.textColor}
           style={{
             fontWeight: marker.selected ? "900" : "400",
-            fontSize: marker.selected ? 16 : undefined,
+            fontSize: marker.selected ? typography.body : undefined,
             lineHeight: marker.selected ? 18 : undefined,
             transform: marker.selected ? [{ scale: 1.08 }] : undefined,
           }}
