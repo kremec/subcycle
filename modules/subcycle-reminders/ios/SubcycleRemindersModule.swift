@@ -1,6 +1,21 @@
 import ExpoModulesCore
 import UserNotifications
 
+private struct PillSchedule: Record {
+  @Field var id: String
+  @Field var hour: Int
+  @Field var minute: Int
+}
+
+private struct MenstruationSchedule: Record {
+  @Field var id: String
+  @Field var date: String
+  @Field var hour: Int
+  @Field var minute: Int
+  @Field var daysBefore: Int
+  @Field var customMessage: String?
+}
+
 private let pillSchedulesKey = "subcycle.pillSchedules"
 private let menstruationSchedulesKey = "subcycle.menstruationSchedules"
 private let pillCategoryIdentifier = "SUBCYCLE_PILL_REMINDER"
@@ -111,7 +126,7 @@ public class SubcycleRemindersModule: Module {
     AsyncFunction("openBatteryOptimizationSettings") {
     }
 
-    AsyncFunction("replacePillSchedules") { (schedules: [[String: Any]], promise: Promise) in
+    AsyncFunction("replacePillSchedules") { (schedules: [PillSchedule], promise: Promise) in
       LocalLog.append(
         category: "ios.scheduler",
         event: "replace-pill-schedules-requested",
@@ -123,24 +138,16 @@ public class SubcycleRemindersModule: Module {
           center.removePendingNotificationRequests(withIdentifiers: existing)
         }
 
-        let identifiers = schedules.compactMap { $0["id"] as? String }
+        let identifiers = schedules.map { $0.id }
         UserDefaults.standard.set(identifiers, forKey: pillSchedulesKey)
 
         let dispatchGroup = DispatchGroup()
         var schedulingError: Error?
 
         schedules.forEach { schedule in
-          guard
-            let id = schedule["id"] as? String,
-            let hour = schedule["hour"] as? Int,
-            let minute = schedule["minute"] as? Int
-          else {
-            return
-          }
-
           var components = DateComponents()
-          components.hour = hour
-          components.minute = minute
+          components.hour = schedule.hour
+          components.minute = schedule.minute
 
           let content = UNMutableNotificationContent()
           content.title = "subcycle"
@@ -150,7 +157,7 @@ public class SubcycleRemindersModule: Module {
           self.configurePillNotificationContent(content, settings: settings)
 
           let request = UNNotificationRequest(
-            identifier: id,
+            identifier: schedule.id,
             content: content,
             trigger: UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
           )
@@ -186,7 +193,7 @@ public class SubcycleRemindersModule: Module {
       }
     }
 
-    AsyncFunction("replaceMenstruationSchedules") { (schedules: [[String: Any]]) in
+    AsyncFunction("replaceMenstruationSchedules") { (schedules: [MenstruationSchedule]) in
       LocalLog.append(
         category: "ios.scheduler",
         event: "replace-menstruation-schedules-requested",
@@ -197,7 +204,7 @@ public class SubcycleRemindersModule: Module {
         center.removePendingNotificationRequests(withIdentifiers: existing)
       }
 
-      let identifiers = schedules.compactMap { $0["id"] as? String }
+      let identifiers = schedules.map { $0.id }
       UserDefaults.standard.set(identifiers, forKey: menstruationSchedulesKey)
 
       let formatter = DateFormatter()
@@ -205,13 +212,7 @@ public class SubcycleRemindersModule: Module {
       formatter.locale = Locale(identifier: "en_US_POSIX")
 
       schedules.forEach { schedule in
-        guard
-          let id = schedule["id"] as? String,
-          let dateString = schedule["date"] as? String,
-          let hour = schedule["hour"] as? Int,
-          let minute = schedule["minute"] as? Int,
-          let date = formatter.date(from: dateString)
-        else {
+        guard let date = formatter.date(from: schedule.date) else {
           return
         }
 
@@ -221,11 +222,11 @@ public class SubcycleRemindersModule: Module {
         triggerComponents.year = components.year
         triggerComponents.month = components.month
         triggerComponents.day = components.day
-        triggerComponents.hour = hour
-        triggerComponents.minute = minute
+        triggerComponents.hour = schedule.hour
+        triggerComponents.minute = schedule.minute
 
-        let daysBefore = schedule["daysBefore"] as? Int ?? 0
-        let message = schedule["customMessage"] as? String ?? (daysBefore == 0
+        let daysBefore = schedule.daysBefore
+        let message = schedule.customMessage ?? (daysBefore == 0
           ? NSLocalizedString("Menstruation coming today.", tableName: "SubcycleReminders", comment: "Menstruation reminder for today")
           : String.localizedStringWithFormat(
             NSLocalizedString("Menstruation coming in %ld days.", tableName: "SubcycleReminders", comment: "Menstruation reminder in days"),
@@ -238,7 +239,7 @@ public class SubcycleRemindersModule: Module {
         content.sound = .default
 
         let request = UNNotificationRequest(
-          identifier: id,
+          identifier: schedule.id,
           content: content,
           trigger: UNCalendarNotificationTrigger(dateMatching: triggerComponents, repeats: false)
         )
