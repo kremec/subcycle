@@ -1,6 +1,8 @@
 import { Fragment, type FC, useState } from "react";
 import { View } from "react-native";
 
+import { useShallow } from "zustand/react/shallow";
+
 import { ListRow } from "@/components/list-row";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -27,23 +29,32 @@ type RuleTarget = { rule?: MenstruationNotification } | null;
 export const MenstruationRemindersSettingsSection: FC = () => {
   const theme = useTheme();
   const { data: events } = useEventsQuery();
-  const { settings, updateSettings } = useSettingsStore();
+  const {
+    menstruationNotificationsEnabled,
+    menstruationNotifications,
+    updateSettings,
+  } = useSettingsStore(
+    useShallow((state) => ({
+      menstruationNotificationsEnabled:
+        state.settings.menstruationNotificationsEnabled,
+      menstruationNotifications: state.settings.menstruationNotifications,
+      updateSettings: state.updateSettings,
+    })),
+  );
   const averageCycleLength = getAverageCycleLength(events);
   const maxRuleDay = averageCycleLength
     ? Math.max(1, Math.min(60, Math.round(averageCycleLength)))
     : 0;
 
-  const sortedRules = settings.menstruationNotifications.toSorted(
+  const sortedRules = [...menstruationNotifications].sort(
     (left, right) =>
       left.dayToMenstruation - right.dayToMenstruation ||
       compareTimesAsc(left.notificationTime, right.notificationTime),
   );
   const showSwitch =
-    settings.menstruationNotificationsEnabled ||
-    settings.menstruationNotifications.length > 0;
+    menstruationNotificationsEnabled || menstruationNotifications.length > 0;
   const showAddButton =
-    settings.menstruationNotificationsEnabled ||
-    settings.menstruationNotifications.length === 0;
+    menstruationNotificationsEnabled || menstruationNotifications.length === 0;
 
   const [ruleTarget, setRuleTarget] = useState<RuleTarget>(null);
   const [ruleDay, setRuleDay] = useState(0);
@@ -59,7 +70,7 @@ export const MenstruationRemindersSettingsSection: FC = () => {
         right={
           showSwitch && (
             <Switch
-              value={settings.menstruationNotificationsEnabled}
+              value={menstruationNotificationsEnabled}
               onValueChange={(menstruationNotificationsEnabled) => {
                 updateSettings({ menstruationNotificationsEnabled });
                 if (menstruationNotificationsEnabled) {
@@ -70,7 +81,7 @@ export const MenstruationRemindersSettingsSection: FC = () => {
           )
         }
       >
-        {settings.menstruationNotificationsEnabled && (
+        {menstruationNotificationsEnabled && (
           <View style={{ gap: theme.spacing.md }}>
             {sortedRules.map((rule, index) => {
               return (
@@ -97,11 +108,11 @@ export const MenstruationRemindersSettingsSection: FC = () => {
                       onPress={() =>
                         updateSettings({
                           menstruationNotifications:
-                            settings.menstruationNotifications.filter(
+                            menstruationNotifications.filter(
                               (item) => item !== rule,
                             ),
                           menstruationNotificationsEnabled:
-                            settings.menstruationNotifications.length > 1,
+                            menstruationNotifications.length > 1,
                         })
                       }
                     >
@@ -166,10 +177,10 @@ export const MenstruationRemindersSettingsSection: FC = () => {
           updateSettings({
             menstruationNotificationsEnabled: true,
             menstruationNotifications: editedRule
-              ? settings.menstruationNotifications.map((item) =>
+              ? menstruationNotifications.map((item) =>
                   item === editedRule ? nextRule : item,
                 )
-              : [...settings.menstruationNotifications, nextRule],
+              : [...menstruationNotifications, nextRule],
           });
           ensureReminderPermissions();
 

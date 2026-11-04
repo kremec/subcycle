@@ -28,9 +28,9 @@ const CalendarScreen: FC = () => {
   const [selectedDate, setSelectedDateState] = useState(() =>
     toCalendarDate(new Date()),
   );
-  const {
-    settings: { predictionTimespan },
-  } = useSettingsStore();
+  const predictionTimespan = useSettingsStore(
+    (state) => state.settings.predictionTimespan,
+  );
 
   const setSelectedDate = (date: Date) => {
     setSelectedDateState(toCalendarDate(date));

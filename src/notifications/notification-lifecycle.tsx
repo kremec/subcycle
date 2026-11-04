@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+import { type FC, useEffect } from "react";
 
 import { parseISO } from "date-fns";
+import { useShallow } from "zustand/react/shallow";
 
 import {
   markPillForDate,
@@ -14,16 +15,24 @@ import { useSettingsStore } from "@/stores/settings-store";
 
 import NativeReminders from "@modules/subcycle-reminders";
 
-export function useNotificationLifecycle() {
+export const NotificationLifecycle: FC = () => {
   const { data: events } = useEventsQuery();
-  const { settings } = useSettingsStore();
   const {
     menstruationNotifications,
     menstruationNotificationsEnabled,
     pillNotificationTimes,
     pillNotificationsEnabled,
     predictionTimespan,
-  } = settings;
+  } = useSettingsStore(
+    useShallow((state) => ({
+      menstruationNotifications: state.settings.menstruationNotifications,
+      menstruationNotificationsEnabled:
+        state.settings.menstruationNotificationsEnabled,
+      pillNotificationTimes: state.settings.pillNotificationTimes,
+      pillNotificationsEnabled: state.settings.pillNotificationsEnabled,
+      predictionTimespan: state.settings.predictionTimespan,
+    })),
+  );
 
   useEffect(() => {
     const subscription = NativeReminders.addListener(
@@ -43,7 +52,7 @@ export function useNotificationLifecycle() {
 
   useEffect(() => {
     const pillSchedules = pillNotificationsEnabled
-      ? pillNotificationTimes.toSorted(compareTimesAsc).map((time, index) => ({
+      ? [...pillNotificationTimes].sort(compareTimesAsc).map((time, index) => ({
           id: `pill-${index}`,
           hour: time.hour,
           minute: time.minute,
@@ -78,4 +87,6 @@ export function useNotificationLifecycle() {
     menstruationNotificationsEnabled,
     menstruationNotifications,
   ]);
-}
+
+  return null;
+};

@@ -34,9 +34,9 @@ const PartnerScreen: FC = () => {
   );
   const { data: events } = useEventsQuery();
   const { data: insights } = usePartnerInsightsQuery();
-  const {
-    settings: { predictionTimespan },
-  } = useSettingsStore();
+  const predictionTimespan = useSettingsStore(
+    (state) => state.settings.predictionTimespan,
+  );
 
   const currentDayInCycle = getDayInCycle(
     new Date(),

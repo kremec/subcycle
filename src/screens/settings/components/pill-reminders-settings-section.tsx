@@ -1,6 +1,8 @@
 import { Fragment, type FC, useState } from "react";
 import { View } from "react-native";
 
+import { useShallow } from "zustand/react/shallow";
+
 import { ListRow } from "@/components/list-row";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
@@ -19,14 +21,19 @@ type PickerTarget = { time?: Time } | null;
 
 export const PillRemindersSettingsSection: FC = () => {
   const theme = useTheme();
-  const { settings, updateSettings } = useSettingsStore();
-  const sortedTimes = settings.pillNotificationTimes.toSorted(compareTimesAsc);
+  const { pillNotificationsEnabled, pillNotificationTimes, updateSettings } =
+    useSettingsStore(
+      useShallow((state) => ({
+        pillNotificationsEnabled: state.settings.pillNotificationsEnabled,
+        pillNotificationTimes: state.settings.pillNotificationTimes,
+        updateSettings: state.updateSettings,
+      })),
+    );
+  const sortedTimes = [...pillNotificationTimes].sort(compareTimesAsc);
   const showSwitch =
-    settings.pillNotificationsEnabled ||
-    settings.pillNotificationTimes.length > 0;
+    pillNotificationsEnabled || pillNotificationTimes.length > 0;
   const showAddButton =
-    settings.pillNotificationsEnabled ||
-    settings.pillNotificationTimes.length === 0;
+    pillNotificationsEnabled || pillNotificationTimes.length === 0;
 
   const [pickerTarget, setPickerTarget] = useState<PickerTarget>(null);
 
@@ -39,7 +46,7 @@ export const PillRemindersSettingsSection: FC = () => {
         right={
           showSwitch && (
             <Switch
-              value={settings.pillNotificationsEnabled}
+              value={pillNotificationsEnabled}
               onValueChange={(pillNotificationsEnabled) => {
                 updateSettings({ pillNotificationsEnabled });
                 if (pillNotificationsEnabled) {
@@ -50,7 +57,7 @@ export const PillRemindersSettingsSection: FC = () => {
           )
         }
       >
-        {settings.pillNotificationsEnabled && (
+        {pillNotificationsEnabled && (
           <View style={{ gap: theme.spacing.md }}>
             {sortedTimes.map((time, index) => {
               return (
@@ -64,12 +71,11 @@ export const PillRemindersSettingsSection: FC = () => {
                       accessibilityLabel={t("settings.deleteReminder")}
                       onPress={() =>
                         updateSettings({
-                          pillNotificationTimes:
-                            settings.pillNotificationTimes.filter(
-                              (item) => item !== time,
-                            ),
+                          pillNotificationTimes: pillNotificationTimes.filter(
+                            (item) => item !== time,
+                          ),
                           pillNotificationsEnabled:
-                            settings.pillNotificationTimes.length > 1,
+                            pillNotificationTimes.length > 1,
                         })
                       }
                     >
@@ -111,10 +117,10 @@ export const PillRemindersSettingsSection: FC = () => {
           updateSettings({
             pillNotificationsEnabled: true,
             pillNotificationTimes: editedTime
-              ? settings.pillNotificationTimes.map((item) =>
+              ? pillNotificationTimes.map((item) =>
                   item === editedTime ? time : item,
                 )
-              : [...settings.pillNotificationTimes, time],
+              : [...pillNotificationTimes, time],
           });
           ensureReminderPermissions();
 
