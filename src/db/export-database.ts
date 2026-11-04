@@ -2,22 +2,17 @@ import * as Sharing from "expo-sharing";
 import {
   backupDatabaseAsync,
   defaultDatabaseDirectory,
-  deleteDatabaseAsync,
   openDatabaseSync,
 } from "expo-sqlite";
 
 import { expoDb } from "@/db/client";
 import { logError, logInfo } from "@/logging/logger";
+import { t } from "@/translation/use-translation";
 
 const EXPORT_DB_NAME = "subcycle-export.db";
 
 export async function exportDatabase(): Promise<void> {
   logInfo("db.export", "start");
-
-  // The temp export DB is usually missing.
-  await deleteDatabaseAsync(EXPORT_DB_NAME, defaultDatabaseDirectory).catch(
-    () => undefined,
-  );
 
   try {
     const exportDb = openDatabaseSync(
@@ -34,12 +29,16 @@ export async function exportDatabase(): Promise<void> {
 
       const exportPath = `file://${defaultDatabaseDirectory}/${EXPORT_DB_NAME}`;
       await Sharing.shareAsync(exportPath, {
-        dialogTitle: "Export subcycle database",
+        dialogTitle: t("settings.exportTitle"),
       });
 
       logInfo("db.export", "share-opened");
     } finally {
-      exportDb.closeSync();
+      try {
+        exportDb.closeSync();
+      } catch (error) {
+        logError("db.export", "close-failed", error);
+      }
     }
   } catch (error) {
     logError("db.export", "failed", error);

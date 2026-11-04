@@ -1,5 +1,5 @@
 import { type FC } from "react";
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
@@ -25,7 +25,11 @@ export const BackupsSection: FC = () => {
             leftAccessory={
               <Icon name="file-import" color={theme.colors.text} size={16} />
             }
-            onPress={importLatestNativeDatabase}
+            onPress={() =>
+              importLatestNativeDatabase().catch(() =>
+                Alert.alert(t("settings.importFailed")),
+              )
+            }
           >
             {t("settings.importData")}
           </Button>
@@ -36,7 +40,11 @@ export const BackupsSection: FC = () => {
             leftAccessory={
               <Icon name="file-export" color={theme.colors.text} size={16} />
             }
-            onPress={exportDatabase}
+            onPress={() =>
+              exportDatabase().catch(() =>
+                Alert.alert(t("settings.exportFailed")),
+              )
+            }
           >
             {t("settings.exportData")}
           </Button>

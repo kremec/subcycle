@@ -1,10 +1,4 @@
-import { File } from "expo-file-system";
-import {
-  backupDatabaseAsync,
-  defaultDatabaseDirectory,
-  deleteDatabaseAsync,
-  openDatabaseSync,
-} from "expo-sqlite";
+import { backupDatabaseAsync, openDatabaseSync } from "expo-sqlite";
 
 import { format } from "date-fns";
 
@@ -18,26 +12,19 @@ function createBackupName(kind: "automatic" | "pre-migration"): string {
 }
 
 async function performDatabaseBackup(name: string): Promise<void> {
-  const tempBackupDbName = `subcycle-automatic-backup-${Date.now()}.db`;
+  const directoryUri = await NativeReminders.getBackupDirectoryUri();
   const backupDb = openDatabaseSync(
-    tempBackupDbName,
+    name,
     { useNewConnection: true },
-    defaultDatabaseDirectory,
+    directoryUri,
   );
   try {
     await backupDatabaseAsync({
       sourceDatabase: expoDb,
       destDatabase: backupDb,
     });
-
-    const directoryUri = await NativeReminders.getBackupDirectoryUri();
-    const source = new File(
-      `file://${defaultDatabaseDirectory}/${tempBackupDbName}`,
-    );
-    await source.copy(new File(directoryUri, name), { overwrite: true });
   } finally {
     await backupDb.closeAsync();
-    await deleteDatabaseAsync(tempBackupDbName, defaultDatabaseDirectory);
   }
 }
 

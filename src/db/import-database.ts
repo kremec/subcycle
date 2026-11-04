@@ -3,8 +3,8 @@ import * as FileSystem from "expo-file-system/legacy";
 import {
   backupDatabaseAsync,
   defaultDatabaseDirectory,
-  deleteDatabaseAsync,
   openDatabaseSync,
+  type SQLiteDatabase,
 } from "expo-sqlite";
 
 import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
@@ -44,48 +44,48 @@ export async function importLatestNativeDatabase(): Promise<void> {
 
   logInfo("db.import", "start");
 
-  // The temp import DB is usually missing.
-  await deleteDatabaseAsync(IMPORT_DB_NAME, defaultDatabaseDirectory).catch(
-    () => undefined,
-  );
-
+  const importUri = `file://${defaultDatabaseDirectory}/${IMPORT_DB_NAME}`;
+  let importDb: SQLiteDatabase | undefined;
   try {
-    const importPath = `${defaultDatabaseDirectory}/${IMPORT_DB_NAME}`;
     await FileSystem.copyAsync({
       from: pickedUri,
-      to: `file://${importPath}`,
+      to: importUri,
     });
 
-    const importDb = openDatabaseSync(
+    importDb = openDatabaseSync(
       IMPORT_DB_NAME,
       { useNewConnection: true },
       defaultDatabaseDirectory,
     );
 
-    try {
-      // Don't replace the live data with a file that isn't a subcycle database.
-      if (
-        !importDb.getFirstSync(
-          "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'events'",
-        )
-      ) {
-        throw new Error("The selected file is not a subcycle database");
-      }
-      await backupDatabaseAsync({
-        sourceDatabase: importDb,
-        destDatabase: expoDb,
-      });
-      await notifyLiveQueriesChanged();
-      backupDatabaseAfterWrite();
-      logInfo("db.import", "complete");
-    } finally {
-      importDb.closeSync();
-      await deleteDatabaseAsync(IMPORT_DB_NAME, defaultDatabaseDirectory).catch(
-        () => undefined,
-      );
+    // Don't replace the live data with a file that isn't a subcycle database.
+    if (
+      !importDb.getFirstSync(
+        "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'events'",
+      )
+    ) {
+      throw new Error("The selected file is not a subcycle database");
     }
+    await backupDatabaseAsync({
+      sourceDatabase: importDb,
+      destDatabase: expoDb,
+    });
+    await notifyLiveQueriesChanged();
+    backupDatabaseAfterWrite();
+    logInfo("db.import", "complete");
   } catch (error) {
     logError("db.import", "failed", error);
     throw error;
+  } finally {
+    try {
+      importDb?.closeSync();
+    } catch (error) {
+      logError("db.import", "close-failed", error);
+    }
+    await FileSystem.deleteAsync(importUri, { idempotent: true }).catch(
+      (error) => {
+        logError("db.import", "cleanup-failed", error);
+      },
+    );
   }
 }
