@@ -174,13 +174,15 @@ export const MenstruationRemindersSettingsSection: FC = () => {
             notificationTime: time,
           };
           const editedRule = ruleTarget?.rule;
+          const rules = menstruationNotifications.map((item) => {
+            if (item === editedRule) return nextRule;
+            return item;
+          });
+          if (!editedRule) rules.push(nextRule);
+
           updateSettings({
             menstruationNotificationsEnabled: true,
-            menstruationNotifications: editedRule
-              ? menstruationNotifications.map((item) =>
-                  item === editedRule ? nextRule : item,
-                )
-              : [...menstruationNotifications, nextRule],
+            menstruationNotifications: rules,
           });
           ensureReminderPermissions();
 

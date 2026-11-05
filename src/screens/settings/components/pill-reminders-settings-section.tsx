@@ -114,13 +114,15 @@ export const PillRemindersSettingsSection: FC = () => {
         onClose={() => setPickerTarget(null)}
         onSave={(time) => {
           const editedTime = pickerTarget?.time;
+          const times = pillNotificationTimes.map((item) => {
+            if (item === editedTime) return time;
+            return item;
+          });
+          if (!editedTime) times.push(time);
+
           updateSettings({
             pillNotificationsEnabled: true,
-            pillNotificationTimes: editedTime
-              ? pillNotificationTimes.map((item) =>
-                  item === editedTime ? time : item,
-                )
-              : [...pillNotificationTimes, time],
+            pillNotificationTimes: times,
           });
           ensureReminderPermissions();
 

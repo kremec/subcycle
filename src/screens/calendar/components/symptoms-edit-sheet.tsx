@@ -9,15 +9,8 @@ import { symptomGroups } from "@/domain/symptom-groups";
 import { SymptomCard } from "@/screens/calendar/components/symptom-card";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
+import type { SymptomGroupDefinition } from "@/types/symptom-definition";
 import type { Symptoms, SymptomsKey } from "@/types/symptoms";
-
-// Libido levels are mutually exclusive.
-const libidoKeys: SymptomsKey[] = [
-  "libidoVeryLow",
-  "libidoLow",
-  "libidoHigh",
-  "libidoVeryHigh",
-];
 
 interface SymptomsEditSheetProps {
   visible: boolean;
@@ -30,11 +23,11 @@ export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
   const { visible, symptoms, onClose, onChange } = props;
   const theme = useTheme();
 
-  const toggle = (key: SymptomsKey) => {
+  const toggle = (group: SymptomGroupDefinition, key: SymptomsKey) => {
     const next = { ...symptoms, [key]: !symptoms[key] };
-    if (next[key] && libidoKeys.includes(key)) {
-      for (const libidoKey of libidoKeys) {
-        if (libidoKey !== key) next[libidoKey] = false;
+    if (next[key] && group.exclusive) {
+      for (const symptom of group.types) {
+        next[symptom.key] = symptom.key === key;
       }
     }
     onChange(next);
@@ -49,8 +42,8 @@ export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
           })}
         </Typography>
         {symptomGroups.map((group) => (
-          <View key={group.name} style={{ gap: theme.spacing.sm }}>
-            <Typography variant="titleSmall">{t(group.name)}</Typography>
+          <View key={group.colorToken} style={{ gap: theme.spacing.sm }}>
+            <Typography variant="titleSmall">{group.name}</Typography>
             <ScrollView
               horizontal
               nestedScrollEnabled
@@ -68,7 +61,7 @@ export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
                     backgroundColor={theme.colors[group.colorToken]}
                     filled={symptom.filled}
                     selected={symptoms[symptom.key]}
-                    onPress={() => toggle(symptom.key)}
+                    onPress={() => toggle(group, symptom.key)}
                   />
                 ))}
               </View>

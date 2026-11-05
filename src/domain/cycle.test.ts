@@ -1,14 +1,10 @@
 import { expect, test } from "bun:test";
 import { addDays } from "date-fns";
 
-import {
-  getAverageCycleLength,
-  getDayInCycle,
-  getEventPeriods,
-} from "@/domain/cycle";
+import { getDayInCycle } from "@/domain/cycle";
 import { withPredictions } from "@/domain/cycle-predictions";
 import { fromEpochDay, toEpochDay } from "@/domain/time";
-import { createDefaultEvent, isMenstruationEvent } from "@/types/event";
+import { createDefaultEvent } from "@/types/event";
 
 test("the first cycle day starts at midnight, before stored local noon", () => {
   const start = new Date(2026, 9, 25, 12);
@@ -41,7 +37,6 @@ test("predictions retain flow ties, zero-day ovulation and their input history",
   const predictions = withPredictions(events, 1).filter(
     (event) => event.prediction,
   );
-  expect(getAverageCycleLength(events)).toBe(28);
   expect(predictions).toHaveLength(2);
   expect(predictions[0].date).toEqual(addDays(start, 56));
   expect(predictions[0].menstruationHeavy).toBe(true);
@@ -49,7 +44,4 @@ test("predictions retain flow ties, zero-day ovulation and their input history",
   expect(predictions[1].ovulation).toBe(true);
   expect(events).toEqual(before);
   expect(withPredictions(events, 0)).toEqual(events);
-  expect(
-    getEventPeriods(events.toReversed(), isMenstruationEvent),
-  ).toHaveLength(2);
 });

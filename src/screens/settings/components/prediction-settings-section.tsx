@@ -1,7 +1,5 @@
 import { type FC } from "react";
 
-import { useShallow } from "zustand/react/shallow";
-
 import { Slider } from "@/components/ui/slider";
 import { Typography } from "@/components/ui/typography";
 import { SettingsSectionCard } from "@/screens/settings/components/settings-section-card";
@@ -11,12 +9,10 @@ import { t } from "@/translation/use-translation";
 
 export const PredictionSettingsSection: FC = () => {
   const theme = useTheme();
-  const { predictionTimespan, updateSettings } = useSettingsStore(
-    useShallow((state) => ({
-      predictionTimespan: state.settings.predictionTimespan,
-      updateSettings: state.updateSettings,
-    })),
+  const predictionTimespan = useSettingsStore(
+    (state) => state.settings.predictionTimespan,
   );
+  const updateSettings = useSettingsStore((state) => state.updateSettings);
 
   return (
     <SettingsSectionCard

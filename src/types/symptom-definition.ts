@@ -1,5 +1,4 @@
 import type { IconName } from "@/components/ui/icon";
-import type { TranslationKeys } from "@/translation/translation-keys";
 import type { SymptomsKey } from "@/types/symptoms";
 
 type SymptomDefinition = {
@@ -16,7 +15,8 @@ type SymptomColorToken =
   | "symptomsMoods";
 
 export type SymptomGroupDefinition = {
-  name: TranslationKeys;
+  name: string;
+  exclusive?: boolean;
   colorToken: SymptomColorToken;
   types: SymptomDefinition[];
 };

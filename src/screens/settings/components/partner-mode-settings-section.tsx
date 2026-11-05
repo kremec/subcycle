@@ -1,19 +1,13 @@
 import { type FC } from "react";
 
-import { useShallow } from "zustand/react/shallow";
-
 import { Switch } from "@/components/ui/switch";
 import { SettingsSectionCard } from "@/screens/settings/components/settings-section-card";
 import { useSettingsStore } from "@/stores/settings-store";
 import { t } from "@/translation/use-translation";
 
 export const PartnerModeSettingsSection: FC = () => {
-  const { partnerMode, updateSettings } = useSettingsStore(
-    useShallow((state) => ({
-      partnerMode: state.settings.partnerMode,
-      updateSettings: state.updateSettings,
-    })),
-  );
+  const partnerMode = useSettingsStore((state) => state.settings.partnerMode);
+  const updateSettings = useSettingsStore((state) => state.updateSettings);
 
   return (
     <SettingsSectionCard
