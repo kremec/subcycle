@@ -111,7 +111,7 @@ function getOvulationPredictions(
   }));
 }
 
-export function withPredictions(
+export function getAllPredictions(
   events: Event[],
   predictionTimespan: number,
 ): Event[] {

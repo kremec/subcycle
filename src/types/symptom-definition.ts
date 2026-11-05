@@ -3,6 +3,7 @@ import type { SymptomsKey } from "@/types/symptoms";
 
 type SymptomDefinition = {
   key: SymptomsKey;
+  label: string;
   icon: IconName;
   filled?: boolean;
 };

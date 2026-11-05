@@ -57,7 +57,7 @@ export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
                   <SymptomCard
                     key={symptom.key}
                     icon={symptom.icon}
-                    text={t(`calendar.symptoms.labels.${symptom.key}`)}
+                    text={symptom.label}
                     backgroundColor={theme.colors[group.colorToken]}
                     filled={symptom.filled}
                     selected={symptoms[symptom.key]}
