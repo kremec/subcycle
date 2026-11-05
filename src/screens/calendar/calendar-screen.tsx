@@ -9,7 +9,7 @@ import { upsertEvent } from "@/db/repositories/events-repository";
 import { useSymptomsQuery } from "@/db/repositories/symptoms-repository";
 import { upsertSymptoms } from "@/db/repositories/symptoms-repository";
 import { getDayInCycle } from "@/domain/cycle";
-import { withPredictions } from "@/domain/cycle-predictions";
+import { getAllPredictions } from "@/domain/cycle-predictions";
 import { toCalendarDate } from "@/domain/time";
 import { Calendar } from "@/screens/calendar/components/calendar";
 import { CalendarEditDialog } from "@/screens/calendar/components/calendar-edit-dialog";
@@ -36,7 +36,7 @@ const CalendarScreen: FC = () => {
     setSelectedDateState(toCalendarDate(date));
   };
 
-  const allEvents = withPredictions(events, predictionTimespan);
+  const allEvents = getAllPredictions(events, predictionTimespan);
 
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
 
@@ -47,13 +47,7 @@ const CalendarScreen: FC = () => {
   const [symptomsEditorVisible, setSymptomsEditorVisible] = useState(false);
 
   return (
-    <Screen
-      style={{
-        paddingHorizontal: theme.spacing.lg,
-        paddingTop: theme.spacing.md,
-        gap: theme.spacing.lg,
-      }}
-    >
+    <Screen>
       <View style={{ flex: 1, justifyContent: "space-between" }}>
         <CycleStatus events={allEvents} />
 

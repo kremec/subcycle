@@ -16,7 +16,7 @@ import {
   upsertPartnerInsight,
 } from "@/db/repositories/partner-insights-repository";
 import { getDayInCycle } from "@/domain/cycle";
-import { withPredictions } from "@/domain/cycle-predictions";
+import { getAllPredictions } from "@/domain/cycle-predictions";
 import { PartnerInsightDialog } from "@/screens/partner/components/partner-insight-dialog";
 import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
@@ -40,7 +40,7 @@ const PartnerScreen: FC = () => {
 
   const currentDayInCycle = getDayInCycle(
     new Date(),
-    withPredictions(events, predictionTimespan),
+    getAllPredictions(events, predictionTimespan),
   );
   const todayInsight =
     currentDayInCycle === null
@@ -50,13 +50,7 @@ const PartnerScreen: FC = () => {
         ) ?? null);
 
   return (
-    <Screen
-      style={{
-        paddingHorizontal: theme.spacing.lg,
-        paddingTop: theme.spacing.md,
-        gap: theme.spacing.lg,
-      }}
-    >
+    <Screen>
       <SegmentedControl
         value={mode}
         onChange={setMode}

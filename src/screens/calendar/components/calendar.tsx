@@ -4,7 +4,7 @@ import { Pressable } from "react-native";
 import { addDays, format, isSameDay } from "date-fns";
 import { CalendarList, type DateData } from "react-native-calendars";
 
-import { Typography, typographyStyles } from "@/components/ui/typography";
+import { Typography } from "@/components/ui/typography";
 import { CalendarDay } from "@/screens/calendar/components/calendar-day";
 import { useTheme } from "@/theme/use-theme";
 import { EventGroupShape, type CalendarMarker } from "@/types/calendar-marker";
@@ -173,7 +173,9 @@ export const Calendar: FC<CalendarProps> = (props) => {
               marginBottom: 7,
               width: 32,
               textAlign: "center",
-              ...typographyStyles.bodySmall,
+              fontSize: theme.typography.bodySmall,
+              lineHeight: theme.typography.bodySmallLineHeight,
+              fontWeight: "500",
               color: theme.colors.textSecondary,
             },
           },
