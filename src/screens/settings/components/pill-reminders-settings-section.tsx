@@ -1,8 +1,6 @@
 import { Fragment, type FC, useState } from "react";
 import { View } from "react-native";
 
-import { useShallow } from "zustand/react/shallow";
-
 import { ListRow } from "@/components/list-row";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
@@ -21,14 +19,13 @@ type PickerTarget = { time?: Time } | null;
 
 export const PillRemindersSettingsSection: FC = () => {
   const theme = useTheme();
-  const { pillNotificationsEnabled, pillNotificationTimes, updateSettings } =
-    useSettingsStore(
-      useShallow((state) => ({
-        pillNotificationsEnabled: state.settings.pillNotificationsEnabled,
-        pillNotificationTimes: state.settings.pillNotificationTimes,
-        updateSettings: state.updateSettings,
-      })),
-    );
+  const pillNotificationsEnabled = useSettingsStore(
+    (state) => state.settings.pillNotificationsEnabled,
+  );
+  const pillNotificationTimes = useSettingsStore(
+    (state) => state.settings.pillNotificationTimes,
+  );
+  const updateSettings = useSettingsStore((state) => state.updateSettings);
   const sortedTimes = [...pillNotificationTimes].sort(compareTimesAsc);
   const showSwitch =
     pillNotificationsEnabled || pillNotificationTimes.length > 0;

@@ -1,7 +1,6 @@
 import { type FC, useEffect } from "react";
 
 import { parseISO } from "date-fns";
-import { useShallow } from "zustand/react/shallow";
 
 import {
   markPillForDate,
@@ -17,21 +16,20 @@ import NativeReminders from "@modules/subcycle-reminders";
 
 export const NotificationLifecycle: FC = () => {
   const { data: events } = useEventsQuery();
-  const {
-    menstruationNotifications,
-    menstruationNotificationsEnabled,
-    pillNotificationTimes,
-    pillNotificationsEnabled,
-    predictionTimespan,
-  } = useSettingsStore(
-    useShallow((state) => ({
-      menstruationNotifications: state.settings.menstruationNotifications,
-      menstruationNotificationsEnabled:
-        state.settings.menstruationNotificationsEnabled,
-      pillNotificationTimes: state.settings.pillNotificationTimes,
-      pillNotificationsEnabled: state.settings.pillNotificationsEnabled,
-      predictionTimespan: state.settings.predictionTimespan,
-    })),
+  const menstruationNotifications = useSettingsStore(
+    (state) => state.settings.menstruationNotifications,
+  );
+  const menstruationNotificationsEnabled = useSettingsStore(
+    (state) => state.settings.menstruationNotificationsEnabled,
+  );
+  const pillNotificationTimes = useSettingsStore(
+    (state) => state.settings.pillNotificationTimes,
+  );
+  const pillNotificationsEnabled = useSettingsStore(
+    (state) => state.settings.pillNotificationsEnabled,
+  );
+  const predictionTimespan = useSettingsStore(
+    (state) => state.settings.predictionTimespan,
   );
 
   useEffect(() => {

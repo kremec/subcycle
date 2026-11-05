@@ -1,8 +1,6 @@
 import { Fragment, type FC, useState } from "react";
 import { View } from "react-native";
 
-import { useShallow } from "zustand/react/shallow";
-
 import { ListRow } from "@/components/list-row";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -29,18 +27,13 @@ type RuleTarget = { rule?: MenstruationNotification } | null;
 export const MenstruationRemindersSettingsSection: FC = () => {
   const theme = useTheme();
   const { data: events } = useEventsQuery();
-  const {
-    menstruationNotificationsEnabled,
-    menstruationNotifications,
-    updateSettings,
-  } = useSettingsStore(
-    useShallow((state) => ({
-      menstruationNotificationsEnabled:
-        state.settings.menstruationNotificationsEnabled,
-      menstruationNotifications: state.settings.menstruationNotifications,
-      updateSettings: state.updateSettings,
-    })),
+  const menstruationNotificationsEnabled = useSettingsStore(
+    (state) => state.settings.menstruationNotificationsEnabled,
   );
+  const menstruationNotifications = useSettingsStore(
+    (state) => state.settings.menstruationNotifications,
+  );
+  const updateSettings = useSettingsStore((state) => state.updateSettings);
   const averageCycleLength = getAverageCycleLength(events);
   const maxRuleDay = averageCycleLength
     ? Math.max(1, Math.min(60, Math.round(averageCycleLength)))
