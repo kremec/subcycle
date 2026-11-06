@@ -11,13 +11,9 @@ const SettingsScreen: FC = () => {
   return (
     <Screen scroll>
       <PredictionSettingsSection />
-
       <PillRemindersSettingsSection />
-
       <MenstruationRemindersSettingsSection />
-
       <PartnerModeSettingsSection />
-
       <BackupsSection />
     </Screen>
   );
