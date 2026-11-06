@@ -49,6 +49,6 @@ export const themePalettes = {
   },
 } as const;
 
-export type ThemeName = keyof typeof themePalettes;
+type ThemeName = keyof typeof themePalettes;
 export type PaletteColor =
   (typeof themePalettes)[ThemeName][keyof (typeof themePalettes)["light"]];

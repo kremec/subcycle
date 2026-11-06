@@ -1,6 +1,8 @@
 import { Fragment, type FC, useState } from "react";
 import { View } from "react-native";
 
+import { format } from "date-fns";
+
 import { ListRow } from "@/components/list-row";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -50,7 +52,7 @@ export const MenstruationRemindersSettingsSection: FC = () => {
   const [ruleTarget, setRuleTarget] = useState<RuleTarget>(null);
   const [ruleDay, setRuleDay] = useState(0);
   const [ruleMessage, setRuleMessage] = useState("");
-  const [pickingTime, setPickingTime] = useState(false);
+  const [pickingTime, setPickingTime] = useState<string | null>(null);
 
   return (
     <Fragment>
@@ -160,10 +162,10 @@ export const MenstruationRemindersSettingsSection: FC = () => {
       </SettingsSectionCard>
 
       <TimePickerDialog
-        visible={pickingTime}
-        value={ruleTarget?.rule?.notificationTime}
+        visible={pickingTime !== null}
+        value={pickingTime ?? "00:00"}
         onClose={() => {
-          setPickingTime(false);
+          setPickingTime(null);
           setRuleTarget(null);
         }}
         onSave={(time) => {
@@ -185,13 +187,13 @@ export const MenstruationRemindersSettingsSection: FC = () => {
           });
           ensureReminderPermissions();
 
-          setPickingTime(false);
+          setPickingTime(null);
           setRuleTarget(null);
         }}
       />
 
       <Dialog
-        visible={ruleTarget !== null && !pickingTime}
+        visible={ruleTarget !== null && pickingTime === null}
         onClose={() => setRuleTarget(null)}
       >
         <View style={{ gap: theme.spacing.md }}>
@@ -232,7 +234,14 @@ export const MenstruationRemindersSettingsSection: FC = () => {
               </Button>
             </View>
             <View style={{ flex: 1 }}>
-              <Button onPress={() => setPickingTime(true)}>
+              <Button
+                onPress={() =>
+                  setPickingTime(
+                    ruleTarget?.rule?.notificationTime ??
+                      format(new Date(), "HH:mm"),
+                  )
+                }
+              >
                 {t("common.save")}
               </Button>
             </View>

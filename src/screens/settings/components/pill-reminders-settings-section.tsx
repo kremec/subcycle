@@ -1,6 +1,8 @@
 import { Fragment, type FC, useState } from "react";
 import { View } from "react-native";
 
+import { format } from "date-fns";
+
 import { ListRow } from "@/components/list-row";
 import { Button } from "@/components/ui/button";
 import { Icon, IconName } from "@/components/ui/icon";
@@ -13,7 +15,7 @@ import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
 
-type PickerTarget = { index?: number } | null;
+type PickerTarget = { time: string; index?: number } | null;
 
 export const PillRemindersSettingsSection: FC = () => {
   const theme = useTheme();
@@ -63,7 +65,7 @@ export const PillRemindersSettingsSection: FC = () => {
                   key={`${time}-${index}`}
                   title={t("settings.notificationTime")}
                   description={time}
-                  onPress={() => setPickerTarget({ index })}
+                  onPress={() => setPickerTarget({ time, index })}
                   right={
                     <IconButton
                       accessibilityLabel={t("settings.deleteReminder")}
@@ -106,7 +108,9 @@ export const PillRemindersSettingsSection: FC = () => {
                   size={16}
                 />
               }
-              onPress={() => setPickerTarget({})}
+              onPress={() =>
+                setPickerTarget({ time: format(new Date(), "HH:mm") })
+              }
             >
               {t("settings.addReminder")}
             </Button>
@@ -116,11 +120,7 @@ export const PillRemindersSettingsSection: FC = () => {
 
       <TimePickerDialog
         visible={pickerTarget !== null}
-        value={
-          pickerTarget?.index === undefined
-            ? undefined
-            : pillNotificationTimes[pickerTarget.index]
-        }
+        value={pickerTarget?.time ?? "00:00"}
         onClose={() => setPickerTarget(null)}
         onSave={(time) => {
           const editedIndex = pickerTarget?.index;

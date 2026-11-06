@@ -12,7 +12,7 @@ import { t } from "@/translation/use-translation";
 
 interface TimePickerDialogProps {
   visible: boolean;
-  value?: string;
+  value: string;
   onClose: () => void;
   onSave: (time: string) => void;
 }
@@ -21,7 +21,7 @@ export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
   const { visible, value, onClose, onSave } = props;
   const theme = useTheme();
   const [draftValue, setDraftValue] = useState<string | null>(null);
-  const selectedValue = draftValue ?? value ?? format(new Date(), "HH:mm");
+  const selectedValue = draftValue ?? value;
   const selectedDate = parse(selectedValue, "HH:mm", 0);
 
   function handleClose() {
