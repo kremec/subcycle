@@ -1,13 +1,19 @@
-export type Event = {
-  date: Date;
-  menstruationLight: boolean;
-  menstruationModerate: boolean;
-  menstruationHeavy: boolean;
-  menstruationSpotting: boolean;
-  ovulation: boolean;
-  pill: boolean;
-  prediction: boolean;
-};
+import { z } from "zod";
+
+const flag = z.boolean().default(false);
+
+export const eventSchema = z.object({
+  date: z.date(),
+  menstruationLight: flag,
+  menstruationModerate: flag,
+  menstruationHeavy: flag,
+  menstruationSpotting: flag,
+  ovulation: flag,
+  pill: flag,
+  prediction: flag,
+});
+
+export type Event = z.infer<typeof eventSchema>;
 
 export enum MenstruationFlow {
   HEAVY = "menstruationHeavy",
@@ -20,19 +26,6 @@ export enum EventKind {
   NONE = "NONE",
   MENSTRUATION = "MENSTRUATION",
   OVULATION = "OVULATION",
-}
-
-export function createDefaultEvent(date: Date): Event {
-  return {
-    date,
-    menstruationLight: false,
-    menstruationModerate: false,
-    menstruationHeavy: false,
-    menstruationSpotting: false,
-    ovulation: false,
-    pill: false,
-    prediction: false,
-  };
 }
 
 export function hasAnyEventFlags(event: Event): boolean {

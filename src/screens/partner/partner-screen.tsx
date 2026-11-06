@@ -22,7 +22,7 @@ import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
 import { formatOrdinal, t } from "@/translation/use-translation";
 import {
-  createDefaultPartnerInsight,
+  partnerInsightSchema,
   type PartnerInsight,
 } from "@/types/partner-insight";
 
@@ -137,7 +137,7 @@ const PartnerScreen: FC = () => {
                 size={16}
               />
             }
-            onPress={() => setEditingInsight(createDefaultPartnerInsight())}
+            onPress={() => setEditingInsight(partnerInsightSchema.parse({}))}
           >
             {t("partner.addInsight")}
           </Button>

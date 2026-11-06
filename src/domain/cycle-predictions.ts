@@ -1,11 +1,7 @@
 import { addDays, compareAsc, differenceInCalendarDays } from "date-fns";
 
 import { getPeriodHistory, type PeriodHistory } from "@/domain/cycle";
-import {
-  createDefaultEvent,
-  MenstruationFlow,
-  type Event,
-} from "@/types/event";
+import { eventSchema, MenstruationFlow, type Event } from "@/types/event";
 
 const flows = Object.values(MenstruationFlow);
 
@@ -50,11 +46,11 @@ function predictMenstruation(
         ? flows[counts.indexOf(Math.max(...counts))]
         : MenstruationFlow.MODERATE;
 
-      return {
-        ...createDefaultEvent(addDays(lastStart, cycle * cycleLength + day)),
+      return eventSchema.parse({
+        date: addDays(lastStart, cycle * cycleLength + day),
         [type]: true,
         prediction: true,
-      };
+      });
     },
   );
 }
@@ -91,13 +87,13 @@ function predictOvulation(
   );
   const lastStart = periods[periods.length - 1].start;
 
-  return Array.from({ length: predictionTimespan }, (_, index) => ({
-    ...createDefaultEvent(
-      addDays(lastStart, (index + 1) * cycleLength + ovulationDay),
-    ),
-    ovulation: true,
-    prediction: true,
-  }));
+  return Array.from({ length: predictionTimespan }, (_, index) =>
+    eventSchema.parse({
+      date: addDays(lastStart, (index + 1) * cycleLength + ovulationDay),
+      ovulation: true,
+      prediction: true,
+    }),
+  );
 }
 
 export function getAllPredictions(

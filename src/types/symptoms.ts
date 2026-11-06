@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export enum Symptom {
   SYMPTOM_INTESTINAL_PROBLEMS = "symptomsIntestinalProblems",
   SYMPTOM_APPETITE_CHANGES = "symptomsAppetiteChanges",
@@ -28,14 +30,16 @@ export enum Symptom {
   MOOD_IRRITATED = "moodIrritated",
 }
 
-export type Symptoms = { date: Date } & Record<Symptom, boolean>;
+const flag = z.boolean().default(false);
 
-export function createDefaultSymptoms(date: Date): Symptoms {
-  return {
-    date,
-    ...Object.fromEntries(Object.values(Symptom).map((key) => [key, false])),
-  } as Symptoms;
-}
+export const symptomsSchema = z.object({
+  date: z.date(),
+  ...(Object.fromEntries(
+    Object.values(Symptom).map((key) => [key, flag]),
+  ) as Record<Symptom, typeof flag>),
+});
+
+export type Symptoms = z.infer<typeof symptomsSchema>;
 
 export function hasAnySymptoms(symptoms: Symptoms): boolean {
   return Object.values(Symptom).some((key) => symptoms[key]);

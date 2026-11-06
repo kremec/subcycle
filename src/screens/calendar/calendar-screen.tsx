@@ -17,8 +17,8 @@ import { SymptomsEditSheet } from "@/screens/calendar/components/symptoms-edit-s
 import { SymptomsOverview } from "@/screens/calendar/components/symptoms-overview";
 import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
-import { createDefaultEvent, type Event } from "@/types/event";
-import { createDefaultSymptoms } from "@/types/symptoms";
+import { eventSchema, type Event } from "@/types/event";
+import { symptomsSchema } from "@/types/symptoms";
 
 const CalendarScreen: FC = () => {
   const theme = useTheme();
@@ -35,7 +35,7 @@ const CalendarScreen: FC = () => {
 
   const selectedSymptoms =
     symptoms.find((entry) => isSameDay(entry.date, selectedDate)) ??
-    createDefaultSymptoms(selectedDate);
+    symptomsSchema.parse({ date: selectedDate });
 
   const [symptomsEditorVisible, setSymptomsEditorVisible] = useState(false);
 
@@ -58,7 +58,7 @@ const CalendarScreen: FC = () => {
 
                 setEditingEvent(
                   allEvents.find((entry) => isSameDay(entry.date, date)) ??
-                    createDefaultEvent(date),
+                    eventSchema.parse({ date }),
                 );
               }}
             />
