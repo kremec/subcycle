@@ -30,16 +30,11 @@ export enum Symptom {
 
 export type Symptoms = { date: Date } & Record<Symptom, boolean>;
 
-export function mapSymptomsKeys<T>(
-  value: (key: Symptom) => T,
-): Record<Symptom, T> {
-  return Object.fromEntries(
-    Object.values(Symptom).map((key) => [key, value(key)]),
-  ) as Record<Symptom, T>;
-}
-
 export function createDefaultSymptoms(date: Date): Symptoms {
-  return { date, ...mapSymptomsKeys(() => false) };
+  return {
+    date,
+    ...Object.fromEntries(Object.values(Symptom).map((key) => [key, false])),
+  } as Symptoms;
 }
 
 export function hasAnySymptoms(symptoms: Symptoms): boolean {

@@ -1,48 +1,65 @@
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { addDays, differenceInCalendarDays } from "date-fns";
+import { sql } from "drizzle-orm";
+import {
+  customType,
+  integer,
+  sqliteTable,
+  text,
+} from "drizzle-orm/sqlite-core";
+
+const epoch = new Date(1970, 0, 1, 12);
+
+const calendarDate = customType<{ data: Date; driverData: number }>({
+  dataType: () => "integer",
+  toDriver: (date) => differenceInCalendarDays(date, epoch),
+  fromDriver: (day) => addDays(epoch, day),
+});
+
+function flag(name: string) {
+  return integer(name, { mode: "boolean" })
+    .notNull()
+    .default(sql`0`);
+}
 
 export const eventsTable = sqliteTable("events", {
-  date: integer("date").primaryKey(),
-  menstruationLight: integer("menstruation_light").notNull().default(0),
-  menstruationModerate: integer("menstruation_moderate").notNull().default(0),
-  menstruationHeavy: integer("menstruation_heavy").notNull().default(0),
-  menstruationSpotting: integer("menstruation_spotting").notNull().default(0),
-  ovulation: integer("ovulation").notNull().default(0),
-  pill: integer("pill").notNull().default(0),
+  date: calendarDate("date").primaryKey(),
+  menstruationLight: flag("menstruation_light"),
+  menstruationModerate: flag("menstruation_moderate"),
+  menstruationHeavy: flag("menstruation_heavy"),
+  menstruationSpotting: flag("menstruation_spotting"),
+  ovulation: flag("ovulation"),
+  pill: flag("pill"),
 });
 
 export const symptomsTable = sqliteTable("symptoms", {
-  date: integer("date").primaryKey(),
-  symptomsIntestinalProblems: integer("symptoms_intestinal_problems")
-    .notNull()
-    .default(0),
-  symptomsAppetiteChanges: integer("symptoms_appetite_changes")
-    .notNull()
-    .default(0),
-  symptomsBloating: integer("symptoms_bloating").notNull().default(0),
-  symptomsChills: integer("symptoms_chills").notNull().default(0),
-  symptomsCramps: integer("symptoms_cramps").notNull().default(0),
-  symptomsDrySkin: integer("symptoms_dry_skin").notNull().default(0),
-  symptomsInsomnia: integer("symptoms_insomnia").notNull().default(0),
-  symptomsNausea: integer("symptoms_nausea").notNull().default(0),
-  dischargeWatery: integer("discharge_watery").notNull().default(0),
-  dischargeCreamy: integer("discharge_creamy").notNull().default(0),
-  dischargeSticky: integer("discharge_sticky").notNull().default(0),
-  dischargeDry: integer("discharge_dry").notNull().default(0),
-  libidoVeryLow: integer("sex_drive_very_low").notNull().default(0),
-  libidoLow: integer("sex_drive_low").notNull().default(0),
-  libidoHigh: integer("sex_drive_high").notNull().default(0),
-  libidoVeryHigh: integer("sex_drive_very_high").notNull().default(0),
-  exerciseRunning: integer("exercise_running").notNull().default(0),
-  exerciseCycling: integer("exercise_cycling").notNull().default(0),
-  exerciseHiking: integer("exercise_hiking").notNull().default(0),
-  exerciseGym: integer("exercise_gym").notNull().default(0),
-  moodAngry: integer("mood_angry").notNull().default(0),
-  moodHappy: integer("mood_happy").notNull().default(0),
-  moodNeutral: integer("mood_neutral").notNull().default(0),
-  moodSad: integer("mood_sad").notNull().default(0),
-  moodAnnoyed: integer("mood_annoyed").notNull().default(0),
-  moodSensitive: integer("mood_sensitive").notNull().default(0),
-  moodIrritated: integer("mood_irritated").notNull().default(0),
+  date: calendarDate("date").primaryKey(),
+  symptomsIntestinalProblems: flag("symptoms_intestinal_problems"),
+  symptomsAppetiteChanges: flag("symptoms_appetite_changes"),
+  symptomsBloating: flag("symptoms_bloating"),
+  symptomsChills: flag("symptoms_chills"),
+  symptomsCramps: flag("symptoms_cramps"),
+  symptomsDrySkin: flag("symptoms_dry_skin"),
+  symptomsInsomnia: flag("symptoms_insomnia"),
+  symptomsNausea: flag("symptoms_nausea"),
+  dischargeWatery: flag("discharge_watery"),
+  dischargeCreamy: flag("discharge_creamy"),
+  dischargeSticky: flag("discharge_sticky"),
+  dischargeDry: flag("discharge_dry"),
+  libidoVeryLow: flag("sex_drive_very_low"),
+  libidoLow: flag("sex_drive_low"),
+  libidoHigh: flag("sex_drive_high"),
+  libidoVeryHigh: flag("sex_drive_very_high"),
+  exerciseRunning: flag("exercise_running"),
+  exerciseCycling: flag("exercise_cycling"),
+  exerciseHiking: flag("exercise_hiking"),
+  exerciseGym: flag("exercise_gym"),
+  moodAngry: flag("mood_angry"),
+  moodHappy: flag("mood_happy"),
+  moodNeutral: flag("mood_neutral"),
+  moodSad: flag("mood_sad"),
+  moodAnnoyed: flag("mood_annoyed"),
+  moodSensitive: flag("mood_sensitive"),
+  moodIrritated: flag("mood_irritated"),
 });
 
 export const partnerInsightsTable = sqliteTable("partner_insights", {
