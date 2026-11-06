@@ -114,7 +114,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
           color={marker.textColor}
           style={{
             fontWeight: marker.selected ? "900" : "400",
-            fontSize: marker.selected ? typography.body : undefined,
+            fontSize: marker.selected ? typography.body.fontSize : undefined,
             lineHeight: marker.selected ? 18 : undefined,
             transform: marker.selected ? [{ scale: 1.08 }] : undefined,
           }}
