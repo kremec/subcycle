@@ -2,6 +2,7 @@ import "expo-sqlite/localStorage/install";
 import { create } from "zustand";
 import { combine, createJSONStorage, persist } from "zustand/middleware";
 
+import { migrateSettings } from "@/stores/settings-migrations";
 import { settingsSchema, type Settings } from "@/types/settings";
 
 export const useSettingsStore = create(
@@ -19,6 +20,8 @@ export const useSettingsStore = create(
     {
       name: "subcycle.settings",
       storage: createJSONStorage(() => localStorage),
+      version: 1,
+      migrate: migrateSettings,
     },
   ),
 );
