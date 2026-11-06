@@ -1,14 +1,12 @@
 import { type FC } from "react";
 import { ScrollView, View } from "react-native";
 
-import { format } from "date-fns";
-
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Typography } from "@/components/ui/typography";
 import { symptomGroups } from "@/domain/symptom-groups";
 import { SymptomCard } from "@/screens/calendar/components/symptom-card";
 import { useTheme } from "@/theme/use-theme";
-import { t } from "@/translation/use-translation";
+import { dateFormatter, t } from "@/translation/use-translation";
 import type { SymptomGroupDefinition } from "@/types/symptom-definition";
 import { symptomsSchema, type Symptoms, type Symptom } from "@/types/symptoms";
 
@@ -38,7 +36,7 @@ export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
       <View style={{ gap: theme.spacing.lg, paddingBottom: theme.spacing.lg }}>
         <Typography variant="title">
           {t("calendar.symptoms.title", {
-            date: format(symptoms.date, "EEE, dd MMM"),
+            date: dateFormatter.format(symptoms.date),
           })}
         </Typography>
         {symptomGroups.map((group) => (

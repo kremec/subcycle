@@ -1,15 +1,13 @@
 import { type FC, useState } from "react";
 import { View } from "react-native";
 
-import { format } from "date-fns";
-
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Icon, IconName } from "@/components/ui/icon";
 import { Typography } from "@/components/ui/typography";
 import { EventToggleButton } from "@/screens/calendar/components/event-toggle-button";
 import { useTheme } from "@/theme/use-theme";
-import { formatOrdinal, t } from "@/translation/use-translation";
+import { dateFormatter, formatOrdinal, t } from "@/translation/use-translation";
 import { eventSchema, type Event } from "@/types/event";
 
 interface CalendarEditDialogProps {
@@ -95,7 +93,7 @@ export const CalendarEditDialog: FC<CalendarEditDialogProps> = (props) => {
               draft.prediction
                 ? "calendar.edit.predictionsTitle"
                 : "calendar.edit.eventsTitle",
-              { date: format(draft.date, "EEE, dd MMM") },
+              { date: dateFormatter.format(draft.date) },
             )}
           </Typography>
           {dayInCycle && (

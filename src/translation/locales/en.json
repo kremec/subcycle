@@ -8,7 +8,8 @@
     },
     "loading": "Loading ...",
     "notAvailable": "N/A",
-    "save": "Save"
+    "save": "Save",
+    "today": "Today"
   },
   "calendar": {
     "cycleStatus": {
@@ -132,5 +133,14 @@
     "averageCycleLength": "Average cycle length",
     "averageHeavyPeriodLength": "Average heavy period length",
     "averagePeriodLength": "Average period length"
+  },
+  "reminders": {
+    "pillBody": "Don't forget to take your pill.",
+    "checkPill": "Check pill for today",
+    "menstruationBody": {
+      "zero": "Menstruation coming today.",
+      "one": "Menstruation coming in {{count}} day.",
+      "other": "Menstruation coming in {{count}} days."
+    }
   }
 }

@@ -26,7 +26,7 @@ enum ReminderScheduler {
     let center = UNUserNotificationCenter.current()
     let action = UNNotificationAction(
       identifier: pillActionIdentifier,
-      title: NSLocalizedString("Check pill for today", tableName: "SubcycleReminders", comment: "Pill reminder action"),
+      title: NSLocalizedString("subcycle_check_pill", comment: "Pill reminder action"),
       options: []
     )
     let category = UNNotificationCategory(
@@ -63,7 +63,7 @@ enum ReminderScheduler {
 
         let content = UNMutableNotificationContent()
         content.title = "subcycle"
-        content.body = NSLocalizedString("Don't forget to take your pill.", tableName: "SubcycleReminders", comment: "Pill reminder body")
+        content.body = NSLocalizedString("subcycle_pill_body", comment: "Pill reminder body")
         content.categoryIdentifier = pillCategoryIdentifier
         content.userInfo = ["date": PillEventStore.currentDateString()]
         self.configurePillNotificationContent(content, settings: settings)

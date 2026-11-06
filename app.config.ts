@@ -1,3 +1,40 @@
+/// <reference types="node" />
+
+import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+
+import en from "./src/translation/locales/en.json";
+
+const catalogDirectory = join(__dirname, "src/translation/locales");
+const locales = Object.fromEntries(
+  readdirSync(catalogDirectory)
+    .filter((file) => file.endsWith(".json"))
+    .sort()
+    .map((file) => {
+      const messages: typeof en = JSON.parse(
+        readFileSync(join(catalogDirectory, file), "utf8"),
+      );
+      const nativeStrings = {
+        subcycle_pill_reminders:
+          messages.settings?.pillReminders ?? en.settings.pillReminders,
+        subcycle_menstruation_reminders:
+          messages.settings?.menstruationReminders ??
+          en.settings.menstruationReminders,
+        subcycle_pill_body:
+          messages.reminders?.pillBody ?? en.reminders.pillBody,
+        subcycle_check_pill:
+          messages.reminders?.checkPill ?? en.reminders.checkPill,
+      };
+      return [
+        Intl.getCanonicalLocales(file.slice(0, -5))[0],
+        {
+          ios: { "Localizable.strings": nativeStrings },
+          android: nativeStrings,
+        },
+      ];
+    }),
+);
+
 const IS_DEV = process.env.APP_VARIANT === "development";
 
 export default {
@@ -14,6 +51,7 @@ export default {
   icon: "./assets/icon.png",
   scheme: "subcycle",
   userInterfaceStyle: "automatic",
+  locales,
   ios: {
     bundleIdentifier: IS_DEV
       ? "com.subbyte.subcycle.dev"
@@ -41,7 +79,7 @@ export default {
   plugins: [
     "expo-router",
     "expo-sharing",
-    "expo-localization",
+    ["expo-localization", { supportedLocales: Object.keys(locales) }],
     "expo-sqlite",
     [
       "expo-build-properties",

@@ -1,15 +1,13 @@
 import { type FC } from "react";
 import { ScrollView, View } from "react-native";
 
-import { format } from "date-fns";
-
 import { Card } from "@/components/ui/card";
 import { Icon, IconName } from "@/components/ui/icon";
 import { IconButton } from "@/components/ui/icon-button";
 import { Typography } from "@/components/ui/typography";
 import { symptomGroups } from "@/domain/symptom-groups";
 import { useTheme } from "@/theme/use-theme";
-import { t } from "@/translation/use-translation";
+import { dateFormatter, t } from "@/translation/use-translation";
 import type { Symptoms } from "@/types/symptoms";
 
 interface SymptomsOverviewProps {
@@ -25,7 +23,7 @@ export const SymptomsOverview: FC<SymptomsOverviewProps> = (props) => {
     <Card style={{ marginBottom: 2 }}>
       <Typography variant="titleSmall">
         {t("calendar.symptoms.title", {
-          date: format(symptoms.date, "EEE, dd MMM"),
+          date: dateFormatter.format(symptoms.date),
         })}
       </Typography>
       <View

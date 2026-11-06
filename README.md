@@ -46,3 +46,9 @@ On stats tab, you can see following statistics about your cycles:
 - Average heavy period length
 
 On partner insights tab, your partner can setup friendly insights into your cycle.
+
+## Localization
+
+Copy `src/translation/locales/en.json` to a BCP 47 language filename such as `sl.json` and translate its values. Keep `{{count}}`/`{{date}}` placeholders and supply the language’s plural forms (Slovenian: `one`, `two`, `few`, `other`; keep `zero` for “today” where present). Ordinals have their own forms; Slovenian can use `"other": "{{count}}."`.
+
+Catalogs register automatically. Dates and calendar labels use the selected language with the Gregorian calendar; missing translations fall back to English. The same catalog supplies native reminder text and notification channel names through Expo’s locale configuration. Rebuild/install the native app after adding a language so its supported languages and native strings are included. Language selection runs at startup; relaunch after changing the app/device language. No registry edits or platform translation files are needed.

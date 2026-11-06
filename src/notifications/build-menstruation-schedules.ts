@@ -1,6 +1,7 @@
 import { format, isFuture, parse, subDays } from "date-fns";
 
 import { getEventPeriods } from "@/domain/cycle";
+import { t } from "@/translation/use-translation";
 import { type Event } from "@/types/event";
 import { type Settings } from "@/types/settings";
 
@@ -46,7 +47,9 @@ export function buildMenstruationSchedules(
           hour,
           minute,
           daysBefore: rule.dayToMenstruation,
-          customMessage: rule.customMessage,
+          customMessage:
+            rule.customMessage ??
+            t("reminders.menstruationBody", { count: rule.dayToMenstruation }),
         },
       ];
     });

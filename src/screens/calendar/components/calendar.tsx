@@ -2,13 +2,43 @@ import { type FC, useRef } from "react";
 import { Pressable } from "react-native";
 
 import { addDays, format, isSameDay } from "date-fns";
-import { CalendarList, type DateData } from "react-native-calendars";
+import {
+  CalendarList,
+  LocaleConfig,
+  type DateData,
+} from "react-native-calendars";
 
 import { Typography } from "@/components/ui/typography";
 import { CalendarDay } from "@/screens/calendar/components/calendar-day";
 import { useTheme } from "@/theme/use-theme";
+import { locale, monthFormatter, t } from "@/translation/use-translation";
 import { EventGroupShape, type CalendarMarker } from "@/types/calendar-marker";
 import { EventKind, type Event } from "@/types/event";
+
+const months = Array.from(
+  { length: 12 },
+  (_, month) => new Date(2000, month, 1),
+);
+const days = Array.from({ length: 7 }, (_, day) => new Date(2000, 0, day + 2));
+
+LocaleConfig.locales[locale] = {
+  monthNames: months.map(
+    new Intl.DateTimeFormat(locale, { month: "long", calendar: "gregory" })
+      .format,
+  ),
+  monthNamesShort: months.map(
+    new Intl.DateTimeFormat(locale, { month: "short", calendar: "gregory" })
+      .format,
+  ),
+  dayNames: days.map(
+    new Intl.DateTimeFormat(locale, { weekday: "long" }).format,
+  ),
+  dayNamesShort: days.map(
+    new Intl.DateTimeFormat(locale, { weekday: "short" }).format,
+  ),
+  today: t("common.today"),
+};
+LocaleConfig.defaultLocale = locale;
 
 interface CalendarProps {
   events: Event[];
@@ -134,7 +164,11 @@ export const Calendar: FC<CalendarProps> = (props) => {
           }}
         >
           <Typography variant="titleSmall" style={{ textAlign: "center" }}>
-            {date?.toString("MMMM yyyy") ?? format(selectedDate, "MMMM yyyy")}
+            {monthFormatter.format(
+              date
+                ? new Date(date.getFullYear(), date.getMonth(), 1)
+                : selectedDate,
+            )}
           </Typography>
         </Pressable>
       )}
