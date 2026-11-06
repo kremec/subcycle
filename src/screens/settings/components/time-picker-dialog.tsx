@@ -1,5 +1,5 @@
 import { type FC, useState } from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 
 import { DateTimePicker } from "@expo/ui/community/datetime-picker";
 import { format, parse } from "date-fns";
@@ -22,7 +22,12 @@ export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
   const theme = useTheme();
   const [draftValue, setDraftValue] = useState<string | null>(null);
   const selectedValue = draftValue ?? value;
-  const selectedDate = parse(selectedValue, "HH:mm", 0);
+  // Android resets its dial when the initial value changes.
+  const selectedDate = parse(
+    Platform.OS === "android" ? value : selectedValue,
+    "HH:mm",
+    0,
+  );
 
   function handleClose() {
     setDraftValue(null);
