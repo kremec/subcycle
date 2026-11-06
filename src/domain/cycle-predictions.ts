@@ -8,15 +8,11 @@ import {
 import {
   createDefaultEvent,
   isMenstruationEvent,
+  MenstruationFlow,
   type Event,
 } from "@/types/event";
 
-const flowTypes = [
-  "menstruationHeavy",
-  "menstruationModerate",
-  "menstruationLight",
-  "menstruationSpotting",
-] as const;
+const flows = Object.values(MenstruationFlow);
 
 export function getMenstruationPredictions(
   events: Event[],
@@ -41,8 +37,8 @@ export function getMenstruationPredictions(
       )
       .sort((left, right) => compareAsc(left.date, right.date))
       .forEach((event, day) => {
-        const counts = (flowCounts[day] ??= [0, 0, 0, 0]);
-        flowTypes.forEach((type, index) => {
+        const counts = (flowCounts[day] ??= flows.map(() => 0));
+        flows.forEach((type, index) => {
           if (event[type]) counts[index] += 1;
         });
       });
@@ -59,8 +55,8 @@ export function getMenstruationPredictions(
       const day = index % periodLength;
       const counts = flowCounts[day];
       const type = counts
-        ? flowTypes[counts.indexOf(Math.max(...counts))]
-        : "menstruationModerate";
+        ? flows[counts.indexOf(Math.max(...counts))]
+        : MenstruationFlow.MODERATE;
 
       return {
         ...createDefaultEvent(addDays(lastStart, cycle * cycleLength + day)),

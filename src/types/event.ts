@@ -9,6 +9,13 @@ export type Event = {
   prediction: boolean;
 };
 
+export enum MenstruationFlow {
+  HEAVY = "menstruationHeavy",
+  MODERATE = "menstruationModerate",
+  LIGHT = "menstruationLight",
+  SPOTTING = "menstruationSpotting",
+}
+
 export enum EventKind {
   NONE = "NONE",
   MENSTRUATION = "MENSTRUATION",
