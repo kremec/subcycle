@@ -1,11 +1,10 @@
 import { type FC } from "react";
-import { Alert, View } from "react-native";
+import { View } from "react-native";
 
 import { Button } from "@/components/ui/button";
 import { Icon, IconName } from "@/components/ui/icon";
 import { exportDatabase } from "@/db/export-database";
 import { importLatestNativeDatabase } from "@/db/import-database";
-import { logError } from "@/logging/logger";
 import { SettingsSectionCard } from "@/screens/settings/components/settings-section-card";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
@@ -30,12 +29,7 @@ export const BackupsSection: FC = () => {
                 size={16}
               />
             }
-            onPress={() =>
-              importLatestNativeDatabase().catch((error) => {
-                logError("db.import", "failed", error);
-                Alert.alert(t("settings.importFailed"));
-              })
-            }
+            onPress={importLatestNativeDatabase}
           >
             {t("settings.importData")}
           </Button>
@@ -50,12 +44,7 @@ export const BackupsSection: FC = () => {
                 size={16}
               />
             }
-            onPress={() =>
-              exportDatabase().catch((error) => {
-                logError("db.export", "failed", error);
-                Alert.alert(t("settings.exportFailed"));
-              })
-            }
+            onPress={exportDatabase}
           >
             {t("settings.exportData")}
           </Button>
