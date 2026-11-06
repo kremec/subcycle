@@ -25,15 +25,19 @@ export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
   const { visible, symptoms, onClose, onChange } = props;
   const theme = useTheme();
 
-  const toggle = (group: SymptomGroupDefinition, key: Symptom) => {
-    const next = { ...symptoms, [key]: !symptoms[key] };
-    if (next[key] && group.exclusive) {
+  function toggleSymptom(group: SymptomGroupDefinition, key: Symptom) {
+    const selected = !symptoms[key];
+    const next = { ...symptoms };
+
+    if (group.exclusive && selected) {
       for (const symptom of group.types) {
-        next[symptom.key] = symptom.key === key;
+        next[symptom.key] = false;
       }
     }
+
+    next[key] = selected;
     onChange(symptomsSchema.parse(next));
-  };
+  }
 
   return (
     <BottomSheet visible={visible} onClose={onClose}>
@@ -63,7 +67,7 @@ export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
                     backgroundColor={group.color}
                     filled={symptom.filled}
                     selected={symptoms[symptom.key]}
-                    onPress={() => toggle(group, symptom.key)}
+                    onPress={() => toggleSymptom(group, symptom.key)}
                   />
                 ))}
               </View>

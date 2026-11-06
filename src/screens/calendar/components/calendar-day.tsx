@@ -14,40 +14,21 @@ interface CalendarDayProps {
 
 export const CalendarDay: FC<CalendarDayProps> = (props) => {
   const { marker, onPress } = props;
-  const borderWidth = 4;
-  const markerSize = 44;
-  const actualShape = getVisualShape(marker.actualGroup, marker.date);
-  const predictionShape = getVisualShape(marker.predictionGroup, marker.date);
-  const actualSingle = marker.actualGroup === EventGroupShape.SINGLE;
-  const predictionSingle = marker.predictionGroup === EventGroupShape.SINGLE;
-
-  function getVisualShape(group: CalendarMarker["actualGroup"], date: Date) {
-    const isFirstDayOfWeek = date.getDay() === 1;
-    const isLastDayOfWeek = date.getDay() === 0;
-    const isFirstDayOfMonth = date.getDate() === 1;
-
-    const roundedLeft =
-      group === EventGroupShape.SINGLE ||
-      group === EventGroupShape.START ||
-      isFirstDayOfWeek ||
-      isFirstDayOfMonth;
-    const roundedRight =
-      group === EventGroupShape.SINGLE ||
-      group === EventGroupShape.END ||
-      isLastDayOfWeek ||
-      isLastDayOfMonth(date);
-
-    return {
-      marginLeft: roundedLeft ? 1 : 0,
-      marginRight: roundedRight ? 1 : 0,
-      roundedLeft,
-      roundedRight,
-      borderTopLeftRadius: roundedLeft ? 1000 : 0,
-      borderBottomLeftRadius: roundedLeft ? 1000 : 0,
-      borderTopRightRadius: roundedRight ? 1000 : 0,
-      borderBottomRightRadius: roundedRight ? 1000 : 0,
-    };
-  }
+  const { date, group, prediction, color } = marker;
+  const single = group === EventGroupShape.SINGLE;
+  const roundedLeft =
+    single ||
+    group === EventGroupShape.START ||
+    date.getDay() === 1 ||
+    date.getDate() === 1;
+  const roundedRight =
+    single ||
+    group === EventGroupShape.END ||
+    date.getDay() === 0 ||
+    isLastDayOfMonth(date);
+  const leftRadius = roundedLeft ? 1000 : 0;
+  const rightRadius = roundedRight ? 1000 : 0;
+  const borderWidth = prediction ? 4 : 0;
 
   return (
     <Pressable
@@ -64,44 +45,26 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
           justifyContent: "center",
         }}
       >
-        {marker.actualColor !== null && (
+        {color !== null && (
           <View
             style={{
               position: "absolute",
               top: 0,
               bottom: 0,
-              left: actualSingle ? "50%" : actualShape.marginLeft,
-              right: actualSingle ? undefined : actualShape.marginRight,
-              width: actualSingle ? markerSize : undefined,
-              marginLeft: actualSingle ? -(markerSize / 2) : 0,
-              backgroundColor: marker.actualColor,
-              borderTopLeftRadius: actualShape.borderTopLeftRadius,
-              borderBottomLeftRadius: actualShape.borderBottomLeftRadius,
-              borderTopRightRadius: actualShape.borderTopRightRadius,
-              borderBottomRightRadius: actualShape.borderBottomRightRadius,
-            }}
-          />
-        )}
-
-        {marker.predictionColor !== null && (
-          <View
-            style={{
-              position: "absolute",
-              top: 0,
-              bottom: 0,
-              left: predictionSingle ? "50%" : predictionShape.marginLeft,
-              right: predictionSingle ? undefined : predictionShape.marginRight,
-              width: predictionSingle ? markerSize : undefined,
-              marginLeft: predictionSingle ? -(markerSize / 2) : 0,
+              left: single ? "50%" : roundedLeft ? 1 : 0,
+              right: single ? undefined : roundedRight ? 1 : 0,
+              width: single ? 44 : undefined,
+              marginLeft: single ? -22 : 0,
+              backgroundColor: prediction ? undefined : color,
+              borderColor: prediction ? color : undefined,
               borderTopWidth: borderWidth,
               borderBottomWidth: borderWidth,
-              borderLeftWidth: predictionShape.roundedLeft ? borderWidth : 0,
-              borderRightWidth: predictionShape.roundedRight ? borderWidth : 0,
-              borderColor: marker.predictionColor,
-              borderTopLeftRadius: predictionShape.borderTopLeftRadius,
-              borderBottomLeftRadius: predictionShape.borderBottomLeftRadius,
-              borderTopRightRadius: predictionShape.borderTopRightRadius,
-              borderBottomRightRadius: predictionShape.borderBottomRightRadius,
+              borderLeftWidth: roundedLeft ? borderWidth : 0,
+              borderRightWidth: roundedRight ? borderWidth : 0,
+              borderTopLeftRadius: leftRadius,
+              borderBottomLeftRadius: leftRadius,
+              borderTopRightRadius: rightRadius,
+              borderBottomRightRadius: rightRadius,
             }}
           />
         )}
@@ -116,7 +79,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
             transform: marker.selected ? [{ scale: 1.08 }] : undefined,
           }}
         >
-          {marker.date.getDate()}
+          {date.getDate()}
         </Typography>
 
         <View

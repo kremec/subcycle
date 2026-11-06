@@ -22,39 +22,63 @@ export const CalendarEditDialog: FC<CalendarEditDialogProps> = (props) => {
   const theme = useTheme();
   const [draft, setDraft] = useState(event);
 
-  const flowToggles = [
-    {
-      key: MenstruationFlow.LIGHT,
-      label: t("calendar.edit.light"),
-      icon: IconName.DROPLET,
-      filled: false,
-      color: theme.colors.calendarMenstruationLight,
-    },
-    {
-      key: MenstruationFlow.MODERATE,
-      label: t("calendar.edit.moderate"),
-      icon: IconName.DROPLET_HALF,
-      filled: true,
-      color: theme.colors.calendarMenstruationModerate,
-    },
-    {
-      key: MenstruationFlow.HEAVY,
-      label: t("calendar.edit.heavy"),
-      icon: IconName.DROPLET,
-      filled: true,
-      color: theme.colors.calendarMenstruationHeavy,
-    },
-    {
-      key: MenstruationFlow.SPOTTING,
-      label: t("calendar.edit.spotting"),
-      icon: IconName.CHART_BUBBLE,
-      filled: true,
-      color: theme.colors.calendarMenstruationLight,
-    },
-  ];
+  const toggleGroups = [
+    [
+      {
+        key: MenstruationFlow.LIGHT,
+        label: t("calendar.edit.light"),
+        icon: IconName.DROPLET,
+        filled: false,
+        color: theme.colors.calendarMenstruationLight,
+      },
+      {
+        key: MenstruationFlow.MODERATE,
+        label: t("calendar.edit.moderate"),
+        icon: IconName.DROPLET_HALF,
+        filled: true,
+        color: theme.colors.calendarMenstruationModerate,
+      },
+      {
+        key: MenstruationFlow.HEAVY,
+        label: t("calendar.edit.heavy"),
+        icon: IconName.DROPLET,
+        filled: true,
+        color: theme.colors.calendarMenstruationHeavy,
+      },
+      {
+        key: MenstruationFlow.SPOTTING,
+        label: t("calendar.edit.spotting"),
+        icon: IconName.CHART_BUBBLE,
+        filled: true,
+        color: theme.colors.calendarMenstruationLight,
+      },
+    ],
+    [
+      {
+        key: "ovulation",
+        label: t("calendar.edit.ovulation"),
+        icon: IconName.EGG,
+        filled: false,
+        color: theme.colors.calendarOvulation,
+      },
+    ],
+    [
+      {
+        key: "pill",
+        label: t("calendar.edit.pill"),
+        icon: IconName.PILL,
+        filled: true,
+        color: theme.colors.calendarPill,
+      },
+    ],
+  ] as const;
 
-  // Flow types and ovulation are mutually exclusive.
-  const toggleExclusive = (key: MenstruationFlow | "ovulation") => {
+  function toggleEvent(key: MenstruationFlow | "ovulation" | "pill") {
+    if (key === "pill") {
+      setDraft(eventSchema.parse({ ...draft, pill: !draft.pill }));
+      return;
+    }
+
     setDraft(
       eventSchema.parse({
         ...draft,
@@ -66,7 +90,7 @@ export const CalendarEditDialog: FC<CalendarEditDialogProps> = (props) => {
         [key]: !draft[key],
       }),
     );
-  };
+  }
 
   const save = () => {
     const finalEvent = eventSchema.parse({
@@ -103,52 +127,27 @@ export const CalendarEditDialog: FC<CalendarEditDialogProps> = (props) => {
           )}
         </View>
 
-        <View style={{ gap: theme.spacing.sm }}>
-          {flowToggles.map((toggle) => (
-            <EventToggleButton
-              key={toggle.key}
-              label={toggle.label}
-              icon={
-                <Icon
-                  name={toggle.icon}
-                  color={theme.colors.text}
-                  size={18}
-                  filled={toggle.filled}
-                />
-              }
-              active={draft[toggle.key]}
-              color={toggle.color}
-              onPress={() => toggleExclusive(toggle.key)}
-            />
-          ))}
-        </View>
-
-        <EventToggleButton
-          label={t("calendar.edit.ovulation")}
-          icon={
-            <Icon name={IconName.EGG} color={theme.colors.text} size={18} />
-          }
-          active={draft.ovulation}
-          color={theme.colors.calendarOvulation}
-          onPress={() => toggleExclusive("ovulation")}
-        />
-
-        <EventToggleButton
-          label={t("calendar.edit.pill")}
-          icon={
-            <Icon
-              name={IconName.PILL}
-              color={theme.colors.text}
-              size={18}
-              filled
-            />
-          }
-          active={draft.pill}
-          color={theme.colors.calendarPill}
-          onPress={() =>
-            setDraft(eventSchema.parse({ ...draft, pill: !draft.pill }))
-          }
-        />
+        {toggleGroups.map((toggles) => (
+          <View key={toggles[0].key} style={{ gap: theme.spacing.sm }}>
+            {toggles.map((toggle) => (
+              <EventToggleButton
+                key={toggle.key}
+                label={toggle.label}
+                icon={
+                  <Icon
+                    name={toggle.icon}
+                    color={theme.colors.text}
+                    size={18}
+                    filled={toggle.filled}
+                  />
+                }
+                active={draft[toggle.key]}
+                color={toggle.color}
+                onPress={() => toggleEvent(toggle.key)}
+              />
+            ))}
+          </View>
+        ))}
 
         <View style={{ flexDirection: "row", gap: theme.spacing.sm }}>
           <View style={{ flex: 1 }}>
