@@ -18,19 +18,26 @@ export function usePartnerInsightsQuery(): {
   );
 }
 
-export async function upsertPartnerInsight(
+export async function savePartnerInsight(
   insight: PartnerInsight,
 ): Promise<void> {
-  await db.insert(partnerInsightsTable).values(insight).onConflictDoUpdate({
-    target: partnerInsightsTable.dayInCycle,
-    set: insight,
-  });
-  backupDatabaseAfterWrite();
+  return db
+    .insert(partnerInsightsTable)
+    .values(insight)
+    .onConflictDoUpdate({
+      target: partnerInsightsTable.dayInCycle,
+      set: insight,
+    })
+    .then(() => {
+      backupDatabaseAfterWrite();
+    });
 }
 
 export async function deletePartnerInsight(dayInCycle: number): Promise<void> {
-  await db
+  return db
     .delete(partnerInsightsTable)
-    .where(eq(partnerInsightsTable.dayInCycle, dayInCycle));
-  backupDatabaseAfterWrite();
+    .where(eq(partnerInsightsTable.dayInCycle, dayInCycle))
+    .then(() => {
+      backupDatabaseAfterWrite();
+    });
 }

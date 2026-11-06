@@ -13,7 +13,7 @@ import { useEventsQuery } from "@/db/repositories/events-repository";
 import { usePartnerInsightsQuery } from "@/db/repositories/partner-insights-repository";
 import {
   deletePartnerInsight,
-  upsertPartnerInsight,
+  savePartnerInsight,
 } from "@/db/repositories/partner-insights-repository";
 import { getDayInCycle } from "@/domain/cycle";
 import { getAllPredictions } from "@/domain/cycle-predictions";
@@ -156,7 +156,7 @@ const PartnerScreen: FC = () => {
             if (editingInsight.dayInCycle !== insight.dayInCycle) {
               deletePartnerInsight(editingInsight.dayInCycle);
             }
-            upsertPartnerInsight(insight);
+            savePartnerInsight(insight);
             setEditingInsight(null);
           }}
         />

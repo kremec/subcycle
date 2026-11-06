@@ -5,7 +5,7 @@ import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
 import { db } from "@/db/client";
 import { eventsTable } from "@/db/schema";
 import { fromEpochDay, toEpochDay } from "@/domain/time";
-import { logError, logInfo } from "@/logging/logger";
+import { logInfo } from "@/logging/logger";
 import { type Event, hasAnyEventFlags } from "@/types/event";
 
 export function useEventsQuery(): { data: Event[]; error?: Error } {
@@ -35,39 +35,41 @@ export function useEventsQuery(): { data: Event[]; error?: Error } {
 }
 
 export async function saveEvent(event: Event): Promise<void> {
-  const action = hasAnyEventFlags(event) ? "upsert" : "delete";
-  try {
-    if (action === "upsert") {
-      const values = {
-        date: toEpochDay(event.date),
-        menstruationLight: Number(event.menstruationLight),
-        menstruationModerate: Number(event.menstruationModerate),
-        menstruationHeavy: Number(event.menstruationHeavy),
-        menstruationSpotting: Number(event.menstruationSpotting),
-        ovulation: Number(event.ovulation),
-        pill: Number(event.pill),
-      };
-      await db
-        .insert(eventsTable)
-        .values(values)
-        .onConflictDoUpdate({ target: eventsTable.date, set: values });
-    } else {
-      await db
-        .delete(eventsTable)
-        .where(eq(eventsTable.date, toEpochDay(event.date)));
-    }
-    backupDatabaseAfterWrite();
-    logInfo("db.event", action);
-  } catch (error) {
-    logError("db.event", `${action}-failed`, error);
-    throw error;
+  if (!hasAnyEventFlags(event)) {
+    return db
+      .delete(eventsTable)
+      .where(eq(eventsTable.date, toEpochDay(event.date)))
+      .then(() => {
+        backupDatabaseAfterWrite();
+        logInfo("db.event", "delete");
+      });
   }
+
+  const values = {
+    date: toEpochDay(event.date),
+    menstruationLight: Number(event.menstruationLight),
+    menstruationModerate: Number(event.menstruationModerate),
+    menstruationHeavy: Number(event.menstruationHeavy),
+    menstruationSpotting: Number(event.menstruationSpotting),
+    ovulation: Number(event.ovulation),
+    pill: Number(event.pill),
+  };
+  return db
+    .insert(eventsTable)
+    .values(values)
+    .onConflictDoUpdate({ target: eventsTable.date, set: values })
+    .then(() => {
+      backupDatabaseAfterWrite();
+      logInfo("db.event", "upsert");
+    });
 }
 
 export async function markPillForDate(date: Date): Promise<void> {
-  await db
+  return db
     .insert(eventsTable)
     .values({ date: toEpochDay(date), pill: 1 })
-    .onConflictDoUpdate({ target: eventsTable.date, set: { pill: 1 } });
-  backupDatabaseAfterWrite();
+    .onConflictDoUpdate({ target: eventsTable.date, set: { pill: 1 } })
+    .then(() => {
+      backupDatabaseAfterWrite();
+    });
 }

@@ -5,7 +5,7 @@ import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
 import { db } from "@/db/client";
 import { symptomsTable } from "@/db/schema";
 import { fromEpochDay, toEpochDay } from "@/domain/time";
-import { logError, logInfo } from "@/logging/logger";
+import { logInfo } from "@/logging/logger";
 import {
   hasAnySymptoms,
   mapSymptomsKeys,
@@ -28,26 +28,26 @@ export function useSymptomsQuery(): { data: Symptoms[]; error?: Error } {
 }
 
 export async function saveSymptoms(symptoms: Symptoms): Promise<void> {
-  const action = hasAnySymptoms(symptoms) ? "upsert" : "delete";
-  try {
-    if (action === "upsert") {
-      const values = {
-        date: toEpochDay(symptoms.date),
-        ...mapSymptomsKeys((key) => Number(symptoms[key])),
-      };
-      await db
-        .insert(symptomsTable)
-        .values(values)
-        .onConflictDoUpdate({ target: symptomsTable.date, set: values });
-    } else {
-      await db
-        .delete(symptomsTable)
-        .where(eq(symptomsTable.date, toEpochDay(symptoms.date)));
-    }
-    backupDatabaseAfterWrite();
-    logInfo("db.symptoms", action);
-  } catch (error) {
-    logError("db.symptoms", `${action}-failed`, error);
-    throw error;
+  if (!hasAnySymptoms(symptoms)) {
+    return db
+      .delete(symptomsTable)
+      .where(eq(symptomsTable.date, toEpochDay(symptoms.date)))
+      .then(() => {
+        backupDatabaseAfterWrite();
+        logInfo("db.symptoms", "delete");
+      });
   }
+
+  const values = {
+    date: toEpochDay(symptoms.date),
+    ...mapSymptomsKeys((key) => Number(symptoms[key])),
+  };
+  return db
+    .insert(symptomsTable)
+    .values(values)
+    .onConflictDoUpdate({ target: symptomsTable.date, set: values })
+    .then(() => {
+      backupDatabaseAfterWrite();
+      logInfo("db.symptoms", "upsert");
+    });
 }
