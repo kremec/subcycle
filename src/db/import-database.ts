@@ -1,15 +1,24 @@
+import { Alert } from "react-native";
+
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system/legacy";
 import {
   backupDatabaseAsync,
   defaultDatabaseDirectory,
-  deleteDatabaseAsync,
-  openDatabaseSync,
+  openDatabaseAsync,
+  type SQLiteDatabase,
 } from "expo-sqlite";
+
+import { drizzle } from "drizzle-orm/expo-sqlite";
 
 import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
 import { expoDb } from "@/db/client";
+import { eventsTable, partnerInsightsTable, symptomsTable } from "@/db/schema";
 import { logError, logInfo } from "@/logging/logger";
+import { t } from "@/translation/use-translation";
+import { eventSchema } from "@/types/event";
+import { partnerInsightSchema } from "@/types/partner-insight";
+import { symptomsSchema } from "@/types/symptom";
 
 const IMPORT_DB_NAME = "subcycle-import.db";
 
@@ -36,55 +45,58 @@ async function notifyLiveQueriesChanged(): Promise<void> {
   await expoDb.execAsync(notifyQueries.join(";"));
 }
 
-export async function importLatestNativeDatabase(): Promise<void> {
-  const pickedUri = await pickDatabaseFile();
-  if (!pickedUri) {
-    return;
-  }
-
-  logInfo("db.import", "start");
-
-  try {
-    await deleteDatabaseAsync(IMPORT_DB_NAME, defaultDatabaseDirectory);
-  } catch {
-    // Ignore missing temp import DB.
-  }
-
-  try {
-    const importPath = `${defaultDatabaseDirectory}/${IMPORT_DB_NAME}`;
-    await FileSystem.copyAsync({
-      from: pickedUri,
-      to: `file://${importPath}`,
-    });
-
-    const importDb = openDatabaseSync(
-      IMPORT_DB_NAME,
-      { useNewConnection: true },
-      defaultDatabaseDirectory,
-    );
-
-    try {
-      await backupDatabaseAsync({
-        sourceDatabase: importDb,
-        destDatabase: expoDb,
-      });
-      await notifyLiveQueriesChanged();
-      backupDatabaseAfterWrite();
-      logInfo("db.import", "complete");
-    } finally {
-      importDb.closeSync();
-      try {
-        await deleteDatabaseAsync(IMPORT_DB_NAME, defaultDatabaseDirectory);
-      } catch {
-        // Ignore cleanup failures for temp imports.
+export function importLatestNativeDatabase(): Promise<void> {
+  return pickDatabaseFile()
+    .then(async (pickedUri) => {
+      if (!pickedUri) {
+        return;
       }
-    }
-  } catch (error) {
-    logError(
-      "db.import",
-      "failed",
-      error instanceof Error ? error : String(error),
-    );
-    throw error;
-  }
+
+      logInfo("db.import", "start");
+
+      const importUri = `file://${defaultDatabaseDirectory}/${IMPORT_DB_NAME}`;
+      let importDb: SQLiteDatabase | undefined;
+      try {
+        await FileSystem.copyAsync({
+          from: pickedUri,
+          to: importUri,
+        });
+
+        importDb = await openDatabaseAsync(
+          IMPORT_DB_NAME,
+          { useNewConnection: true },
+          defaultDatabaseDirectory,
+        );
+
+        const sourceDb = drizzle(importDb);
+        eventSchema.array().parse(sourceDb.select().from(eventsTable).all());
+        symptomsSchema
+          .array()
+          .parse(sourceDb.select().from(symptomsTable).all());
+        partnerInsightSchema
+          .array()
+          .parse(sourceDb.select().from(partnerInsightsTable).all());
+
+        await backupDatabaseAsync({
+          sourceDatabase: importDb,
+          destDatabase: expoDb,
+        });
+        await notifyLiveQueriesChanged();
+        backupDatabaseAfterWrite();
+        logInfo("db.import", "complete");
+      } finally {
+        await importDb?.closeAsync().catch((error) => {
+          logError("db.import", "close-failed", error);
+        });
+        await FileSystem.deleteAsync(importUri, { idempotent: true }).catch(
+          (error) => {
+            logError("db.import", "cleanup-failed", error);
+          },
+        );
+      }
+    })
+    .catch((error) => {
+      logError("db.import", "failed", error);
+      Alert.alert(t("settings.importFailed"));
+    });
 }

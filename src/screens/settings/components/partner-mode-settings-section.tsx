@@ -1,20 +1,18 @@
 import { type FC } from "react";
 
-import { Switch } from "@/components/ui";
+import { IconName } from "@/components/ui/icon";
+import { Switch } from "@/components/ui/switch";
 import { SettingsSectionCard } from "@/screens/settings/components/settings-section-card";
 import { useSettingsStore } from "@/stores/settings-store";
-import { useT } from "@/translation/use-translation";
+import { t } from "@/translation/use-translation";
 
 export const PartnerModeSettingsSection: FC = () => {
-  const t = useT();
-  const {
-    settings: { partnerMode },
-    updateSettings,
-  } = useSettingsStore();
+  const partnerMode = useSettingsStore((state) => state.settings.partnerMode);
+  const updateSettings = useSettingsStore((state) => state.updateSettings);
 
   return (
     <SettingsSectionCard
-      icon="user-heart"
+      icon={IconName.USER_HEART}
       title={t("settings.partnerMode")}
       description={t("settings.partnerModeDescription")}
       right={

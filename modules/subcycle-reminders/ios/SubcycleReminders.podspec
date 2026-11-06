@@ -20,5 +20,7 @@ Pod::Spec.new do |s|
     'DEFINES_MODULE' => 'YES',
   }
 
+  s.resources = "Resources/**/*"
+
   s.source_files = "**/*.{h,m,mm,swift,hpp,cpp}"
 end

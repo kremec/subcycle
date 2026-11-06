@@ -1,43 +1,35 @@
 import { type FC } from "react";
 
+import { IconName } from "@/components/ui/icon";
 import { Screen } from "@/components/ui/screen";
-import { useEventsQuery } from "@/db/queries/use-events-query";
-import { getAverageCycleLength } from "@/domain/stats/get-average-cycle-length";
-import { getAverageHeavyPeriodLength } from "@/domain/stats/get-average-heavy-period-length";
-import { getAveragePeriodLength } from "@/domain/stats/get-average-period-length";
+import { useEventsQuery } from "@/db/repositories/events-repository";
+import { getAverageCycleLength, getAveragePeriodLength } from "@/domain/cycle";
 import { StatCard } from "@/screens/stats/components/stat-card";
-import { useT } from "@/translation/use-translation";
+import { t } from "@/translation/use-translation";
 
 const StatsScreen: FC = () => {
-  const t = useT();
   const { data: events } = useEventsQuery();
-
-  function formatDays(value: number | null): string {
-    if (value === null || Number.isNaN(value)) {
-      return t("common.notAvailable");
-    }
-
-    const days = Math.trunc(value);
-    return t("common.days", { count: days });
-  }
 
   return (
     <Screen>
       <StatCard
-        icon="reload"
+        icon={IconName.RELOAD}
         title={t("stats.averageCycleLength")}
-        description={formatDays(getAverageCycleLength(events))}
+        days={getAverageCycleLength(events)}
       />
       <StatCard
-        icon="droplet"
+        icon={IconName.DROPLET}
         title={t("stats.averagePeriodLength")}
-        description={formatDays(getAveragePeriodLength(events))}
+        days={getAveragePeriodLength(events)}
       />
       <StatCard
-        icon="droplet"
+        icon={IconName.DROPLET}
         filled
         title={t("stats.averageHeavyPeriodLength")}
-        description={formatDays(getAverageHeavyPeriodLength(events))}
+        days={getAveragePeriodLength(
+          events,
+          (event) => event.menstruationHeavy,
+        )}
       />
     </Screen>
   );

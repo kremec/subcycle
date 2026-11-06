@@ -1,13 +1,9 @@
-import { format, isFuture, set as setDateTime, subDays } from "date-fns";
+import { format, isFuture, parse, subDays } from "date-fns";
 
-import { getEventPeriods } from "@/domain/events/get-event-periods";
-import { toCalendarDate } from "@/domain/time";
-import {
-  isMenstruationEvent,
-  type Event,
-  type Settings,
-  type Time,
-} from "@/types";
+import { getEventPeriods } from "@/domain/cycle";
+import { t } from "@/translation/use-translation";
+import { type Event } from "@/types/event";
+import { type Settings } from "@/types/settings";
 
 import type { MenstruationNotificationSchedule } from "@modules/subcycle-reminders";
 
@@ -15,17 +11,6 @@ type MenstruationReminderSettings = Pick<
   Settings,
   "menstruationNotifications" | "menstruationNotificationsEnabled"
 >;
-
-function isNotificationInFuture(date: Date, time: Time): boolean {
-  return isFuture(
-    setDateTime(date, {
-      hours: time.hour,
-      minutes: time.minute,
-      seconds: 0,
-      milliseconds: 0,
-    }),
-  );
-}
 
 export function buildMenstruationSchedules(
   settings: MenstruationReminderSettings,
@@ -35,38 +20,36 @@ export function buildMenstruationSchedules(
     return [];
   }
 
-  const predictedStarts = getEventPeriods(
-    predictedMenstruationEvents,
-    isMenstruationEvent,
-  ).map((period) => period.start);
+  const predictedStarts = getEventPeriods(predictedMenstruationEvents).map(
+    (period) => period.start,
+  );
 
   return settings.menstruationNotifications
     .slice()
     .sort((left, right) => left.dayToMenstruation - right.dayToMenstruation)
     .flatMap((rule, index) => {
       const target = predictedStarts.find((menstruationStart) => {
-        const candidate = toCalendarDate(
-          subDays(menstruationStart, rule.dayToMenstruation),
-        );
-        return isNotificationInFuture(candidate, rule.notificationTime);
+        const candidate = subDays(menstruationStart, rule.dayToMenstruation);
+        return isFuture(parse(rule.notificationTime, "HH:mm", candidate));
       });
 
       if (!target) {
         return [];
       }
 
-      const scheduleDate = toCalendarDate(
-        subDays(target, rule.dayToMenstruation),
-      );
+      const scheduleDate = subDays(target, rule.dayToMenstruation);
+      const [hour, minute] = rule.notificationTime.split(":").map(Number);
 
       return [
         {
           id: `menstruation-${index}`,
           date: format(scheduleDate, "yyyy-MM-dd"),
-          hour: rule.notificationTime.hour,
-          minute: rule.notificationTime.minute,
+          hour,
+          minute,
           daysBefore: rule.dayToMenstruation,
-          customMessage: rule.customMessage,
+          customMessage:
+            rule.customMessage ??
+            t("reminders.menstruationBody", { count: rule.dayToMenstruation }),
         },
       ];
     });

@@ -1,19 +1,15 @@
 import { type FC, useRef } from "react";
 import { Pressable } from "react-native";
 
-import { addDays, format, isSameDay } from "date-fns";
-import { CalendarList, type DateData } from "react-native-calendars";
+import { format } from "date-fns";
+import { CalendarList } from "react-native-calendars";
 
-import { Typography } from "@/components/ui";
+import { Typography } from "@/components/ui/typography";
+import { createCalendarMarkers } from "@/domain/calendar-markers";
 import { CalendarDay } from "@/screens/calendar/components/calendar-day";
 import { useTheme } from "@/theme/use-theme";
-import {
-  EventGroupShape,
-  EventKind,
-  getEventKind,
-  type CalendarMarker,
-  type Event,
-} from "@/types";
+import { monthFormatter } from "@/translation/use-translation";
+import { type Event } from "@/types/event";
 
 interface CalendarProps {
   events: Event[];
@@ -29,94 +25,12 @@ export const Calendar: FC<CalendarProps> = (props) => {
     null,
   );
 
-  const getKey = (date: Date) => format(date, "yyyy-MM-dd");
-  const getDate = (date: DateData) =>
-    new Date(date.year, date.month - 1, date.day, 12);
-  const getColor = (event: Event | null | undefined) => {
-    if (!event) {
-      return null;
-    }
-
-    if (event.ovulation) {
-      return theme.colors.calendarOvulation;
-    }
-
-    if (event.menstruationLight || event.menstruationSpotting) {
-      return theme.colors.calendarMenstruationLight;
-    }
-
-    if (event.menstruationModerate) {
-      return theme.colors.calendarMenstruationModerate;
-    }
-
-    if (event.menstruationHeavy) {
-      return theme.colors.calendarMenstruationHeavy;
-    }
-
-    return null;
-  };
-
-  const actualEventMap = new Map<string, Event>();
-  const predictionEventMap = new Map<string, Event>();
-
-  events.forEach((event) => {
-    (event.prediction ? predictionEventMap : actualEventMap).set(
-      getKey(event.date),
-      event,
-    );
-  });
-
-  const getGroupShape = (
-    date: Date,
-    eventMap: Map<string, Event>,
-    kind: EventKind,
-  ): CalendarMarker["actualGroup"] => {
-    if (kind === EventKind.NONE) {
-      return EventGroupShape.NONE;
-    }
-
-    const previousSame =
-      getEventKind(eventMap.get(getKey(addDays(date, -1)))) === kind;
-    const nextSame =
-      getEventKind(eventMap.get(getKey(addDays(date, 1)))) === kind;
-
-    if (!previousSame && !nextSame) {
-      return EventGroupShape.SINGLE;
-    }
-
-    if (!previousSame) {
-      return EventGroupShape.START;
-    }
-
-    return nextSame ? EventGroupShape.MIDDLE : EventGroupShape.END;
-  };
-
-  const getMarker = (date: Date): CalendarMarker => {
-    const actualEvent = actualEventMap.get(getKey(date)) ?? null;
-    const predictionEvent = predictionEventMap.get(getKey(date)) ?? null;
-    const actualKind = getEventKind(actualEvent);
-    const predictionKind = getEventKind(predictionEvent);
-
-    return {
-      date,
-      actualColor: getColor(actualEvent),
-      actualGroup: getGroupShape(date, actualEventMap, actualKind),
-      predictionColor:
-        actualKind === EventKind.NONE ? getColor(predictionEvent) : null,
-      predictionGroup: getGroupShape(date, predictionEventMap, predictionKind),
-      textColor:
-        actualKind !== EventKind.NONE
-          ? theme.colors.surface
-          : theme.colors.text,
-      dotColor: actualEvent?.pill ? theme.colors.calendarPill : "transparent",
-      selected: isSameDay(date, selectedDate),
-    };
-  };
+  const getMarker = createCalendarMarkers(events, selectedDate, theme.colors);
 
   return (
     <CalendarList
       ref={calendarRef}
-      current={getKey(selectedDate)}
+      current={format(selectedDate, "yyyy-MM-dd")}
       horizontal
       pagingEnabled
       staticHeader
@@ -132,20 +46,17 @@ export const Calendar: FC<CalendarProps> = (props) => {
       renderHeader={(date) => (
         <Pressable
           onPress={() => {
-            const now = new Date();
-            const today = new Date(
-              now.getFullYear(),
-              now.getMonth(),
-              now.getDate(),
-              12,
-            );
-
+            const today = new Date();
             onPressToday(today);
-            calendarRef.current?.scrollToMonth?.(getKey(today));
+            calendarRef.current?.scrollToMonth?.(format(today, "yyyy-MM-dd"));
           }}
         >
           <Typography variant="titleSmall" style={{ textAlign: "center" }}>
-            {date?.toString("MMMM yyyy") ?? format(selectedDate, "MMMM yyyy")}
+            {monthFormatter.format(
+              date
+                ? new Date(date.getFullYear(), date.getMonth(), 1)
+                : selectedDate,
+            )}
           </Typography>
         </Pressable>
       )}
@@ -155,7 +66,7 @@ export const Calendar: FC<CalendarProps> = (props) => {
           return null;
         }
 
-        const calendarDate = getDate(date);
+        const calendarDate = new Date(date.year, date.month - 1, date.day, 12);
 
         return (
           <CalendarDay
@@ -169,8 +80,8 @@ export const Calendar: FC<CalendarProps> = (props) => {
         dayTextColor: theme.colors.text,
         monthTextColor: theme.colors.text,
         todayTextColor: theme.colors.accent,
-        textDayHeaderFontSize: theme.typography.bodySmall,
-        textMonthFontSize: 24,
+        textDayHeaderFontSize: theme.typography.bodySmall.fontSize,
+        textMonthFontSize: theme.typography.title.fontSize,
         weekVerticalMargin: 2,
         textSectionTitleColor: theme.colors.textSecondary,
         ...{
@@ -185,9 +96,7 @@ export const Calendar: FC<CalendarProps> = (props) => {
               marginBottom: 7,
               width: 32,
               textAlign: "center",
-              fontSize: theme.typography.bodySmall,
-              lineHeight: theme.typography.bodySmall + 4,
-              fontWeight: "500",
+              ...theme.typography.bodySmall,
               color: theme.colors.textSecondary,
             },
           },

@@ -1,30 +1,29 @@
 import { type FC } from "react";
 import { ScrollView, View } from "react-native";
 
-import { format } from "date-fns";
-
-import { Card, Icon, IconButton, Typography } from "@/components/ui";
+import { Card } from "@/components/ui/card";
+import { Icon, IconName } from "@/components/ui/icon";
+import { IconButton } from "@/components/ui/icon-button";
+import { Typography } from "@/components/ui/typography";
 import { symptomGroups } from "@/domain/symptom-groups";
 import { useTheme } from "@/theme/use-theme";
-import { useT } from "@/translation/use-translation";
-import type { Symptoms } from "@/types";
+import { dateFormatter, t } from "@/translation/use-translation";
+import type { Symptoms } from "@/types/symptom";
 
 interface SymptomsOverviewProps {
-  selectedDate: Date;
   symptoms: Symptoms;
   onPressEdit: () => void;
 }
 
 export const SymptomsOverview: FC<SymptomsOverviewProps> = (props) => {
-  const { selectedDate, symptoms, onPressEdit } = props;
+  const { symptoms, onPressEdit } = props;
   const theme = useTheme();
-  const t = useT();
 
   return (
     <Card style={{ marginBottom: 2 }}>
       <Typography variant="titleSmall">
         {t("calendar.symptoms.title", {
-          date: format(selectedDate, "EEE, dd MMM"),
+          date: dateFormatter.format(symptoms.date),
         })}
       </Typography>
       <View
@@ -36,8 +35,11 @@ export const SymptomsOverview: FC<SymptomsOverviewProps> = (props) => {
           gap: theme.spacing.md,
         }}
       >
-        <IconButton onPress={onPressEdit}>
-          <Icon name="plus" color={theme.colors.text} size={20} />
+        <IconButton
+          accessibilityLabel={t("calendar.symptoms.edit")}
+          onPress={onPressEdit}
+        >
+          <Icon name={IconName.PLUS} color={theme.colors.text} size={20} />
         </IconButton>
 
         <ScrollView
@@ -50,22 +52,17 @@ export const SymptomsOverview: FC<SymptomsOverviewProps> = (props) => {
         >
           <View style={{ flexDirection: "row", gap: theme.spacing.xs }}>
             {symptomGroups.flatMap((group) =>
-              group.types.map((symptom) => {
-                const active = symptoms[symptom.key];
-                if (!active) {
-                  return null;
-                }
-
-                return (
+              group.types
+                .filter((symptom) => symptoms[symptom.key])
+                .map((symptom) => (
                   <Icon
                     key={symptom.key}
                     name={symptom.icon}
                     size={34}
-                    color={theme.colors[group.colorToken]}
+                    color={group.color}
                     filled={symptom.filled}
                   />
-                );
-              }),
+                )),
             )}
           </View>
         </ScrollView>

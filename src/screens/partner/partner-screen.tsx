@@ -1,57 +1,48 @@
 import { Fragment, type FC, useState } from "react";
 import { ScrollView, View } from "react-native";
 
-import {
-  Screen,
-  Badge,
-  Button,
-  Card,
-  Icon,
-  ListRow,
-  SegmentedControl,
-  Typography,
-} from "@/components/ui";
-import { useEventsQuery } from "@/db/queries/use-events-query";
-import { usePartnerInsightsQuery } from "@/db/queries/use-partner-insights-query";
+import { ListRow } from "@/components/list-row";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Icon, IconName } from "@/components/ui/icon";
+import { Screen } from "@/components/ui/screen";
+import { SegmentedControl } from "@/components/ui/segmented-control";
+import { Typography } from "@/components/ui/typography";
+import { useEventsQuery } from "@/db/repositories/events-repository";
 import {
   deletePartnerInsight,
-  upsertPartnerInsight,
+  savePartnerInsight,
+  usePartnerInsightsQuery,
 } from "@/db/repositories/partner-insights-repository";
-import { getDayInCycle } from "@/domain/events/get-day-in-cycle";
-import { getMenstruationPredictions } from "@/domain/predictions/get-menstruation-predictions";
-import { getOvulationPredictions } from "@/domain/predictions/get-ovulation-predictions";
+import { getDayInCycle } from "@/domain/cycle";
+import { getAllPredictions } from "@/domain/cycle-predictions";
 import { PartnerInsightDialog } from "@/screens/partner/components/partner-insight-dialog";
 import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
-import { formatOrdinal, useT } from "@/translation/use-translation";
-import { createDefaultPartnerInsight, type PartnerInsight } from "@/types";
+import { formatOrdinal, t } from "@/translation/use-translation";
+import {
+  PartnerInsightMode,
+  type PartnerInsight,
+} from "@/types/partner-insight";
+
+type InsightTarget = { insight?: PartnerInsight } | null;
 
 const PartnerScreen: FC = () => {
   const theme = useTheme();
-  const t = useT();
-  const [mode, setMode] = useState<"view" | "edit">("view");
-  const [editingInsight, setEditingInsight] = useState<PartnerInsight | null>(
-    null,
-  );
+  const [mode, setMode] = useState(PartnerInsightMode.VIEW);
+  const [insightTarget, setInsightTarget] = useState<InsightTarget>(null);
   const { data: events } = useEventsQuery();
   const { data: insights } = usePartnerInsightsQuery();
-  const {
-    settings: { predictionTimespan },
-  } = useSettingsStore();
+  const predictionTimespan = useSettingsStore(
+    (state) => state.settings.predictionTimespan,
+  );
 
-  const allEvents = [
-    ...events,
-    ...getMenstruationPredictions(events, predictionTimespan),
-    ...getOvulationPredictions(events, predictionTimespan),
-  ];
-
-  const currentDayInCycle = getDayInCycle(new Date(), allEvents);
-  const todayInsight =
-    currentDayInCycle === null
-      ? null
-      : (insights.findLast(
-          (insight) => insight.dayInCycle <= currentDayInCycle,
-        ) ?? null);
+  const allEvents = getAllPredictions(events, predictionTimespan);
+  const dayInCycle = getDayInCycle(new Date(), allEvents);
+  const todayInsight = insights.findLast(
+    (insight) => dayInCycle !== null && insight.dayInCycle <= dayInCycle,
+  );
 
   return (
     <Screen>
@@ -60,49 +51,53 @@ const PartnerScreen: FC = () => {
         onChange={setMode}
         items={[
           {
-            value: "view",
+            value: PartnerInsightMode.VIEW,
             label: t("partner.todayInsights"),
-            icon: <Icon name="compass" color={theme.colors.text} size={16} />,
+            icon: (
+              <Icon
+                name={IconName.COMPASS}
+                color={theme.colors.text}
+                size={16}
+              />
+            ),
           },
           {
-            value: "edit",
+            value: PartnerInsightMode.EDIT,
             label: t("partner.editInsights"),
-            icon: <Icon name="edit" color={theme.colors.text} size={16} />,
+            icon: (
+              <Icon name={IconName.EDIT} color={theme.colors.text} size={16} />
+            ),
           },
         ]}
       />
 
-      {mode === "view" && (
-        <Fragment>
-          {todayInsight && currentDayInCycle && (
-            <Card>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginVertical: theme.spacing.sm,
-                }}
-              >
-                <Typography variant="title">{todayInsight.name}</Typography>
-                <Badge>
-                  {t("partner.dayInCycle", {
-                    day: formatOrdinal(currentDayInCycle),
-                  })}
-                </Badge>
-              </View>
-              <Typography>{todayInsight.description}</Typography>
-            </Card>
-          )}
-          {(!todayInsight || !currentDayInCycle) && (
-            <Typography variant="titleSmall" style={{ textAlign: "center" }}>
-              {t("partner.noInsightsFound")}
-            </Typography>
-          )}
-        </Fragment>
+      {mode === PartnerInsightMode.VIEW && todayInsight && !!dayInCycle && (
+        <Card>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginVertical: theme.spacing.sm,
+            }}
+          >
+            <Typography variant="title">{todayInsight.name}</Typography>
+            <Badge>
+              {t("partner.dayInCycle", {
+                day: formatOrdinal(dayInCycle),
+              })}
+            </Badge>
+          </View>
+          <Typography>{todayInsight.description}</Typography>
+        </Card>
+      )}
+      {mode === PartnerInsightMode.VIEW && !todayInsight && (
+        <Typography variant="titleSmall" style={{ textAlign: "center" }}>
+          {t("partner.noInsightsFound")}
+        </Typography>
       )}
 
-      {mode === "edit" && (
+      {mode === PartnerInsightMode.EDIT && (
         <Fragment>
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={{ gap: theme.spacing.lg }}>
@@ -117,13 +112,13 @@ const PartnerScreen: FC = () => {
                         {insight.dayInCycle}
                       </Typography>
                       <Icon
-                        name="arrow-down"
+                        name={IconName.ARROW_DOWN}
                         color={theme.colors.textSecondary}
                         size={18}
                       />
                     </View>
                   }
-                  onPress={() => setEditingInsight(insight)}
+                  onPress={() => setInsightTarget({ insight })}
                 />
               ))}
             </View>
@@ -131,39 +126,40 @@ const PartnerScreen: FC = () => {
 
           <Button
             leftAccessory={
-              <Icon name="plus" color={theme.colors.surface} size={16} />
+              <Icon
+                name={IconName.PLUS}
+                color={theme.colors.surface}
+                size={16}
+              />
             }
-            onPress={() => setEditingInsight(createDefaultPartnerInsight())}
+            onPress={() => setInsightTarget({})}
           >
             {t("partner.addInsight")}
           </Button>
         </Fragment>
       )}
 
-      <PartnerInsightDialog
-        key={
-          editingInsight
-            ? `${editingInsight.dayInCycle}-${editingInsight.name}`
-            : "empty"
-        }
-        visible={editingInsight !== null}
-        insight={editingInsight}
-        onClose={() => setEditingInsight(null)}
-        onDelete={(dayInCycle) => {
-          deletePartnerInsight(dayInCycle);
-          setEditingInsight(null);
-        }}
-        onSave={(insight) => {
-          if (
-            editingInsight &&
-            editingInsight.dayInCycle !== insight.dayInCycle
-          ) {
-            deletePartnerInsight(editingInsight.dayInCycle);
+      {insightTarget && (
+        <PartnerInsightDialog
+          insight={insightTarget.insight}
+          occupiedDays={insights
+            .filter(
+              (insight) =>
+                insight.dayInCycle !== insightTarget.insight?.dayInCycle,
+            )
+            .map((insight) => insight.dayInCycle)}
+          onClose={() => setInsightTarget(null)}
+          onDelete={(dayInCycle) => {
+            deletePartnerInsight(dayInCycle);
+            setInsightTarget(null);
+          }}
+          onSave={(insight) =>
+            savePartnerInsight(insight, insightTarget.insight?.dayInCycle).then(
+              () => setInsightTarget(null),
+            )
           }
-          upsertPartnerInsight(insight);
-          setEditingInsight(null);
-        }}
-      />
+        />
+      )}
     </Screen>
   );
 };

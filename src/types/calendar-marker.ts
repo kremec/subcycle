@@ -8,10 +8,9 @@ export enum EventGroupShape {
 
 export type CalendarMarker = {
   date: Date;
-  actualColor: string | null;
-  actualGroup: EventGroupShape;
-  predictionColor: string | null;
-  predictionGroup: EventGroupShape;
+  color: string | null;
+  group: EventGroupShape;
+  prediction: boolean;
   textColor: string;
   dotColor: string;
   selected: boolean;

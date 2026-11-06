@@ -3,11 +3,7 @@ import { View, type ViewProps } from "react-native";
 
 import { useTheme } from "@/theme/use-theme";
 
-interface CardProps extends Omit<ViewProps, "style"> {
-  style?: ViewProps["style"];
-}
-
-export const Card: FC<CardProps> = (props) => {
+export const Card: FC<ViewProps> = (props) => {
   const { style, ...viewProps } = props;
   const theme = useTheme();
 
