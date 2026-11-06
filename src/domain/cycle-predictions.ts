@@ -1,13 +1,8 @@
 import { addDays, compareAsc, differenceInCalendarDays } from "date-fns";
 
-import {
-  getAverageCycleLength,
-  getAveragePeriodLength,
-  getEventPeriods,
-} from "@/domain/cycle";
+import { getPeriodHistory, type PeriodHistory } from "@/domain/cycle";
 import {
   createDefaultEvent,
-  isMenstruationEvent,
   MenstruationFlow,
   type Event,
 } from "@/types/event";
@@ -18,30 +13,27 @@ export function getMenstruationPredictions(
   events: Event[],
   predictionTimespan: number,
 ): Event[] {
-  const averageCycleLength = getAverageCycleLength(events);
-  const averagePeriodLength = getAveragePeriodLength(events);
+  return predictMenstruation(getPeriodHistory(events), predictionTimespan);
+}
+
+function predictMenstruation(
+  history: PeriodHistory,
+  predictionTimespan: number,
+): Event[] {
+  const { periods, averageCycleLength, averagePeriodLength } = history;
   if (predictionTimespan <= 0 || !averageCycleLength || !averagePeriodLength) {
     return [];
   }
 
-  // Count each flow type per day of period, to predict the most common one.
-  const periods = getEventPeriods(events, isMenstruationEvent);
+  // Count each flow type by observation index within each period.
   const flowCounts: number[][] = [];
   for (const period of periods) {
-    events
-      .filter(
-        (event) =>
-          isMenstruationEvent(event) &&
-          event.date >= period.start &&
-          event.date <= period.end,
-      )
-      .sort((left, right) => compareAsc(left.date, right.date))
-      .forEach((event, day) => {
-        const counts = (flowCounts[day] ??= flows.map(() => 0));
-        flows.forEach((type, index) => {
-          if (event[type]) counts[index] += 1;
-        });
+    period.events.forEach((event, day) => {
+      const counts = (flowCounts[day] ??= flows.map(() => 0));
+      flows.forEach((type, index) => {
+        if (event[type]) counts[index] += 1;
       });
+    });
   }
 
   const cycleLength = Math.round(averageCycleLength);
@@ -67,27 +59,28 @@ export function getMenstruationPredictions(
   );
 }
 
-function getOvulationPredictions(
+function predictOvulation(
   events: Event[],
+  history: PeriodHistory,
   predictionTimespan: number,
 ): Event[] {
-  const periods = getEventPeriods(events, isMenstruationEvent);
+  const { periods, averageCycleLength } = history;
+  if (predictionTimespan <= 0 || !averageCycleLength) {
+    return [];
+  }
+
+  const ovulationDates = events
+    .filter((event) => event.ovulation)
+    .map((event) => event.date)
+    .sort(compareAsc);
   const ovulationOffsets = periods.slice(1).flatMap((next, index) => {
     const start = periods[index].start;
-    const offsets = events
-      .filter(
-        (event) =>
-          event.ovulation && event.date >= start && event.date < next.start,
-      )
-      .map((event) => differenceInCalendarDays(event.date, start));
-    return offsets.length === 0 ? [] : [Math.min(...offsets)];
+    const date = ovulationDates.find(
+      (date) => date >= start && date < next.start,
+    );
+    return date ? [differenceInCalendarDays(date, start)] : [];
   });
-  const averageCycleLength = getAverageCycleLength(events);
-  if (
-    predictionTimespan <= 0 ||
-    ovulationOffsets.length === 0 ||
-    !averageCycleLength
-  ) {
+  if (ovulationOffsets.length === 0) {
     return [];
   }
 
@@ -111,9 +104,10 @@ export function getAllPredictions(
   events: Event[],
   predictionTimespan: number,
 ): Event[] {
+  const history = getPeriodHistory(events);
   return [
     ...events,
-    ...getMenstruationPredictions(events, predictionTimespan),
-    ...getOvulationPredictions(events, predictionTimespan),
+    ...predictMenstruation(history, predictionTimespan),
+    ...predictOvulation(events, history, predictionTimespan),
   ];
 }
