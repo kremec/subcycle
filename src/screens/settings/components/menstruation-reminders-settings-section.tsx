@@ -12,7 +12,6 @@ import { Switch } from "@/components/ui/switch";
 import { Typography } from "@/components/ui/typography";
 import { useEventsQuery } from "@/db/repositories/events-repository";
 import { getAverageCycleLength } from "@/domain/cycle";
-import { compareTimesAsc, getCurrentTime } from "@/domain/time";
 import { ensureReminderPermissions } from "@/notifications/ensure-reminder-permissions";
 import { SettingsSectionCard } from "@/screens/settings/components/settings-section-card";
 import { TimePickerDialog } from "@/screens/settings/components/time-picker-dialog";
@@ -20,6 +19,7 @@ import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
 import { type MenstruationNotification } from "@/types/settings";
+import { compareTimesAsc, getCurrentTime } from "@/types/time";
 import { formatHourMinute } from "@/types/time";
 
 type RuleTarget = { rule?: MenstruationNotification } | null;

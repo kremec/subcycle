@@ -1,7 +1,6 @@
 import { format, isFuture, set as setDateTime, subDays } from "date-fns";
 
 import { getEventPeriods } from "@/domain/cycle";
-import { toCalendarDate } from "@/domain/time";
 import { isMenstruationEvent, type Event } from "@/types/event";
 import { type Settings } from "@/types/settings";
 import { type Time } from "@/types/time";
@@ -42,9 +41,7 @@ export function buildMenstruationSchedules(
     .sort((left, right) => left.dayToMenstruation - right.dayToMenstruation)
     .flatMap((rule, index) => {
       const target = predictedStarts.find((menstruationStart) => {
-        const candidate = toCalendarDate(
-          subDays(menstruationStart, rule.dayToMenstruation),
-        );
+        const candidate = subDays(menstruationStart, rule.dayToMenstruation);
         return isNotificationInFuture(candidate, rule.notificationTime);
       });
 
@@ -52,9 +49,7 @@ export function buildMenstruationSchedules(
         return [];
       }
 
-      const scheduleDate = toCalendarDate(
-        subDays(target, rule.dayToMenstruation),
-      );
+      const scheduleDate = subDays(target, rule.dayToMenstruation);
 
       return [
         {

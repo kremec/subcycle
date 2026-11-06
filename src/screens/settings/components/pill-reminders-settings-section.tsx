@@ -6,13 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Icon, IconName } from "@/components/ui/icon";
 import { IconButton } from "@/components/ui/icon-button";
 import { Switch } from "@/components/ui/switch";
-import { compareTimesAsc, getCurrentTime } from "@/domain/time";
 import { ensureReminderPermissions } from "@/notifications/ensure-reminder-permissions";
 import { SettingsSectionCard } from "@/screens/settings/components/settings-section-card";
 import { TimePickerDialog } from "@/screens/settings/components/time-picker-dialog";
 import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
+import { compareTimesAsc, getCurrentTime } from "@/types/time";
 import { formatHourMinute, type Time } from "@/types/time";
 
 type PickerTarget = { time?: Time } | null;

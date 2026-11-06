@@ -6,9 +6,9 @@ import { DateTimePicker } from "@expo/ui/community/datetime-picker";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Typography } from "@/components/ui/typography";
-import { timeToDate } from "@/domain/time";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
+import { timeToDate } from "@/types/time";
 import { formatHourMinute, type Time } from "@/types/time";
 
 interface TimePickerDialogProps {

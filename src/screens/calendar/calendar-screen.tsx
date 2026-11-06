@@ -1,7 +1,7 @@
 import { type FC, useState } from "react";
 import { View } from "react-native";
 
-import { isSameDay } from "date-fns";
+import { isSameDay, startOfDay } from "date-fns";
 
 import { Screen } from "@/components/ui/screen";
 import { useEventsQuery } from "@/db/repositories/events-repository";
@@ -10,7 +10,6 @@ import { useSymptomsQuery } from "@/db/repositories/symptoms-repository";
 import { saveSymptoms } from "@/db/repositories/symptoms-repository";
 import { getDayInCycle } from "@/domain/cycle";
 import { getAllPredictions } from "@/domain/cycle-predictions";
-import { toCalendarDate } from "@/domain/time";
 import { Calendar } from "@/screens/calendar/components/calendar";
 import { CalendarEditDialog } from "@/screens/calendar/components/calendar-edit-dialog";
 import { CycleStatus } from "@/screens/calendar/components/cycle-status";
@@ -26,14 +25,14 @@ const CalendarScreen: FC = () => {
   const { data: events } = useEventsQuery();
   const { data: symptoms } = useSymptomsQuery();
   const [selectedDate, setSelectedDateState] = useState(() =>
-    toCalendarDate(new Date()),
+    startOfDay(new Date()),
   );
   const predictionTimespan = useSettingsStore(
     (state) => state.settings.predictionTimespan,
   );
 
   const setSelectedDate = (date: Date) => {
-    setSelectedDateState(toCalendarDate(date));
+    setSelectedDateState(startOfDay(date));
   };
 
   const allEvents = getAllPredictions(events, predictionTimespan);
