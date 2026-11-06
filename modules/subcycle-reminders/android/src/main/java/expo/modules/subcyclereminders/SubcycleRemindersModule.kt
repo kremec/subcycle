@@ -82,8 +82,7 @@ class SubcycleRemindersModule : Module() {
 
         AsyncFunction("openBatteryOptimizationSettings") {
             if (!isIgnoringBatteryOptimizations()) {
-                val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-                    .setData(Uri.parse("package:${context.packageName}"))
+                val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
                     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 openSettingsIntent(intent)
             }
