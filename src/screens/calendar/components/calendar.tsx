@@ -11,7 +11,7 @@ import {
 import { Typography } from "@/components/ui/typography";
 import { CalendarDay } from "@/screens/calendar/components/calendar-day";
 import { useTheme } from "@/theme/use-theme";
-import { locale, monthFormatter, t } from "@/translation/use-translation";
+import { locale, monthFormatter } from "@/translation/use-translation";
 import { EventGroupShape, type CalendarMarker } from "@/types/calendar-marker";
 import { EventKind, type Event } from "@/types/event";
 
@@ -36,7 +36,6 @@ LocaleConfig.locales[locale] = {
   dayNamesShort: days.map(
     new Intl.DateTimeFormat(locale, { weekday: "short" }).format,
   ),
-  today: t("common.today"),
 };
 LocaleConfig.defaultLocale = locale;
 

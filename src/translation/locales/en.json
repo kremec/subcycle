@@ -8,8 +8,7 @@
     },
     "loading": "Loading ...",
     "notAvailable": "N/A",
-    "save": "Save",
-    "today": "Today"
+    "save": "Save"
   },
   "calendar": {
     "cycleStatus": {
