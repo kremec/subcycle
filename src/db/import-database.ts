@@ -7,9 +7,15 @@ import {
   type SQLiteDatabase,
 } from "expo-sqlite";
 
+import { drizzle } from "drizzle-orm/expo-sqlite";
+
 import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
 import { expoDb } from "@/db/client";
+import { eventsTable, partnerInsightsTable, symptomsTable } from "@/db/schema";
 import { logError, logInfo } from "@/logging/logger";
+import { eventSchema } from "@/types/event";
+import { partnerInsightSchema } from "@/types/partner-insight";
+import { symptomsSchema } from "@/types/symptoms";
 
 const IMPORT_DB_NAME = "subcycle-import.db";
 
@@ -58,14 +64,13 @@ export async function importLatestNativeDatabase(): Promise<void> {
       defaultDatabaseDirectory,
     );
 
-    // Don't replace the live data with a file that isn't a subcycle database.
-    if (
-      !importDb.getFirstSync(
-        "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'events'",
-      )
-    ) {
-      throw new Error("The selected file is not a subcycle database");
-    }
+    const sourceDb = drizzle(importDb);
+    eventSchema.array().parse(sourceDb.select().from(eventsTable).all());
+    symptomsSchema.array().parse(sourceDb.select().from(symptomsTable).all());
+    partnerInsightSchema
+      .array()
+      .parse(sourceDb.select().from(partnerInsightsTable).all());
+
     await backupDatabaseAsync({
       sourceDatabase: importDb,
       destDatabase: expoDb,
