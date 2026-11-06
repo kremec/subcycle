@@ -5,7 +5,7 @@ import { format } from "date-fns";
 
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
-import { Icon } from "@/components/ui/icon";
+import { Icon, IconName } from "@/components/ui/icon";
 import { Typography } from "@/components/ui/typography";
 import { EventToggleButton } from "@/screens/calendar/components/event-toggle-button";
 import { useTheme } from "@/theme/use-theme";
@@ -32,28 +32,28 @@ export const CalendarEditDialog: FC<CalendarEditDialogProps> = (props) => {
     {
       key: "menstruationLight",
       label: t("calendar.edit.light"),
-      icon: "droplet",
+      icon: IconName.DROPLET,
       filled: false,
       color: theme.colors.calendarMenstruationLight,
     },
     {
       key: "menstruationModerate",
       label: t("calendar.edit.moderate"),
-      icon: "droplet-half",
+      icon: IconName.DROPLET_HALF,
       filled: true,
       color: theme.colors.calendarMenstruationModerate,
     },
     {
       key: "menstruationHeavy",
       label: t("calendar.edit.heavy"),
-      icon: "droplet",
+      icon: IconName.DROPLET,
       filled: true,
       color: theme.colors.calendarMenstruationHeavy,
     },
     {
       key: "menstruationSpotting",
       label: t("calendar.edit.spotting"),
-      icon: "chart-bubble",
+      icon: IconName.CHART_BUBBLE,
       filled: true,
       color: theme.colors.calendarMenstruationLight,
     },
@@ -132,7 +132,9 @@ export const CalendarEditDialog: FC<CalendarEditDialogProps> = (props) => {
 
         <EventToggleButton
           label={t("calendar.edit.ovulation")}
-          icon={<Icon name="egg" color={theme.colors.text} size={18} />}
+          icon={
+            <Icon name={IconName.EGG} color={theme.colors.text} size={18} />
+          }
           active={draft.ovulation}
           color={theme.colors.calendarOvulation}
           onPress={() => toggleExclusive("ovulation")}
@@ -140,7 +142,14 @@ export const CalendarEditDialog: FC<CalendarEditDialogProps> = (props) => {
 
         <EventToggleButton
           label={t("calendar.edit.pill")}
-          icon={<Icon name="pill" color={theme.colors.text} size={18} filled />}
+          icon={
+            <Icon
+              name={IconName.PILL}
+              color={theme.colors.text}
+              size={18}
+              filled
+            />
+          }
           active={draft.pill}
           color={theme.colors.calendarPill}
           onPress={() => setDraft({ ...draft, pill: !draft.pill })}

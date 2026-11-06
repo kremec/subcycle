@@ -1,4 +1,5 @@
 import type { IconName } from "@/components/ui/icon";
+import type { PaletteColor } from "@/theme/palette";
 import type { SymptomsKey } from "@/types/symptoms";
 
 type SymptomDefinition = {
@@ -8,16 +9,9 @@ type SymptomDefinition = {
   filled?: boolean;
 };
 
-type SymptomColorToken =
-  | "symptomsSymptoms"
-  | "symptomsDischarge"
-  | "symptomsLibido"
-  | "symptomsExercise"
-  | "symptomsMoods";
-
 export type SymptomGroupDefinition = {
   name: string;
   exclusive?: boolean;
-  colorToken: SymptomColorToken;
+  color: PaletteColor;
   types: SymptomDefinition[];
 };

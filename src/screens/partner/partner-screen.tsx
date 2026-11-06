@@ -5,7 +5,7 @@ import { ListRow } from "@/components/list-row";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Icon } from "@/components/ui/icon";
+import { Icon, IconName } from "@/components/ui/icon";
 import { Screen } from "@/components/ui/screen";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Typography } from "@/components/ui/typography";
@@ -58,12 +58,20 @@ const PartnerScreen: FC = () => {
           {
             value: "view",
             label: t("partner.todayInsights"),
-            icon: <Icon name="compass" color={theme.colors.text} size={16} />,
+            icon: (
+              <Icon
+                name={IconName.COMPASS}
+                color={theme.colors.text}
+                size={16}
+              />
+            ),
           },
           {
             value: "edit",
             label: t("partner.editInsights"),
-            icon: <Icon name="edit" color={theme.colors.text} size={16} />,
+            icon: (
+              <Icon name={IconName.EDIT} color={theme.colors.text} size={16} />
+            ),
           },
         ]}
       />
@@ -109,7 +117,7 @@ const PartnerScreen: FC = () => {
                         {insight.dayInCycle}
                       </Typography>
                       <Icon
-                        name="arrow-down"
+                        name={IconName.ARROW_DOWN}
                         color={theme.colors.textSecondary}
                         size={18}
                       />
@@ -123,7 +131,11 @@ const PartnerScreen: FC = () => {
 
           <Button
             leftAccessory={
-              <Icon name="plus" color={theme.colors.surface} size={16} />
+              <Icon
+                name={IconName.PLUS}
+                color={theme.colors.surface}
+                size={16}
+              />
             }
             onPress={() => setEditingInsight(createDefaultPartnerInsight())}
           >

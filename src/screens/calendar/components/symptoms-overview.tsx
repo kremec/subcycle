@@ -4,7 +4,7 @@ import { ScrollView, View } from "react-native";
 import { format } from "date-fns";
 
 import { Card } from "@/components/ui/card";
-import { Icon } from "@/components/ui/icon";
+import { Icon, IconName } from "@/components/ui/icon";
 import { IconButton } from "@/components/ui/icon-button";
 import { Typography } from "@/components/ui/typography";
 import { symptomGroups } from "@/domain/symptom-groups";
@@ -41,7 +41,7 @@ export const SymptomsOverview: FC<SymptomsOverviewProps> = (props) => {
           accessibilityLabel={t("calendar.symptoms.edit")}
           onPress={onPressEdit}
         >
-          <Icon name="plus" color={theme.colors.text} size={20} />
+          <Icon name={IconName.PLUS} color={theme.colors.text} size={20} />
         </IconButton>
 
         <ScrollView
@@ -61,7 +61,7 @@ export const SymptomsOverview: FC<SymptomsOverviewProps> = (props) => {
                     key={symptom.key}
                     name={symptom.icon}
                     size={34}
-                    color={theme.colors[group.colorToken]}
+                    color={group.color}
                     filled={symptom.filled}
                   />
                 )),

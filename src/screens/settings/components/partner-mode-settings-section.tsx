@@ -1,5 +1,6 @@
 import { type FC } from "react";
 
+import { IconName } from "@/components/ui/icon";
 import { Switch } from "@/components/ui/switch";
 import { SettingsSectionCard } from "@/screens/settings/components/settings-section-card";
 import { useSettingsStore } from "@/stores/settings-store";
@@ -11,7 +12,7 @@ export const PartnerModeSettingsSection: FC = () => {
 
   return (
     <SettingsSectionCard
-      icon="user-heart"
+      icon={IconName.USER_HEART}
       title={t("settings.partnerMode")}
       description={t("settings.partnerModeDescription")}
       right={

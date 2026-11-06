@@ -5,7 +5,7 @@ import { ListRow } from "@/components/list-row";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
-import { Icon } from "@/components/ui/icon";
+import { Icon, IconName } from "@/components/ui/icon";
 import { IconButton } from "@/components/ui/icon-button";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
@@ -57,7 +57,7 @@ export const MenstruationRemindersSettingsSection: FC = () => {
   return (
     <Fragment>
       <SettingsSectionCard
-        icon="alarm"
+        icon={IconName.ALARM}
         title={t("settings.menstruationReminders")}
         description={t("settings.notificationsBeforePredictedMenstruation")}
         right={
@@ -109,7 +109,11 @@ export const MenstruationRemindersSettingsSection: FC = () => {
                         })
                       }
                     >
-                      <Icon name="trash" color={theme.colors.text} size={18} />
+                      <Icon
+                        name={IconName.TRASH}
+                        color={theme.colors.text}
+                        size={18}
+                      />
                     </IconButton>
                   }
                 />
@@ -129,7 +133,11 @@ export const MenstruationRemindersSettingsSection: FC = () => {
               variant="outline"
               disabled={maxRuleDay === 0}
               leftAccessory={
-                <Icon name="plus" color={theme.colors.text} size={16} />
+                <Icon
+                  name={IconName.PLUS}
+                  color={theme.colors.text}
+                  size={16}
+                />
               }
               onPress={() => {
                 setRuleTarget({});

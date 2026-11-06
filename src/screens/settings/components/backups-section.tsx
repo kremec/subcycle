@@ -2,7 +2,7 @@ import { type FC } from "react";
 import { Alert, View } from "react-native";
 
 import { Button } from "@/components/ui/button";
-import { Icon } from "@/components/ui/icon";
+import { Icon, IconName } from "@/components/ui/icon";
 import { exportDatabase } from "@/db/export-database";
 import { importLatestNativeDatabase } from "@/db/import-database";
 import { SettingsSectionCard } from "@/screens/settings/components/settings-section-card";
@@ -14,7 +14,7 @@ export const BackupsSection: FC = () => {
 
   return (
     <SettingsSectionCard
-      icon="folder"
+      icon={IconName.FOLDER}
       title={t("settings.backups")}
       description={t("settings.backupsDescription")}
     >
@@ -23,7 +23,11 @@ export const BackupsSection: FC = () => {
           <Button
             variant="outline"
             leftAccessory={
-              <Icon name="file-import" color={theme.colors.text} size={16} />
+              <Icon
+                name={IconName.FILE_IMPORT}
+                color={theme.colors.text}
+                size={16}
+              />
             }
             onPress={() =>
               importLatestNativeDatabase().catch(() =>
@@ -38,7 +42,11 @@ export const BackupsSection: FC = () => {
           <Button
             variant="outline"
             leftAccessory={
-              <Icon name="file-export" color={theme.colors.text} size={16} />
+              <Icon
+                name={IconName.FILE_EXPORT}
+                color={theme.colors.text}
+                size={16}
+              />
             }
             onPress={() =>
               exportDatabase().catch(() =>

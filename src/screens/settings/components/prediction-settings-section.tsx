@@ -1,5 +1,6 @@
 import { type FC } from "react";
 
+import { IconName } from "@/components/ui/icon";
 import { Slider } from "@/components/ui/slider";
 import { Typography } from "@/components/ui/typography";
 import { SettingsSectionCard } from "@/screens/settings/components/settings-section-card";
@@ -16,7 +17,7 @@ export const PredictionSettingsSection: FC = () => {
 
   return (
     <SettingsSectionCard
-      icon="chart-bubble"
+      icon={IconName.CHART_BUBBLE}
       title={t("settings.menstrualCyclePrediction")}
       description={t("settings.numberOfMonthsForPrediction")}
     >

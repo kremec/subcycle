@@ -42,7 +42,7 @@ export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
           })}
         </Typography>
         {symptomGroups.map((group) => (
-          <View key={group.colorToken} style={{ gap: theme.spacing.sm }}>
+          <View key={group.name} style={{ gap: theme.spacing.sm }}>
             <Typography variant="titleSmall">{group.name}</Typography>
             <ScrollView
               horizontal
@@ -58,7 +58,7 @@ export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
                     key={symptom.key}
                     icon={symptom.icon}
                     text={symptom.label}
-                    backgroundColor={theme.colors[group.colorToken]}
+                    backgroundColor={group.color}
                     filled={symptom.filled}
                     selected={symptoms[symptom.key]}
                     onPress={() => toggle(group, symptom.key)}

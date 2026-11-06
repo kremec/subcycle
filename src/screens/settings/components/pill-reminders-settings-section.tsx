@@ -3,7 +3,7 @@ import { View } from "react-native";
 
 import { ListRow } from "@/components/list-row";
 import { Button } from "@/components/ui/button";
-import { Icon } from "@/components/ui/icon";
+import { Icon, IconName } from "@/components/ui/icon";
 import { IconButton } from "@/components/ui/icon-button";
 import { Switch } from "@/components/ui/switch";
 import { compareTimesAsc, getCurrentTime } from "@/domain/time";
@@ -37,7 +37,7 @@ export const PillRemindersSettingsSection: FC = () => {
   return (
     <Fragment>
       <SettingsSectionCard
-        icon="alarm"
+        icon={IconName.ALARM}
         title={t("settings.pillReminders")}
         description={t("settings.dailyNotifications")}
         right={
@@ -76,7 +76,11 @@ export const PillRemindersSettingsSection: FC = () => {
                         })
                       }
                     >
-                      <Icon name="trash" color={theme.colors.text} size={18} />
+                      <Icon
+                        name={IconName.TRASH}
+                        color={theme.colors.text}
+                        size={18}
+                      />
                     </IconButton>
                   }
                 />
@@ -95,7 +99,11 @@ export const PillRemindersSettingsSection: FC = () => {
             <Button
               variant="outline"
               leftAccessory={
-                <Icon name="plus" color={theme.colors.text} size={16} />
+                <Icon
+                  name={IconName.PLUS}
+                  color={theme.colors.text}
+                  size={16}
+                />
               }
               onPress={() => setPickerTarget({})}
             >
