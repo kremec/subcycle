@@ -2,33 +2,34 @@ import { type FC, useState } from "react";
 import { Platform, View } from "react-native";
 
 import { DateTimePicker } from "@expo/ui/community/datetime-picker";
+import { format, parse } from "date-fns";
 
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Typography } from "@/components/ui/typography";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
-import { timeToDate, formatHourMinute, type Time } from "@/types/time";
 
 interface TimePickerDialogProps {
   visible: boolean;
-  value: Time;
+  value?: string;
   onClose: () => void;
-  onSave: (time: Time) => void;
+  onSave: (time: string) => void;
 }
 
 export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
   const { visible, value, onClose, onSave } = props;
   const theme = useTheme();
-  const [draftValue, setDraftValue] = useState<Time | null>(null);
-  const selectedValue = draftValue ?? value;
+  const [draftValue, setDraftValue] = useState<string | null>(null);
+  const selectedValue = draftValue ?? value ?? format(new Date(), "HH:mm");
+  const selectedDate = parse(selectedValue, "HH:mm", 0);
 
   function handleClose() {
     setDraftValue(null);
     onClose();
   }
 
-  function handleSave(time: Time) {
+  function handleSave(time: string) {
     setDraftValue(null);
     onSave(time);
   }
@@ -37,7 +38,7 @@ export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
     if (!visible) return null;
     return (
       <DateTimePicker
-        value={timeToDate(value)}
+        value={selectedDate}
         mode="time"
         is24Hour
         accentColor={theme.colors.accent}
@@ -45,10 +46,7 @@ export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
         positiveButton={{ label: t("common.save") }}
         negativeButton={{ label: t("common.cancel") }}
         onValueChange={(_, nextValue) => {
-          handleSave({
-            hour: nextValue.getHours(),
-            minute: nextValue.getMinutes(),
-          });
+          handleSave(format(nextValue, "HH:mm"));
         }}
         onDismiss={handleClose}
       />
@@ -62,21 +60,18 @@ export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
           {t("settings.notificationTime")}
         </Typography>
         <Typography variant="bodySmall" color={theme.colors.textSecondary}>
-          {formatHourMinute(selectedValue)}
+          {selectedValue}
         </Typography>
         {visible && (
           <DateTimePicker
-            value={timeToDate(selectedValue)}
+            value={selectedDate}
             mode="time"
             is24Hour
             display="spinner"
             themeVariant={theme.themeName}
             accentColor={theme.colors.accent}
             onValueChange={(_, nextValue) => {
-              setDraftValue({
-                hour: nextValue.getHours(),
-                minute: nextValue.getMinutes(),
-              });
+              setDraftValue(format(nextValue, "HH:mm"));
             }}
           />
         )}

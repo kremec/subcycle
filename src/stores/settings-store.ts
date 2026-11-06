@@ -2,11 +2,11 @@ import "expo-sqlite/localStorage/install";
 import { create } from "zustand";
 import { combine, createJSONStorage, persist } from "zustand/middleware";
 
-import { createDefaultSettings, type Settings } from "@/types/settings";
+import { settingsSchema, type Settings } from "@/types/settings";
 
 export const useSettingsStore = create(
   persist(
-    combine({ settings: createDefaultSettings() }, (set, get) => ({
+    combine({ settings: settingsSchema.parse({}) }, (set, get) => ({
       updateSettings: (patch: Partial<Settings>) => {
         set({
           settings: {

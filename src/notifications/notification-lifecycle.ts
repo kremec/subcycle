@@ -10,7 +10,6 @@ import { getMenstruationPredictions } from "@/domain/cycle-predictions";
 import { logError } from "@/logging/logger";
 import { buildMenstruationSchedules } from "@/notifications/build-menstruation-schedules";
 import { useSettingsStore } from "@/stores/settings-store";
-import { compareTimesAsc } from "@/types/time";
 
 import NativeReminders from "@modules/subcycle-reminders";
 
@@ -18,13 +17,10 @@ async function syncSchedules(): Promise<void> {
   try {
     const { settings } = useSettingsStore.getState();
     const pillSchedules = settings.pillNotificationsEnabled
-      ? [...settings.pillNotificationTimes]
-          .sort(compareTimesAsc)
-          .map((time, index) => ({
-            id: `pill-${index}`,
-            hour: time.hour,
-            minute: time.minute,
-          }))
+      ? [...settings.pillNotificationTimes].sort().map((time, index) => {
+          const [hour, minute] = time.split(":").map(Number);
+          return { id: `pill-${index}`, hour, minute };
+        })
       : [];
     const menstruationSchedules = buildMenstruationSchedules(
       settings,

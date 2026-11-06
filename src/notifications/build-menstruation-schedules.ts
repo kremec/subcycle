@@ -1,9 +1,8 @@
-import { format, isFuture, set as setDateTime, subDays } from "date-fns";
+import { format, isFuture, parse, subDays } from "date-fns";
 
 import { getEventPeriods } from "@/domain/cycle";
 import { isMenstruationEvent, type Event } from "@/types/event";
 import { type Settings } from "@/types/settings";
-import { type Time } from "@/types/time";
 
 import type { MenstruationNotificationSchedule } from "@modules/subcycle-reminders";
 
@@ -11,17 +10,6 @@ type MenstruationReminderSettings = Pick<
   Settings,
   "menstruationNotifications" | "menstruationNotificationsEnabled"
 >;
-
-function isNotificationInFuture(date: Date, time: Time): boolean {
-  return isFuture(
-    setDateTime(date, {
-      hours: time.hour,
-      minutes: time.minute,
-      seconds: 0,
-      milliseconds: 0,
-    }),
-  );
-}
 
 export function buildMenstruationSchedules(
   settings: MenstruationReminderSettings,
@@ -42,7 +30,7 @@ export function buildMenstruationSchedules(
     .flatMap((rule, index) => {
       const target = predictedStarts.find((menstruationStart) => {
         const candidate = subDays(menstruationStart, rule.dayToMenstruation);
-        return isNotificationInFuture(candidate, rule.notificationTime);
+        return isFuture(parse(rule.notificationTime, "HH:mm", candidate));
       });
 
       if (!target) {
@@ -50,13 +38,14 @@ export function buildMenstruationSchedules(
       }
 
       const scheduleDate = subDays(target, rule.dayToMenstruation);
+      const [hour, minute] = rule.notificationTime.split(":").map(Number);
 
       return [
         {
           id: `menstruation-${index}`,
           date: format(scheduleDate, "yyyy-MM-dd"),
-          hour: rule.notificationTime.hour,
-          minute: rule.notificationTime.minute,
+          hour,
+          minute,
           daysBefore: rule.dayToMenstruation,
           customMessage: rule.customMessage,
         },

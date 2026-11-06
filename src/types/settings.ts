@@ -1,27 +1,24 @@
-import type { Time } from "@/types/time";
+import { z } from "zod";
 
-export interface MenstruationNotification {
-  dayToMenstruation: number;
-  customMessage: string | null;
-  notificationTime: Time;
-}
+const menstruationNotificationSchema = z.object({
+  dayToMenstruation: z.number(),
+  customMessage: z.string().nullable(),
+  notificationTime: z.iso.time({ precision: -1 }),
+});
 
-export type Settings = {
-  predictionTimespan: number;
-  pillNotificationsEnabled: boolean;
-  pillNotificationTimes: Time[];
-  menstruationNotificationsEnabled: boolean;
-  menstruationNotifications: MenstruationNotification[];
-  partnerMode: boolean;
-};
+export type MenstruationNotification = z.infer<
+  typeof menstruationNotificationSchema
+>;
 
-export function createDefaultSettings(): Settings {
-  return {
-    predictionTimespan: 0,
-    pillNotificationsEnabled: false,
-    pillNotificationTimes: [],
-    menstruationNotificationsEnabled: false,
-    menstruationNotifications: [],
-    partnerMode: false,
-  };
-}
+export const settingsSchema = z.object({
+  predictionTimespan: z.number().default(0),
+  pillNotificationsEnabled: z.boolean().default(false),
+  pillNotificationTimes: z.array(z.iso.time({ precision: -1 })).default([]),
+  menstruationNotificationsEnabled: z.boolean().default(false),
+  menstruationNotifications: z
+    .array(menstruationNotificationSchema)
+    .default([]),
+  partnerMode: z.boolean().default(false),
+});
+
+export type Settings = z.infer<typeof settingsSchema>;

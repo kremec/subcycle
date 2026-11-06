@@ -19,11 +19,6 @@ import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
 import { type MenstruationNotification } from "@/types/settings";
-import {
-  compareTimesAsc,
-  formatHourMinute,
-  getCurrentTime,
-} from "@/types/time";
 
 type RuleTarget = { rule?: MenstruationNotification } | null;
 
@@ -45,7 +40,7 @@ export const MenstruationRemindersSettingsSection: FC = () => {
   const sortedRules = [...menstruationNotifications].sort(
     (left, right) =>
       left.dayToMenstruation - right.dayToMenstruation ||
-      compareTimesAsc(left.notificationTime, right.notificationTime),
+      left.notificationTime.localeCompare(right.notificationTime),
   );
   const showSwitch =
     menstruationNotificationsEnabled || menstruationNotifications.length > 0;
@@ -87,7 +82,7 @@ export const MenstruationRemindersSettingsSection: FC = () => {
                     rule: t("settings.reminderRule", {
                       count: rule.dayToMenstruation,
                     }),
-                    time: formatHourMinute(rule.notificationTime),
+                    time: rule.notificationTime,
                   })}
                   description={
                     rule.customMessage ??
@@ -166,7 +161,7 @@ export const MenstruationRemindersSettingsSection: FC = () => {
 
       <TimePickerDialog
         visible={pickingTime}
-        value={ruleTarget?.rule?.notificationTime ?? getCurrentTime()}
+        value={ruleTarget?.rule?.notificationTime}
         onClose={() => {
           setPickingTime(false);
           setRuleTarget(null);
