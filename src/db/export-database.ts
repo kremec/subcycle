@@ -25,15 +25,20 @@ export function exportDatabase(): Promise<void> {
       backupDatabaseAsync({
         sourceDatabase: expoDb,
         destDatabase: exportDb,
-      }).finally(() => exportDb.closeAsync()),
+      })
+        .then(async () => {
+          const exportPath = `file://${defaultDatabaseDirectory}/${EXPORT_DB_NAME}`;
+          await Sharing.shareAsync(exportPath, {
+            dialogTitle: t("settings.exportTitle"),
+          });
+          logInfo("db.export", "share-opened");
+        })
+        .finally(() =>
+          exportDb.closeAsync().catch((error) => {
+            logError("db.export", "close-failed", error);
+          }),
+        ),
     )
-    .then(async () => {
-      const exportPath = `file://${defaultDatabaseDirectory}/${EXPORT_DB_NAME}`;
-      await Sharing.shareAsync(exportPath, {
-        dialogTitle: t("settings.exportTitle"),
-      });
-      logInfo("db.export", "share-opened");
-    })
     .catch((error) => {
       logError("db.export", "failed", error);
       Alert.alert(t("settings.exportFailed"));
