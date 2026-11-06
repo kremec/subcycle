@@ -2,7 +2,7 @@ import { IconName } from "@/components/ui/icon";
 import { palette } from "@/theme/palette";
 import { t } from "@/translation/use-translation";
 import type { SymptomGroupDefinition } from "@/types/symptom-definition";
-import { SymptomsKey } from "@/types/symptoms";
+import { Symptom } from "@/types/symptoms";
 
 export const symptomGroups: SymptomGroupDefinition[] = [
   {
@@ -10,42 +10,42 @@ export const symptomGroups: SymptomGroupDefinition[] = [
     color: palette.symptomsSymptoms,
     types: [
       {
-        key: SymptomsKey.SYMPTOMS_INTESTINAL_PROBLEMS,
+        key: Symptom.SYMPTOM_INTESTINAL_PROBLEMS,
         label: t("calendar.symptoms.labels.symptomsIntestinalProblems"),
         icon: IconName.POO,
       },
       {
-        key: SymptomsKey.SYMPTOMS_APPETITE_CHANGES,
+        key: Symptom.SYMPTOM_APPETITE_CHANGES,
         label: t("calendar.symptoms.labels.symptomsAppetiteChanges"),
         icon: IconName.TOOLS_KITCHEN_2,
       },
       {
-        key: SymptomsKey.SYMPTOMS_BLOATING,
+        key: Symptom.SYMPTOM_BLOATING,
         label: t("calendar.symptoms.labels.symptomsBloating"),
         icon: IconName.BALLOON,
       },
       {
-        key: SymptomsKey.SYMPTOMS_CHILLS,
+        key: Symptom.SYMPTOM_CHILLS,
         label: t("calendar.symptoms.labels.symptomsChills"),
         icon: IconName.SNOWFLAKE,
       },
       {
-        key: SymptomsKey.SYMPTOMS_CRAMPS,
+        key: Symptom.SYMPTOM_CRAMPS,
         label: t("calendar.symptoms.labels.symptomsCramps"),
         icon: IconName.BOLT,
       },
       {
-        key: SymptomsKey.SYMPTOMS_DRY_SKIN,
+        key: Symptom.SYMPTOM_DRY_SKIN,
         label: t("calendar.symptoms.labels.symptomsDrySkin"),
         icon: IconName.DROPLET_OFF,
       },
       {
-        key: SymptomsKey.SYMPTOMS_INSOMNIA,
+        key: Symptom.SYMPTOM_INSOMNIA,
         label: t("calendar.symptoms.labels.symptomsInsomnia"),
         icon: IconName.BED_OFF,
       },
       {
-        key: SymptomsKey.SYMPTOMS_NAUSEA,
+        key: Symptom.SYMPTOM_NAUSEA,
         label: t("calendar.symptoms.labels.symptomsNausea"),
         icon: IconName.MOOD_SICK,
       },
@@ -56,22 +56,22 @@ export const symptomGroups: SymptomGroupDefinition[] = [
     color: palette.symptomsDischarge,
     types: [
       {
-        key: SymptomsKey.DISCHARGE_WATERY,
+        key: Symptom.DISCHARGE_WATERY,
         label: t("calendar.symptoms.labels.dischargeWatery"),
         icon: IconName.RIPPLE,
       },
       {
-        key: SymptomsKey.DISCHARGE_CREAMY,
+        key: Symptom.DISCHARGE_CREAMY,
         label: t("calendar.symptoms.labels.dischargeCreamy"),
         icon: IconName.ICE_CREAM_2,
       },
       {
-        key: SymptomsKey.DISCHARGE_STICKY,
+        key: Symptom.DISCHARGE_STICKY,
         label: t("calendar.symptoms.labels.dischargeSticky"),
         icon: IconName.CHART_RADAR,
       },
       {
-        key: SymptomsKey.DISCHARGE_DRY,
+        key: Symptom.DISCHARGE_DRY,
         label: t("calendar.symptoms.labels.dischargeDry"),
         icon: IconName.CACTUS,
       },
@@ -83,23 +83,23 @@ export const symptomGroups: SymptomGroupDefinition[] = [
     color: palette.symptomsLibido,
     types: [
       {
-        key: SymptomsKey.LIBIDO_VERY_LOW,
+        key: Symptom.LIBIDO_VERY_LOW,
         label: t("calendar.symptoms.labels.libidoVeryLow"),
         icon: IconName.ARROW_BADGE_DOWN,
         filled: true,
       },
       {
-        key: SymptomsKey.LIBIDO_LOW,
+        key: Symptom.LIBIDO_LOW,
         label: t("calendar.symptoms.labels.libidoLow"),
         icon: IconName.ARROW_BADGE_DOWN,
       },
       {
-        key: SymptomsKey.LIBIDO_HIGH,
+        key: Symptom.LIBIDO_HIGH,
         label: t("calendar.symptoms.labels.libidoHigh"),
         icon: IconName.ARROW_BADGE_UP,
       },
       {
-        key: SymptomsKey.LIBIDO_VERY_HIGH,
+        key: Symptom.LIBIDO_VERY_HIGH,
         label: t("calendar.symptoms.labels.libidoVeryHigh"),
         icon: IconName.ARROW_BADGE_UP,
         filled: true,
@@ -111,22 +111,22 @@ export const symptomGroups: SymptomGroupDefinition[] = [
     color: palette.symptomsExercise,
     types: [
       {
-        key: SymptomsKey.EXERCISE_RUNNING,
+        key: Symptom.EXERCISE_RUNNING,
         label: t("calendar.symptoms.labels.exerciseRunning"),
         icon: IconName.RUN,
       },
       {
-        key: SymptomsKey.EXERCISE_CYCLING,
+        key: Symptom.EXERCISE_CYCLING,
         label: t("calendar.symptoms.labels.exerciseCycling"),
         icon: IconName.BIKE,
       },
       {
-        key: SymptomsKey.EXERCISE_HIKING,
+        key: Symptom.EXERCISE_HIKING,
         label: t("calendar.symptoms.labels.exerciseHiking"),
         icon: IconName.TREKKING,
       },
       {
-        key: SymptomsKey.EXERCISE_GYM,
+        key: Symptom.EXERCISE_GYM,
         label: t("calendar.symptoms.labels.exerciseGym"),
         icon: IconName.BARBELL,
       },
@@ -137,37 +137,37 @@ export const symptomGroups: SymptomGroupDefinition[] = [
     color: palette.symptomsMoods,
     types: [
       {
-        key: SymptomsKey.MOOD_ANGRY,
+        key: Symptom.MOOD_ANGRY,
         label: t("calendar.symptoms.labels.moodAngry"),
         icon: IconName.MOOD_ANGRY,
       },
       {
-        key: SymptomsKey.MOOD_HAPPY,
+        key: Symptom.MOOD_HAPPY,
         label: t("calendar.symptoms.labels.moodHappy"),
         icon: IconName.MOOD_HAPPY,
       },
       {
-        key: SymptomsKey.MOOD_NEUTRAL,
+        key: Symptom.MOOD_NEUTRAL,
         label: t("calendar.symptoms.labels.moodNeutral"),
         icon: IconName.MOOD_NEUTRAL,
       },
       {
-        key: SymptomsKey.MOOD_SAD,
+        key: Symptom.MOOD_SAD,
         label: t("calendar.symptoms.labels.moodSad"),
         icon: IconName.MOOD_SAD,
       },
       {
-        key: SymptomsKey.MOOD_ANNOYED,
+        key: Symptom.MOOD_ANNOYED,
         label: t("calendar.symptoms.labels.moodAnnoyed"),
         icon: IconName.MOOD_ANNOYED,
       },
       {
-        key: SymptomsKey.MOOD_SENSITIVE,
+        key: Symptom.MOOD_SENSITIVE,
         label: t("calendar.symptoms.labels.moodSensitive"),
         icon: IconName.MOOD_CRY,
       },
       {
-        key: SymptomsKey.MOOD_IRRITATED,
+        key: Symptom.MOOD_IRRITATED,
         label: t("calendar.symptoms.labels.moodIrritated"),
         icon: IconName.MOOD_SAD_SQUINT,
       },

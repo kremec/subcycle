@@ -10,7 +10,7 @@ import { SymptomCard } from "@/screens/calendar/components/symptom-card";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
 import type { SymptomGroupDefinition } from "@/types/symptom-definition";
-import type { Symptoms, SymptomsKey } from "@/types/symptoms";
+import type { Symptoms, Symptom } from "@/types/symptoms";
 
 interface SymptomsEditSheetProps {
   visible: boolean;
@@ -23,7 +23,7 @@ export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
   const { visible, symptoms, onClose, onChange } = props;
   const theme = useTheme();
 
-  const toggle = (group: SymptomGroupDefinition, key: SymptomsKey) => {
+  const toggle = (group: SymptomGroupDefinition, key: Symptom) => {
     const next = { ...symptoms, [key]: !symptoms[key] };
     if (next[key] && group.exclusive) {
       for (const symptom of group.types) {

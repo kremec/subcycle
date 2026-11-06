@@ -1,9 +1,9 @@
 import type { IconName } from "@/components/ui/icon";
 import type { PaletteColor } from "@/theme/palette";
-import type { SymptomsKey } from "@/types/symptoms";
+import type { Symptom } from "@/types/symptoms";
 
 type SymptomDefinition = {
-  key: SymptomsKey;
+  key: Symptom;
   label: string;
   icon: IconName;
   filled?: boolean;

@@ -1,12 +1,12 @@
-export enum SymptomsKey {
-  SYMPTOMS_INTESTINAL_PROBLEMS = "symptomsIntestinalProblems",
-  SYMPTOMS_APPETITE_CHANGES = "symptomsAppetiteChanges",
-  SYMPTOMS_BLOATING = "symptomsBloating",
-  SYMPTOMS_CHILLS = "symptomsChills",
-  SYMPTOMS_CRAMPS = "symptomsCramps",
-  SYMPTOMS_DRY_SKIN = "symptomsDrySkin",
-  SYMPTOMS_INSOMNIA = "symptomsInsomnia",
-  SYMPTOMS_NAUSEA = "symptomsNausea",
+export enum Symptom {
+  SYMPTOM_INTESTINAL_PROBLEMS = "symptomsIntestinalProblems",
+  SYMPTOM_APPETITE_CHANGES = "symptomsAppetiteChanges",
+  SYMPTOM_BLOATING = "symptomsBloating",
+  SYMPTOM_CHILLS = "symptomsChills",
+  SYMPTOM_CRAMPS = "symptomsCramps",
+  SYMPTOM_DRY_SKIN = "symptomsDrySkin",
+  SYMPTOM_INSOMNIA = "symptomsInsomnia",
+  SYMPTOM_NAUSEA = "symptomsNausea",
   DISCHARGE_WATERY = "dischargeWatery",
   DISCHARGE_CREAMY = "dischargeCreamy",
   DISCHARGE_STICKY = "dischargeSticky",
@@ -28,14 +28,14 @@ export enum SymptomsKey {
   MOOD_IRRITATED = "moodIrritated",
 }
 
-export type Symptoms = { date: Date } & Record<SymptomsKey, boolean>;
+export type Symptoms = { date: Date } & Record<Symptom, boolean>;
 
 export function mapSymptomsKeys<T>(
-  value: (key: SymptomsKey) => T,
-): Record<SymptomsKey, T> {
+  value: (key: Symptom) => T,
+): Record<Symptom, T> {
   return Object.fromEntries(
-    Object.values(SymptomsKey).map((key) => [key, value(key)]),
-  ) as Record<SymptomsKey, T>;
+    Object.values(Symptom).map((key) => [key, value(key)]),
+  ) as Record<Symptom, T>;
 }
 
 export function createDefaultSymptoms(date: Date): Symptoms {
@@ -43,5 +43,5 @@ export function createDefaultSymptoms(date: Date): Symptoms {
 }
 
 export function hasAnySymptoms(symptoms: Symptoms): boolean {
-  return Object.values(SymptomsKey).some((key) => symptoms[key]);
+  return Object.values(Symptom).some((key) => symptoms[key]);
 }
