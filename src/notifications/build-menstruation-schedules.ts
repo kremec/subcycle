@@ -1,7 +1,7 @@
 import { format, isFuture, parse, subDays } from "date-fns";
 
 import { getEventPeriods } from "@/domain/cycle";
-import { isMenstruationEvent, type Event } from "@/types/event";
+import { type Event } from "@/types/event";
 import { type Settings } from "@/types/settings";
 
 import type { MenstruationNotificationSchedule } from "@modules/subcycle-reminders";
@@ -19,10 +19,9 @@ export function buildMenstruationSchedules(
     return [];
   }
 
-  const predictedStarts = getEventPeriods(
-    predictedMenstruationEvents,
-    isMenstruationEvent,
-  ).map((period) => period.start);
+  const predictedStarts = getEventPeriods(predictedMenstruationEvents).map(
+    (period) => period.start,
+  );
 
   return settings.menstruationNotifications
     .slice()

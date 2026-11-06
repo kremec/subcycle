@@ -32,15 +32,17 @@ export enum Symptom {
 
 const flag = z.boolean().default(false);
 
-export const symptomsSchema = z.object({
-  date: z.date(),
-  ...(Object.fromEntries(
-    Object.values(Symptom).map((key) => [key, flag]),
-  ) as Record<Symptom, typeof flag>),
-});
+export const symptomsSchema = z
+  .object({
+    date: z.date(),
+    ...(Object.fromEntries(
+      Object.values(Symptom).map((key) => [key, flag]),
+    ) as Record<Symptom, typeof flag>),
+  })
+  .transform((symptoms) => ({
+    ...symptoms,
+    hasSymptoms: Object.values(symptoms).some((value) => value === true),
+  }))
+  .readonly();
 
 export type Symptoms = z.infer<typeof symptomsSchema>;
-
-export function hasAnySymptoms(symptoms: Symptoms): boolean {
-  return Object.values(Symptom).some((key) => symptoms[key]);
-}

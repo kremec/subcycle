@@ -5,16 +5,18 @@ import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
 import { db } from "@/db/client";
 import { symptomsTable } from "@/db/schema";
 import { logInfo } from "@/logging/logger";
-import { hasAnySymptoms, type Symptoms } from "@/types/symptoms";
+import { symptomsSchema, type Symptoms } from "@/types/symptoms";
 
 export function useSymptomsQuery() {
-  return useLiveQuery(
+  const query = useLiveQuery(
     db.select().from(symptomsTable).orderBy(symptomsTable.date),
   );
+  return { ...query, data: symptomsSchema.array().parse(query.data) };
 }
 
 export async function saveSymptoms(symptoms: Symptoms): Promise<void> {
-  if (!hasAnySymptoms(symptoms)) {
+  const { hasSymptoms, ...values } = symptoms;
+  if (!hasSymptoms) {
     return db
       .delete(symptomsTable)
       .where(eq(symptomsTable.date, symptoms.date))
@@ -26,8 +28,8 @@ export async function saveSymptoms(symptoms: Symptoms): Promise<void> {
 
   return db
     .insert(symptomsTable)
-    .values(symptoms)
-    .onConflictDoUpdate({ target: symptomsTable.date, set: symptoms })
+    .values(values)
+    .onConflictDoUpdate({ target: symptomsTable.date, set: values })
     .then(() => {
       backupDatabaseAfterWrite();
       logInfo("db.symptoms", "upsert");

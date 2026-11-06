@@ -7,7 +7,7 @@ import { Typography } from "@/components/ui/typography";
 import { getEventPeriods } from "@/domain/cycle";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
-import { isMenstruationEvent, type Event } from "@/types/event";
+import { type Event } from "@/types/event";
 
 interface CycleStatusProps {
   events: Event[];
@@ -18,7 +18,7 @@ export const CycleStatus: FC<CycleStatusProps> = (props) => {
   const theme = useTheme();
 
   const today = startOfDay(new Date());
-  const currentOrNextPeriod = getEventPeriods(events, isMenstruationEvent).find(
+  const currentOrNextPeriod = getEventPeriods(events).find(
     (entry) => differenceInCalendarDays(entry.end, today) >= 0,
   );
   const isMenstruating =

@@ -1,20 +1,5 @@
 import { z } from "zod";
 
-const flag = z.boolean().default(false);
-
-export const eventSchema = z.object({
-  date: z.date(),
-  menstruationLight: flag,
-  menstruationModerate: flag,
-  menstruationHeavy: flag,
-  menstruationSpotting: flag,
-  ovulation: flag,
-  pill: flag,
-  prediction: flag,
-});
-
-export type Event = z.infer<typeof eventSchema>;
-
 export enum MenstruationFlow {
   HEAVY = "menstruationHeavy",
   MODERATE = "menstruationModerate",
@@ -28,38 +13,35 @@ export enum EventKind {
   OVULATION = "OVULATION",
 }
 
-export function hasAnyEventFlags(event: Event): boolean {
-  return (
-    event.menstruationLight ||
-    event.menstruationModerate ||
-    event.menstruationHeavy ||
-    event.menstruationSpotting ||
-    event.ovulation ||
-    event.pill
-  );
-}
+const flag = z.boolean().default(false);
 
-export function isMenstruationEvent(event: Event): boolean {
-  return (
-    event.menstruationLight ||
-    event.menstruationModerate ||
-    event.menstruationHeavy ||
-    event.menstruationSpotting
-  );
-}
+export const eventSchema = z
+  .object({
+    date: z.date(),
+    menstruationLight: flag,
+    menstruationModerate: flag,
+    menstruationHeavy: flag,
+    menstruationSpotting: flag,
+    ovulation: flag,
+    pill: flag,
+    prediction: flag,
+  })
+  .transform((event) => {
+    const menstruation =
+      event.menstruationLight ||
+      event.menstruationModerate ||
+      event.menstruationHeavy ||
+      event.menstruationSpotting;
+    let kind = EventKind.NONE;
+    if (menstruation) kind = EventKind.MENSTRUATION;
+    else if (event.ovulation) kind = EventKind.OVULATION;
 
-export function isOvulationEvent(event: Event): boolean {
-  return event.ovulation;
-}
+    return {
+      ...event,
+      kind,
+      hasFlags: menstruation || event.ovulation || event.pill,
+    };
+  })
+  .readonly();
 
-export function getEventKind(event: Event | null | undefined): EventKind {
-  if (!event) {
-    return EventKind.NONE;
-  }
-
-  if (isMenstruationEvent(event)) {
-    return EventKind.MENSTRUATION;
-  }
-
-  return isOvulationEvent(event) ? EventKind.OVULATION : EventKind.NONE;
-}
+export type Event = z.infer<typeof eventSchema>;

@@ -10,7 +10,7 @@ import { Typography } from "@/components/ui/typography";
 import { EventToggleButton } from "@/screens/calendar/components/event-toggle-button";
 import { useTheme } from "@/theme/use-theme";
 import { formatOrdinal, t } from "@/translation/use-translation";
-import { hasAnyEventFlags, type Event } from "@/types/event";
+import { eventSchema, type Event } from "@/types/event";
 
 interface CalendarEditDialogProps {
   event: Event;
@@ -59,24 +59,26 @@ export const CalendarEditDialog: FC<CalendarEditDialogProps> = (props) => {
   const toggleExclusive = (
     key: (typeof flowToggles)[number]["key"] | "ovulation",
   ) => {
-    setDraft({
-      ...draft,
-      menstruationLight: false,
-      menstruationModerate: false,
-      menstruationHeavy: false,
-      menstruationSpotting: false,
-      ovulation: false,
-      [key]: !draft[key],
-    });
+    setDraft(
+      eventSchema.parse({
+        ...draft,
+        menstruationLight: false,
+        menstruationModerate: false,
+        menstruationHeavy: false,
+        menstruationSpotting: false,
+        ovulation: false,
+        [key]: !draft[key],
+      }),
+    );
   };
 
   const save = () => {
-    const finalEvent = {
+    const finalEvent = eventSchema.parse({
       ...draft,
       prediction: false,
-    };
+    });
 
-    if (event.prediction && !hasAnyEventFlags(finalEvent)) {
+    if (event.prediction && !finalEvent.hasFlags) {
       onClose();
       return;
     }
@@ -147,7 +149,9 @@ export const CalendarEditDialog: FC<CalendarEditDialogProps> = (props) => {
           }
           active={draft.pill}
           color={theme.colors.calendarPill}
-          onPress={() => setDraft({ ...draft, pill: !draft.pill })}
+          onPress={() =>
+            setDraft(eventSchema.parse({ ...draft, pill: !draft.pill }))
+          }
         />
 
         <View style={{ flexDirection: "row", gap: theme.spacing.sm }}>

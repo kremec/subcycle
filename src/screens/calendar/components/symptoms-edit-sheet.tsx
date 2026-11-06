@@ -10,7 +10,7 @@ import { SymptomCard } from "@/screens/calendar/components/symptom-card";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
 import type { SymptomGroupDefinition } from "@/types/symptom-definition";
-import type { Symptoms, Symptom } from "@/types/symptoms";
+import { symptomsSchema, type Symptoms, type Symptom } from "@/types/symptoms";
 
 interface SymptomsEditSheetProps {
   visible: boolean;
@@ -30,7 +30,7 @@ export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
         next[symptom.key] = symptom.key === key;
       }
     }
-    onChange(next);
+    onChange(symptomsSchema.parse(next));
   };
 
   return (

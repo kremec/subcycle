@@ -5,7 +5,7 @@ import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
 import { db } from "@/db/client";
 import { eventsTable } from "@/db/schema";
 import { logInfo } from "@/logging/logger";
-import { type Event, hasAnyEventFlags } from "@/types/event";
+import { type Event, eventSchema } from "@/types/event";
 
 function eventsQuery() {
   return db
@@ -18,15 +18,16 @@ function eventsQuery() {
 }
 
 export function getEvents(): Event[] {
-  return eventsQuery().all();
+  return eventSchema.array().parse(eventsQuery().all());
 }
 
 export function useEventsQuery() {
-  return useLiveQuery(eventsQuery());
+  const query = useLiveQuery(eventsQuery());
+  return { ...query, data: eventSchema.array().parse(query.data) };
 }
 
 export async function saveEvent(event: Event): Promise<void> {
-  if (!hasAnyEventFlags(event)) {
+  if (!event.hasFlags) {
     return db
       .delete(eventsTable)
       .where(eq(eventsTable.date, event.date))

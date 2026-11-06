@@ -1,6 +1,6 @@
 import { compareAsc, differenceInCalendarDays } from "date-fns";
 
-import { isMenstruationEvent, type Event } from "@/types/event";
+import { EventKind, type Event } from "@/types/event";
 
 export type EventPeriod = {
   start: Date;
@@ -15,7 +15,7 @@ export type PeriodHistory = {
 
 export function getPeriodHistory(
   events: Event[],
-  eventFilter = isMenstruationEvent,
+  eventFilter = (event: Event) => event.kind === EventKind.MENSTRUATION,
 ): PeriodHistory {
   const periods: PeriodHistory["periods"] = [];
   const observations = events
@@ -56,7 +56,7 @@ export function getPeriodHistory(
 
 export function getEventPeriods(
   events: Event[],
-  eventFilter: (event: Event) => boolean,
+  eventFilter?: (event: Event) => boolean,
 ): EventPeriod[] {
   return getPeriodHistory(events, eventFilter).periods.map((period) => ({
     start: period.start,
@@ -78,7 +78,7 @@ export function getAverageCycleLength(events: Event[]): number | null {
 
 export function getAveragePeriodLength(
   events: Event[],
-  eventFilter = isMenstruationEvent,
+  eventFilter?: (event: Event) => boolean,
 ): number | null {
   return getPeriodHistory(events, eventFilter).averagePeriodLength;
 }
