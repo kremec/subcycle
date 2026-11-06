@@ -15,7 +15,7 @@ import { eventsTable, partnerInsightsTable, symptomsTable } from "@/db/schema";
 import { logError, logInfo } from "@/logging/logger";
 import { eventSchema } from "@/types/event";
 import { partnerInsightSchema } from "@/types/partner-insight";
-import { symptomsSchema } from "@/types/symptoms";
+import { symptomsSchema } from "@/types/symptom";
 
 const IMPORT_DB_NAME = "subcycle-import.db";
 

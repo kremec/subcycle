@@ -4,10 +4,11 @@ import { View } from "react-native";
 import { isSameDay } from "date-fns";
 
 import { Screen } from "@/components/ui/screen";
-import { useEventsQuery } from "@/db/repositories/events-repository";
-import { saveEvent } from "@/db/repositories/events-repository";
-import { useSymptomsQuery } from "@/db/repositories/symptoms-repository";
-import { saveSymptoms } from "@/db/repositories/symptoms-repository";
+import { saveEvent, useEventsQuery } from "@/db/repositories/events-repository";
+import {
+  saveSymptoms,
+  useSymptomsQuery,
+} from "@/db/repositories/symptoms-repository";
 import { getDayInCycle } from "@/domain/cycle";
 import { getAllPredictions } from "@/domain/cycle-predictions";
 import { Calendar } from "@/screens/calendar/components/calendar";
@@ -18,7 +19,7 @@ import { SymptomsOverview } from "@/screens/calendar/components/symptoms-overvie
 import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
 import { eventSchema, type Event } from "@/types/event";
-import { symptomsSchema } from "@/types/symptoms";
+import { symptomsSchema } from "@/types/symptom";
 
 const CalendarScreen: FC = () => {
   const theme = useTheme();
@@ -74,9 +75,7 @@ const CalendarScreen: FC = () => {
         visible={symptomsEditorVisible}
         symptoms={selectedSymptoms}
         onClose={() => setSymptomsEditorVisible(false)}
-        onChange={(nextSymptoms) => {
-          saveSymptoms(nextSymptoms);
-        }}
+        onChange={saveSymptoms}
       />
 
       {editingEvent && (

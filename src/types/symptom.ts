@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+import type { IconName } from "@/components/ui/icon";
+import type { PaletteColor } from "@/theme/palette";
+
 export enum Symptom {
   SYMPTOM_INTESTINAL_PROBLEMS = "symptomsIntestinalProblems",
   SYMPTOM_APPETITE_CHANGES = "symptomsAppetiteChanges",
@@ -46,3 +49,17 @@ export const symptomsSchema = z
   .readonly();
 
 export type Symptoms = z.infer<typeof symptomsSchema>;
+
+type SymptomDefinition = {
+  key: Symptom;
+  label: string;
+  icon: IconName;
+  filled?: boolean;
+};
+
+export type SymptomGroupDefinition = {
+  name: string;
+  exclusive?: boolean;
+  color: PaletteColor;
+  types: SymptomDefinition[];
+};

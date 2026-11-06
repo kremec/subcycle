@@ -76,49 +76,46 @@ export const MenstruationRemindersSettingsSection: FC = () => {
       >
         {menstruationNotificationsEnabled && (
           <View style={{ gap: theme.spacing.md }}>
-            {sortedRules.map((rule, index) => {
-              return (
-                <ListRow
-                  key={`${rule.dayToMenstruation}-${index}`}
-                  title={t("settings.reminderRuleAtTime", {
-                    rule: t("settings.reminderRule", {
-                      count: rule.dayToMenstruation,
-                    }),
-                    time: rule.notificationTime,
-                  })}
-                  description={
-                    rule.customMessage ??
-                    t("settings.useDefaultReminderMessage")
-                  }
-                  onPress={() => {
-                    setRuleTarget({ rule });
-                    setRuleDay(rule.dayToMenstruation);
-                    setRuleMessage(rule.customMessage ?? "");
-                  }}
-                  right={
-                    <IconButton
-                      accessibilityLabel={t("settings.deleteReminder")}
-                      onPress={() =>
-                        updateSettings({
-                          menstruationNotifications:
-                            menstruationNotifications.filter(
-                              (item) => item !== rule,
-                            ),
-                          menstruationNotificationsEnabled:
-                            menstruationNotifications.length > 1,
-                        })
-                      }
-                    >
-                      <Icon
-                        name={IconName.TRASH}
-                        color={theme.colors.text}
-                        size={18}
-                      />
-                    </IconButton>
-                  }
-                />
-              );
-            })}
+            {sortedRules.map((rule, index) => (
+              <ListRow
+                key={`${rule.dayToMenstruation}-${index}`}
+                title={t("settings.reminderRuleAtTime", {
+                  rule: t("settings.reminderRule", {
+                    count: rule.dayToMenstruation,
+                  }),
+                  time: rule.notificationTime,
+                })}
+                description={
+                  rule.customMessage ?? t("settings.useDefaultReminderMessage")
+                }
+                onPress={() => {
+                  setRuleTarget({ rule });
+                  setRuleDay(rule.dayToMenstruation);
+                  setRuleMessage(rule.customMessage ?? "");
+                }}
+                right={
+                  <IconButton
+                    accessibilityLabel={t("settings.deleteReminder")}
+                    onPress={() =>
+                      updateSettings({
+                        menstruationNotifications:
+                          menstruationNotifications.filter(
+                            (item) => item !== rule,
+                          ),
+                        menstruationNotificationsEnabled:
+                          menstruationNotifications.length > 1,
+                      })
+                    }
+                  >
+                    <Icon
+                      name={IconName.TRASH}
+                      color={theme.colors.text}
+                      size={18}
+                    />
+                  </IconButton>
+                }
+              />
+            ))}
           </View>
         )}
 

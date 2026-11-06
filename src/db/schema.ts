@@ -7,6 +7,8 @@ import {
   text,
 } from "drizzle-orm/sqlite-core";
 
+import { Symptom } from "@/types/symptom";
+
 const epoch = new Date(1970, 0, 1, 12);
 
 const calendarDate = customType<{ data: Date; driverData: number }>({
@@ -33,33 +35,33 @@ export const eventsTable = sqliteTable("events", {
 
 export const symptomsTable = sqliteTable("symptoms", {
   date: calendarDate("date").primaryKey(),
-  symptomsIntestinalProblems: flag("symptoms_intestinal_problems"),
-  symptomsAppetiteChanges: flag("symptoms_appetite_changes"),
-  symptomsBloating: flag("symptoms_bloating"),
-  symptomsChills: flag("symptoms_chills"),
-  symptomsCramps: flag("symptoms_cramps"),
-  symptomsDrySkin: flag("symptoms_dry_skin"),
-  symptomsInsomnia: flag("symptoms_insomnia"),
-  symptomsNausea: flag("symptoms_nausea"),
-  dischargeWatery: flag("discharge_watery"),
-  dischargeCreamy: flag("discharge_creamy"),
-  dischargeSticky: flag("discharge_sticky"),
-  dischargeDry: flag("discharge_dry"),
-  libidoVeryLow: flag("sex_drive_very_low"),
-  libidoLow: flag("sex_drive_low"),
-  libidoHigh: flag("sex_drive_high"),
-  libidoVeryHigh: flag("sex_drive_very_high"),
-  exerciseRunning: flag("exercise_running"),
-  exerciseCycling: flag("exercise_cycling"),
-  exerciseHiking: flag("exercise_hiking"),
-  exerciseGym: flag("exercise_gym"),
-  moodAngry: flag("mood_angry"),
-  moodHappy: flag("mood_happy"),
-  moodNeutral: flag("mood_neutral"),
-  moodSad: flag("mood_sad"),
-  moodAnnoyed: flag("mood_annoyed"),
-  moodSensitive: flag("mood_sensitive"),
-  moodIrritated: flag("mood_irritated"),
+  [Symptom.SYMPTOM_INTESTINAL_PROBLEMS]: flag("symptoms_intestinal_problems"),
+  [Symptom.SYMPTOM_APPETITE_CHANGES]: flag("symptoms_appetite_changes"),
+  [Symptom.SYMPTOM_BLOATING]: flag("symptoms_bloating"),
+  [Symptom.SYMPTOM_CHILLS]: flag("symptoms_chills"),
+  [Symptom.SYMPTOM_CRAMPS]: flag("symptoms_cramps"),
+  [Symptom.SYMPTOM_DRY_SKIN]: flag("symptoms_dry_skin"),
+  [Symptom.SYMPTOM_INSOMNIA]: flag("symptoms_insomnia"),
+  [Symptom.SYMPTOM_NAUSEA]: flag("symptoms_nausea"),
+  [Symptom.DISCHARGE_WATERY]: flag("discharge_watery"),
+  [Symptom.DISCHARGE_CREAMY]: flag("discharge_creamy"),
+  [Symptom.DISCHARGE_STICKY]: flag("discharge_sticky"),
+  [Symptom.DISCHARGE_DRY]: flag("discharge_dry"),
+  [Symptom.LIBIDO_VERY_LOW]: flag("sex_drive_very_low"),
+  [Symptom.LIBIDO_LOW]: flag("sex_drive_low"),
+  [Symptom.LIBIDO_HIGH]: flag("sex_drive_high"),
+  [Symptom.LIBIDO_VERY_HIGH]: flag("sex_drive_very_high"),
+  [Symptom.EXERCISE_RUNNING]: flag("exercise_running"),
+  [Symptom.EXERCISE_CYCLING]: flag("exercise_cycling"),
+  [Symptom.EXERCISE_HIKING]: flag("exercise_hiking"),
+  [Symptom.EXERCISE_GYM]: flag("exercise_gym"),
+  [Symptom.MOOD_ANGRY]: flag("mood_angry"),
+  [Symptom.MOOD_HAPPY]: flag("mood_happy"),
+  [Symptom.MOOD_NEUTRAL]: flag("mood_neutral"),
+  [Symptom.MOOD_SAD]: flag("mood_sad"),
+  [Symptom.MOOD_ANNOYED]: flag("mood_annoyed"),
+  [Symptom.MOOD_SENSITIVE]: flag("mood_sensitive"),
+  [Symptom.MOOD_IRRITATED]: flag("mood_irritated"),
 });
 
 export const partnerInsightsTable = sqliteTable("partner_insights", {

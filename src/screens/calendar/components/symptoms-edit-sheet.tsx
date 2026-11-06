@@ -7,8 +7,12 @@ import { symptomGroups } from "@/domain/symptom-groups";
 import { SymptomCard } from "@/screens/calendar/components/symptom-card";
 import { useTheme } from "@/theme/use-theme";
 import { dateFormatter, t } from "@/translation/use-translation";
-import type { SymptomGroupDefinition } from "@/types/symptom-definition";
-import { symptomsSchema, type Symptoms, type Symptom } from "@/types/symptoms";
+import {
+  symptomsSchema,
+  type Symptoms,
+  type Symptom,
+  type SymptomGroupDefinition,
+} from "@/types/symptom";
 
 interface SymptomsEditSheetProps {
   visible: boolean;

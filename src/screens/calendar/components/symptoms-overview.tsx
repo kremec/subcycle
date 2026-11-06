@@ -8,7 +8,7 @@ import { Typography } from "@/components/ui/typography";
 import { symptomGroups } from "@/domain/symptom-groups";
 import { useTheme } from "@/theme/use-theme";
 import { dateFormatter, t } from "@/translation/use-translation";
-import type { Symptoms } from "@/types/symptoms";
+import type { Symptoms } from "@/types/symptom";
 
 interface SymptomsOverviewProps {
   symptoms: Symptoms;

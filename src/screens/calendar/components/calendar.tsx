@@ -56,7 +56,7 @@ export const Calendar: FC<CalendarProps> = (props) => {
   const getKey = (date: Date) => format(date, "yyyy-MM-dd");
   const getDate = (date: DateData) =>
     new Date(date.year, date.month - 1, date.day, 12);
-  const getColor = (event: Event | null | undefined) => {
+  const getColor = (event: Event | undefined) => {
     if (!event) {
       return null;
     }
@@ -99,11 +99,8 @@ export const Calendar: FC<CalendarProps> = (props) => {
       return EventGroupShape.NONE;
     }
 
-    const previousSame =
-      (eventMap.get(getKey(addDays(date, -1)))?.kind ?? EventKind.NONE) ===
-      kind;
-    const nextSame =
-      (eventMap.get(getKey(addDays(date, 1)))?.kind ?? EventKind.NONE) === kind;
+    const previousSame = eventMap.get(getKey(addDays(date, -1)))?.kind === kind;
+    const nextSame = eventMap.get(getKey(addDays(date, 1)))?.kind === kind;
 
     if (!previousSame && !nextSame) {
       return EventGroupShape.SINGLE;
@@ -117,8 +114,8 @@ export const Calendar: FC<CalendarProps> = (props) => {
   };
 
   const getMarker = (date: Date): CalendarMarker => {
-    const actualEvent = actualEventMap.get(getKey(date)) ?? null;
-    const predictionEvent = predictionEventMap.get(getKey(date)) ?? null;
+    const actualEvent = actualEventMap.get(getKey(date));
+    const predictionEvent = predictionEventMap.get(getKey(date));
     const actualKind = actualEvent?.kind ?? EventKind.NONE;
     const predictionKind = predictionEvent?.kind ?? EventKind.NONE;
 

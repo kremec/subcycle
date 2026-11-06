@@ -5,7 +5,7 @@ import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
 import { db } from "@/db/client";
 import { symptomsTable } from "@/db/schema";
 import { logInfo } from "@/logging/logger";
-import { symptomsSchema, type Symptoms } from "@/types/symptoms";
+import { symptomsSchema, type Symptoms } from "@/types/symptom";
 
 export function useSymptomsQuery() {
   const query = useLiveQuery(

@@ -1,7 +1,7 @@
 import { Fragment, type FC } from "react";
 import { View } from "react-native";
 
-import { differenceInCalendarDays, startOfDay } from "date-fns";
+import { differenceInCalendarDays } from "date-fns";
 
 import { Typography } from "@/components/ui/typography";
 import { getEventPeriods } from "@/domain/cycle";
@@ -17,7 +17,7 @@ export const CycleStatus: FC<CycleStatusProps> = (props) => {
   const { events } = props;
   const theme = useTheme();
 
-  const today = startOfDay(new Date());
+  const today = new Date();
   const currentOrNextPeriod = getEventPeriods(events).find(
     (entry) => differenceInCalendarDays(entry.end, today) >= 0,
   );

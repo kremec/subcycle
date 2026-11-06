@@ -1,6 +1,8 @@
 import { type FC } from "react";
 import { Pressable, View } from "react-native";
 
+import { isLastDayOfMonth } from "date-fns";
+
 import { Typography } from "@/components/ui/typography";
 import { typography } from "@/theme/tokens";
 import { EventGroupShape, type CalendarMarker } from "@/types/calendar-marker";
@@ -16,8 +18,6 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
   const markerSize = 44;
   const actualShape = getVisualShape(marker.actualGroup, marker.date);
   const predictionShape = getVisualShape(marker.predictionGroup, marker.date);
-  const backgroundVisible = marker.actualColor !== null;
-  const predictionVisible = marker.predictionColor !== null;
   const actualSingle = marker.actualGroup === EventGroupShape.SINGLE;
   const predictionSingle = marker.predictionGroup === EventGroupShape.SINGLE;
 
@@ -25,9 +25,6 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
     const isFirstDayOfWeek = date.getDay() === 1;
     const isLastDayOfWeek = date.getDay() === 0;
     const isFirstDayOfMonth = date.getDate() === 1;
-    const isLastDayOfMonth =
-      date.getDate() ===
-      new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 
     const roundedLeft =
       group === EventGroupShape.SINGLE ||
@@ -38,7 +35,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
       group === EventGroupShape.SINGLE ||
       group === EventGroupShape.END ||
       isLastDayOfWeek ||
-      isLastDayOfMonth;
+      isLastDayOfMonth(date);
 
     return {
       marginLeft: roundedLeft ? 1 : 0,
@@ -67,7 +64,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
           justifyContent: "center",
         }}
       >
-        {backgroundVisible && (
+        {marker.actualColor !== null && (
           <View
             style={{
               position: "absolute",
@@ -77,7 +74,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
               right: actualSingle ? undefined : actualShape.marginRight,
               width: actualSingle ? markerSize : undefined,
               marginLeft: actualSingle ? -(markerSize / 2) : 0,
-              backgroundColor: marker.actualColor!,
+              backgroundColor: marker.actualColor,
               borderTopLeftRadius: actualShape.borderTopLeftRadius,
               borderBottomLeftRadius: actualShape.borderBottomLeftRadius,
               borderTopRightRadius: actualShape.borderTopRightRadius,
@@ -86,7 +83,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
           />
         )}
 
-        {predictionVisible && (
+        {marker.predictionColor !== null && (
           <View
             style={{
               position: "absolute",
@@ -100,7 +97,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
               borderBottomWidth: borderWidth,
               borderLeftWidth: predictionShape.roundedLeft ? borderWidth : 0,
               borderRightWidth: predictionShape.roundedRight ? borderWidth : 0,
-              borderColor: marker.predictionColor!,
+              borderColor: marker.predictionColor,
               borderTopLeftRadius: predictionShape.borderTopLeftRadius,
               borderBottomLeftRadius: predictionShape.borderBottomLeftRadius,
               borderTopRightRadius: predictionShape.borderTopRightRadius,

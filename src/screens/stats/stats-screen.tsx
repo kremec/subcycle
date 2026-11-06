@@ -11,9 +11,8 @@ const StatsScreen: FC = () => {
   const { data: events } = useEventsQuery();
 
   function formatDays(value: number | null): string {
-    return value === null
-      ? t("common.notAvailable")
-      : t("common.days", { count: Math.trunc(value) });
+    if (value === null) return t("common.notAvailable");
+    return t("common.days", { count: Math.trunc(value) });
   }
 
   return (

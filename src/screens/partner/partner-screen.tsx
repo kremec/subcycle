@@ -10,10 +10,10 @@ import { Screen } from "@/components/ui/screen";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Typography } from "@/components/ui/typography";
 import { useEventsQuery } from "@/db/repositories/events-repository";
-import { usePartnerInsightsQuery } from "@/db/repositories/partner-insights-repository";
 import {
   deletePartnerInsight,
   savePartnerInsight,
+  usePartnerInsightsQuery,
 } from "@/db/repositories/partner-insights-repository";
 import { getDayInCycle } from "@/domain/cycle";
 import { getAllPredictions } from "@/domain/cycle-predictions";
@@ -38,16 +38,11 @@ const PartnerScreen: FC = () => {
     (state) => state.settings.predictionTimespan,
   );
 
-  const currentDayInCycle = getDayInCycle(
-    new Date(),
-    getAllPredictions(events, predictionTimespan),
+  const allEvents = getAllPredictions(events, predictionTimespan);
+  const dayInCycle = getDayInCycle(new Date(), allEvents);
+  const todayInsight = insights.findLast(
+    (insight) => dayInCycle !== null && insight.dayInCycle <= dayInCycle,
   );
-  const todayInsight =
-    currentDayInCycle === null
-      ? null
-      : (insights.findLast(
-          (insight) => insight.dayInCycle <= currentDayInCycle,
-        ) ?? null);
 
   return (
     <Screen>
@@ -76,7 +71,7 @@ const PartnerScreen: FC = () => {
         ]}
       />
 
-      {mode === "view" && todayInsight && !!currentDayInCycle && (
+      {mode === "view" && todayInsight && !!dayInCycle && (
         <Card>
           <View
             style={{
@@ -89,14 +84,14 @@ const PartnerScreen: FC = () => {
             <Typography variant="title">{todayInsight.name}</Typography>
             <Badge>
               {t("partner.dayInCycle", {
-                day: formatOrdinal(currentDayInCycle),
+                day: formatOrdinal(dayInCycle),
               })}
             </Badge>
           </View>
           <Typography>{todayInsight.description}</Typography>
         </Card>
       )}
-      {mode === "view" && (!todayInsight || !currentDayInCycle) && (
+      {mode === "view" && (!todayInsight || !dayInCycle) && (
         <Typography variant="titleSmall" style={{ textAlign: "center" }}>
           {t("partner.noInsightsFound")}
         </Typography>

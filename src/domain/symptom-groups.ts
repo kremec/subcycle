@@ -1,8 +1,7 @@
 import { IconName } from "@/components/ui/icon";
 import { themePalettes } from "@/theme/palette";
 import { t } from "@/translation/use-translation";
-import type { SymptomGroupDefinition } from "@/types/symptom-definition";
-import { Symptom } from "@/types/symptoms";
+import { Symptom, type SymptomGroupDefinition } from "@/types/symptom";
 
 export const symptomGroups: SymptomGroupDefinition[] = [
   {

@@ -8,7 +8,7 @@ import { Typography } from "@/components/ui/typography";
 import { EventToggleButton } from "@/screens/calendar/components/event-toggle-button";
 import { useTheme } from "@/theme/use-theme";
 import { dateFormatter, formatOrdinal, t } from "@/translation/use-translation";
-import { eventSchema, type Event } from "@/types/event";
+import { eventSchema, MenstruationFlow, type Event } from "@/types/event";
 
 interface CalendarEditDialogProps {
   event: Event;
@@ -24,39 +24,37 @@ export const CalendarEditDialog: FC<CalendarEditDialogProps> = (props) => {
 
   const flowToggles = [
     {
-      key: "menstruationLight",
+      key: MenstruationFlow.LIGHT,
       label: t("calendar.edit.light"),
       icon: IconName.DROPLET,
       filled: false,
       color: theme.colors.calendarMenstruationLight,
     },
     {
-      key: "menstruationModerate",
+      key: MenstruationFlow.MODERATE,
       label: t("calendar.edit.moderate"),
       icon: IconName.DROPLET_HALF,
       filled: true,
       color: theme.colors.calendarMenstruationModerate,
     },
     {
-      key: "menstruationHeavy",
+      key: MenstruationFlow.HEAVY,
       label: t("calendar.edit.heavy"),
       icon: IconName.DROPLET,
       filled: true,
       color: theme.colors.calendarMenstruationHeavy,
     },
     {
-      key: "menstruationSpotting",
+      key: MenstruationFlow.SPOTTING,
       label: t("calendar.edit.spotting"),
       icon: IconName.CHART_BUBBLE,
       filled: true,
       color: theme.colors.calendarMenstruationLight,
     },
-  ] as const;
+  ];
 
   // Flow types and ovulation are mutually exclusive.
-  const toggleExclusive = (
-    key: (typeof flowToggles)[number]["key"] | "ovulation",
-  ) => {
+  const toggleExclusive = (key: MenstruationFlow | "ovulation") => {
     setDraft(
       eventSchema.parse({
         ...draft,
