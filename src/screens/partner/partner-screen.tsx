@@ -22,17 +22,16 @@ import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
 import { formatOrdinal, t } from "@/translation/use-translation";
 import {
-  partnerInsightSchema,
   PartnerInsightMode,
   type PartnerInsight,
 } from "@/types/partner-insight";
 
+type InsightTarget = { insight?: PartnerInsight } | null;
+
 const PartnerScreen: FC = () => {
   const theme = useTheme();
   const [mode, setMode] = useState(PartnerInsightMode.VIEW);
-  const [editingInsight, setEditingInsight] = useState<PartnerInsight | null>(
-    null,
-  );
+  const [insightTarget, setInsightTarget] = useState<InsightTarget>(null);
   const { data: events } = useEventsQuery();
   const { data: insights } = usePartnerInsightsQuery();
   const predictionTimespan = useSettingsStore(
@@ -119,7 +118,7 @@ const PartnerScreen: FC = () => {
                       />
                     </View>
                   }
-                  onPress={() => setEditingInsight(insight)}
+                  onPress={() => setInsightTarget({ insight })}
                 />
               ))}
             </View>
@@ -133,28 +132,32 @@ const PartnerScreen: FC = () => {
                 size={16}
               />
             }
-            onPress={() => setEditingInsight(partnerInsightSchema.parse({}))}
+            onPress={() => setInsightTarget({})}
           >
             {t("partner.addInsight")}
           </Button>
         </Fragment>
       )}
 
-      {editingInsight && (
+      {insightTarget && (
         <PartnerInsightDialog
-          insight={editingInsight}
-          onClose={() => setEditingInsight(null)}
+          insight={insightTarget.insight}
+          occupiedDays={insights
+            .filter(
+              (insight) =>
+                insight.dayInCycle !== insightTarget.insight?.dayInCycle,
+            )
+            .map((insight) => insight.dayInCycle)}
+          onClose={() => setInsightTarget(null)}
           onDelete={(dayInCycle) => {
             deletePartnerInsight(dayInCycle);
-            setEditingInsight(null);
+            setInsightTarget(null);
           }}
-          onSave={(insight) => {
-            if (editingInsight.dayInCycle !== insight.dayInCycle) {
-              deletePartnerInsight(editingInsight.dayInCycle);
-            }
-            savePartnerInsight(insight);
-            setEditingInsight(null);
-          }}
+          onSave={(insight) =>
+            savePartnerInsight(insight, insightTarget.insight?.dayInCycle).then(
+              () => setInsightTarget(null),
+            )
+          }
         />
       )}
     </Screen>

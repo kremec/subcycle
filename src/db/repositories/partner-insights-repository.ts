@@ -20,17 +20,19 @@ export function usePartnerInsightsQuery(): {
 
 export async function savePartnerInsight(
   insight: PartnerInsight,
+  previousDayInCycle?: number,
 ): Promise<void> {
-  return db
-    .insert(partnerInsightsTable)
-    .values(insight)
-    .onConflictDoUpdate({
-      target: partnerInsightsTable.dayInCycle,
-      set: insight,
-    })
-    .then(() => {
-      backupDatabaseAfterWrite();
-    });
+  const query =
+    previousDayInCycle === undefined
+      ? db.insert(partnerInsightsTable).values(insight)
+      : db
+          .update(partnerInsightsTable)
+          .set(insight)
+          .where(eq(partnerInsightsTable.dayInCycle, previousDayInCycle));
+
+  return query.then(() => {
+    backupDatabaseAfterWrite();
+  });
 }
 
 export async function deletePartnerInsight(dayInCycle: number): Promise<void> {

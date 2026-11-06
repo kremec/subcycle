@@ -90,6 +90,7 @@
     "name": "Name",
     "noInsightsFound": "No insights found",
     "startDayInCycle": "Start day in cycle",
+    "startDayAlreadyUsed": "An insight already starts on this day.",
     "todayInsights": "Today's insights"
   },
   "settings": {

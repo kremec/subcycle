@@ -7,27 +7,32 @@ import { Field } from "@/components/ui/field";
 import { Typography } from "@/components/ui/typography";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
-import { type PartnerInsight } from "@/types/partner-insight";
+import {
+  partnerInsightSchema,
+  type PartnerInsight,
+} from "@/types/partner-insight";
 
 interface PartnerInsightDialogProps {
-  insight: PartnerInsight;
+  insight?: PartnerInsight;
+  occupiedDays: number[];
   onClose: () => void;
   onDelete: (dayInCycle: number) => void;
   onSave: (insight: PartnerInsight) => void;
 }
 
 export const PartnerInsightDialog: FC<PartnerInsightDialogProps> = (props) => {
-  const { insight, onClose, onDelete, onSave } = props;
+  const { insight, occupiedDays, onClose, onDelete, onSave } = props;
   const theme = useTheme();
-  const [draft, setDraft] = useState(insight);
+  const [draft, setDraft] = useState(
+    () => insight ?? partnerInsightSchema.parse({}),
+  );
+  const dayOccupied = occupiedDays.includes(draft.dayInCycle);
 
   return (
     <Dialog visible onClose={onClose}>
       <View style={{ gap: theme.spacing.md }}>
         <Typography variant="title">
-          {insight.dayInCycle === 1 && !insight.name && !insight.description
-            ? t("partner.addInsight")
-            : t("partner.editInsight")}
+          {t(insight ? "partner.editInsight" : "partner.addInsight")}
         </Typography>
         <Field
           label={t("partner.name")}
@@ -57,17 +62,26 @@ export const PartnerInsightDialog: FC<PartnerInsightDialogProps> = (props) => {
             }))
           }
         />
+        {dayOccupied && (
+          <Typography variant="bodySmall" color={theme.colors.danger}>
+            {t("partner.startDayAlreadyUsed")}
+          </Typography>
+        )}
         <View style={{ flexDirection: "row", gap: theme.spacing.sm }}>
+          {insight && (
+            <View style={{ flex: 1 }}>
+              <Button
+                variant="outline"
+                onPress={() => onDelete(insight.dayInCycle)}
+              >
+                {t("partner.delete")}
+              </Button>
+            </View>
+          )}
           <View style={{ flex: 1 }}>
-            <Button
-              variant="outline"
-              onPress={() => onDelete(insight.dayInCycle)}
-            >
-              {t("partner.delete")}
+            <Button disabled={dayOccupied} onPress={() => onSave(draft)}>
+              {t("common.save")}
             </Button>
-          </View>
-          <View style={{ flex: 1 }}>
-            <Button onPress={() => onSave(draft)}>{t("common.save")}</Button>
           </View>
         </View>
       </View>
