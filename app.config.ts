@@ -1,58 +1,10 @@
 /// <reference types="node" />
 
-import {
-  AndroidConfig,
-  type ConfigPlugin,
-  withStringsXml,
-} from "expo/config-plugins";
-import { readdirSync, readFileSync } from "node:fs";
-import { join } from "node:path";
-
-import en from "./src/translation/locales/en.json";
-
-const catalogDirectory = join(__dirname, "src/translation/locales");
-const locales = Object.fromEntries(
-  readdirSync(catalogDirectory)
-    .filter((file) => file.endsWith(".json"))
-    .sort()
-    .map((file) => {
-      const messages: typeof en = JSON.parse(
-        readFileSync(join(catalogDirectory, file), "utf8"),
-      );
-      const nativeStrings = {
-        subcycle_pill_reminders:
-          messages.settings?.pillReminders ?? en.settings.pillReminders,
-        subcycle_menstruation_reminders:
-          messages.settings?.menstruationReminders ??
-          en.settings.menstruationReminders,
-        subcycle_pill_body:
-          messages.reminders?.pillBody ?? en.reminders.pillBody,
-        subcycle_check_pill:
-          messages.reminders?.checkPill ?? en.reminders.checkPill,
-      };
-      return [
-        Intl.getCanonicalLocales(file.slice(0, -5))[0],
-        {
-          ios: { "Localizable.strings": nativeStrings },
-          android: nativeStrings,
-        },
-      ];
-    }),
-);
+import { locales, withReminderStrings } from "./plugins/localization.js";
 
 const IS_DEV = process.env.APP_VARIANT === "development";
-
-const withReminderStrings: ConfigPlugin = (config) =>
-  withStringsXml(config, (mod) => {
-    mod.modResults = AndroidConfig.Strings.setStringItem(
-      Object.entries(locales.en.android).map(([name, value]) => ({
-        $: { name },
-        _: value,
-      })),
-      mod.modResults,
-    );
-    return mod;
-  });
+const appId = IS_DEV ? "com.subbyte.subcycle.dev" : "com.subbyte.subcycle";
+const projectId = "48d6445a-942c-474d-be16-5d46d6f25603";
 
 export default {
   name: IS_DEV ? "subcycle (DEV)" : "subcycle",
@@ -62,7 +14,7 @@ export default {
     policy: "fingerprint",
   },
   updates: {
-    url: "https://u.expo.dev/48d6445a-942c-474d-be16-5d46d6f25603",
+    url: `https://u.expo.dev/${projectId}`,
   },
   orientation: "portrait",
   icon: "./assets/icon.png",
@@ -70,9 +22,7 @@ export default {
   userInterfaceStyle: "automatic",
   locales,
   ios: {
-    bundleIdentifier: IS_DEV
-      ? "com.subbyte.subcycle.dev"
-      : "com.subbyte.subcycle",
+    bundleIdentifier: appId,
     entitlements: {
       "com.apple.developer.usernotifications.critical-alerts": true,
       "com.apple.developer.usernotifications.time-sensitive": true,
@@ -83,7 +33,7 @@ export default {
     },
   },
   android: {
-    package: IS_DEV ? "com.subbyte.subcycle.dev" : "com.subbyte.subcycle",
+    package: appId,
     predictiveBackGestureEnabled: false,
     permissions: [
       "android.permission.POST_NOTIFICATIONS",
@@ -128,7 +78,7 @@ export default {
   },
   extra: {
     eas: {
-      projectId: "48d6445a-942c-474d-be16-5d46d6f25603",
+      projectId,
     },
   },
 };
