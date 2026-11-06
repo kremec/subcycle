@@ -18,26 +18,20 @@ async function performDatabaseBackup(name: string): Promise<void> {
     { useNewConnection: true },
     directoryUri,
   );
-  try {
-    await backupDatabaseAsync({
-      sourceDatabase: expoDb,
-      destDatabase: backupDb,
-    });
-  } finally {
-    await backupDb.closeAsync();
-  }
+  await backupDatabaseAsync({
+    sourceDatabase: expoDb,
+    destDatabase: backupDb,
+  }).finally(() => backupDb.closeAsync());
 }
 
-export async function backupDatabaseAfterWrite(): Promise<void> {
-  try {
-    await performDatabaseBackup(createBackupName("automatic"));
-    logInfo("db.backup", "complete");
-  } catch (error) {
-    logError("db.backup", "failed", error);
-  }
+export function backupDatabaseAfterWrite(): Promise<void> {
+  return performDatabaseBackup(createBackupName("automatic"))
+    .then(() => logInfo("db.backup", "complete"))
+    .catch((error) => logError("db.backup", "failed", error));
 }
 
-export async function backupDatabaseBeforeMigration(): Promise<void> {
-  await performDatabaseBackup(createBackupName("pre-migration"));
-  logInfo("db.backup", "pre-migration-complete");
+export function backupDatabaseBeforeMigration(): Promise<void> {
+  return performDatabaseBackup(createBackupName("pre-migration")).then(() =>
+    logInfo("db.backup", "pre-migration-complete"),
+  );
 }

@@ -1,34 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { migrate } from "drizzle-orm/expo-sqlite/migrator";
-
-import { backupDatabaseBeforeMigration } from "@/db/automatic-database-backup";
-import { db, expoDb } from "@/db/client";
+import { migrateDatabase } from "@/db/database-migration";
 import { logError } from "@/logging/logger";
-import migrations from "@drizzle/migrations";
-
-function hasPendingMigrations(): boolean {
-  const latestMigration = migrations.journal.entries.at(-1);
-  if (!latestMigration) {
-    return false;
-  }
-
-  try {
-    const appliedMigration = expoDb.getFirstSync<{ created_at: number }>(
-      "SELECT created_at FROM __drizzle_migrations ORDER BY created_at DESC LIMIT 1",
-    );
-    return (appliedMigration?.created_at ?? 0) < latestMigration.when;
-  } catch {
-    return true;
-  }
-}
-
-async function migrateDatabase(): Promise<void> {
-  if (hasPendingMigrations()) {
-    await backupDatabaseBeforeMigration();
-  }
-  await migrate(db, migrations);
-}
 
 export function useAppBootstrap() {
   const [ready, setReady] = useState(false);

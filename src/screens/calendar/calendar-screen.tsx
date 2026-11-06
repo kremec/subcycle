@@ -5,9 +5,9 @@ import { isSameDay } from "date-fns";
 
 import { Screen } from "@/components/ui/screen";
 import { useEventsQuery } from "@/db/repositories/events-repository";
-import { upsertEvent } from "@/db/repositories/events-repository";
+import { saveEvent } from "@/db/repositories/events-repository";
 import { useSymptomsQuery } from "@/db/repositories/symptoms-repository";
-import { upsertSymptoms } from "@/db/repositories/symptoms-repository";
+import { saveSymptoms } from "@/db/repositories/symptoms-repository";
 import { getDayInCycle } from "@/domain/cycle";
 import { getAllPredictions } from "@/domain/cycle-predictions";
 import { toCalendarDate } from "@/domain/time";
@@ -82,7 +82,7 @@ const CalendarScreen: FC = () => {
         symptoms={selectedSymptoms}
         onClose={() => setSymptomsEditorVisible(false)}
         onChange={(nextSymptoms) => {
-          upsertSymptoms(nextSymptoms);
+          saveSymptoms(nextSymptoms);
         }}
       />
 
@@ -92,7 +92,7 @@ const CalendarScreen: FC = () => {
           dayInCycle={getDayInCycle(editingEvent.date, allEvents)}
           onClose={() => setEditingEvent(null)}
           onSave={(event) => {
-            upsertEvent(event);
+            saveEvent(event);
             setEditingEvent(null);
           }}
         />

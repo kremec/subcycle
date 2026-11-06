@@ -34,7 +34,7 @@ export function useEventsQuery(): { data: Event[]; error?: Error } {
   };
 }
 
-export async function upsertEvent(event: Event): Promise<void> {
+export async function saveEvent(event: Event): Promise<void> {
   const action = hasAnyEventFlags(event) ? "upsert" : "delete";
   try {
     if (action === "upsert") {

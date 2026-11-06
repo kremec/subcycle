@@ -27,7 +27,7 @@ export function useSymptomsQuery(): { data: Symptoms[]; error?: Error } {
   };
 }
 
-export async function upsertSymptoms(symptoms: Symptoms): Promise<void> {
+export async function saveSymptoms(symptoms: Symptoms): Promise<void> {
   const action = hasAnySymptoms(symptoms) ? "upsert" : "delete";
   try {
     if (action === "upsert") {
