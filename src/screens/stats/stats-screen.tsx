@@ -10,29 +10,25 @@ import { t } from "@/translation/use-translation";
 const StatsScreen: FC = () => {
   const { data: events } = useEventsQuery();
 
-  function formatDays(value: number | null): string {
-    if (value === null) return t("common.notAvailable");
-    return t("common.days", { count: Math.trunc(value) });
-  }
-
   return (
     <Screen>
       <StatCard
         icon={IconName.RELOAD}
         title={t("stats.averageCycleLength")}
-        description={formatDays(getAverageCycleLength(events))}
+        days={getAverageCycleLength(events)}
       />
       <StatCard
         icon={IconName.DROPLET}
         title={t("stats.averagePeriodLength")}
-        description={formatDays(getAveragePeriodLength(events))}
+        days={getAveragePeriodLength(events)}
       />
       <StatCard
         icon={IconName.DROPLET}
         filled
         title={t("stats.averageHeavyPeriodLength")}
-        description={formatDays(
-          getAveragePeriodLength(events, (event) => event.menstruationHeavy),
+        days={getAveragePeriodLength(
+          events,
+          (event) => event.menstruationHeavy,
         )}
       />
     </Screen>

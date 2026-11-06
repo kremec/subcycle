@@ -23,12 +23,13 @@ import { useTheme } from "@/theme/use-theme";
 import { formatOrdinal, t } from "@/translation/use-translation";
 import {
   partnerInsightSchema,
+  PartnerInsightMode,
   type PartnerInsight,
 } from "@/types/partner-insight";
 
 const PartnerScreen: FC = () => {
   const theme = useTheme();
-  const [mode, setMode] = useState<"view" | "edit">("view");
+  const [mode, setMode] = useState(PartnerInsightMode.VIEW);
   const [editingInsight, setEditingInsight] = useState<PartnerInsight | null>(
     null,
   );
@@ -51,7 +52,7 @@ const PartnerScreen: FC = () => {
         onChange={setMode}
         items={[
           {
-            value: "view",
+            value: PartnerInsightMode.VIEW,
             label: t("partner.todayInsights"),
             icon: (
               <Icon
@@ -62,7 +63,7 @@ const PartnerScreen: FC = () => {
             ),
           },
           {
-            value: "edit",
+            value: PartnerInsightMode.EDIT,
             label: t("partner.editInsights"),
             icon: (
               <Icon name={IconName.EDIT} color={theme.colors.text} size={16} />
@@ -71,7 +72,7 @@ const PartnerScreen: FC = () => {
         ]}
       />
 
-      {mode === "view" && todayInsight && !!dayInCycle && (
+      {mode === PartnerInsightMode.VIEW && todayInsight && !!dayInCycle && (
         <Card>
           <View
             style={{
@@ -91,13 +92,13 @@ const PartnerScreen: FC = () => {
           <Typography>{todayInsight.description}</Typography>
         </Card>
       )}
-      {mode === "view" && !todayInsight && (
+      {mode === PartnerInsightMode.VIEW && !todayInsight && (
         <Typography variant="titleSmall" style={{ textAlign: "center" }}>
           {t("partner.noInsightsFound")}
         </Typography>
       )}
 
-      {mode === "edit" && (
+      {mode === PartnerInsightMode.EDIT && (
         <Fragment>
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={{ gap: theme.spacing.lg }}>

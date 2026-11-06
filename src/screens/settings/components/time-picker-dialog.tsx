@@ -1,5 +1,5 @@
 import { type FC, useState } from "react";
-import { Platform, View } from "react-native";
+import { View } from "react-native";
 
 import { DateTimePicker } from "@expo/ui/community/datetime-picker";
 import { format, parse } from "date-fns";
@@ -29,28 +29,9 @@ export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
     onClose();
   }
 
-  function handleSave(time: string) {
+  function handleSave() {
     setDraftValue(null);
-    onSave(time);
-  }
-
-  if (Platform.OS === "android") {
-    if (!visible) return null;
-    return (
-      <DateTimePicker
-        value={selectedDate}
-        mode="time"
-        is24Hour
-        accentColor={theme.colors.accent}
-        presentation="dialog"
-        positiveButton={{ label: t("common.save") }}
-        negativeButton={{ label: t("common.cancel") }}
-        onValueChange={(_, nextValue) => {
-          handleSave(format(nextValue, "HH:mm"));
-        }}
-        onDismiss={handleClose}
-      />
-    );
+    onSave(selectedValue);
   }
 
   return (
@@ -66,6 +47,7 @@ export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
           <DateTimePicker
             value={selectedDate}
             mode="time"
+            presentation="inline"
             is24Hour
             display="spinner"
             themeVariant={theme.themeName}
@@ -82,9 +64,7 @@ export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
             </Button>
           </View>
           <View style={{ flex: 1 }}>
-            <Button onPress={() => handleSave(selectedValue)}>
-              {t("common.save")}
-            </Button>
+            <Button onPress={handleSave}>{t("common.save")}</Button>
           </View>
         </View>
       </View>

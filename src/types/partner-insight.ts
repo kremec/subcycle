@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+export enum PartnerInsightMode {
+  VIEW = "view",
+  EDIT = "edit",
+}
+
 export const partnerInsightSchema = z.object({
   dayInCycle: z.number().default(1),
   name: z.string().default(""),
