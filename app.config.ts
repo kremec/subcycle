@@ -1,5 +1,10 @@
 /// <reference types="node" />
 
+import {
+  AndroidConfig,
+  type ConfigPlugin,
+  withStringsXml,
+} from "expo/config-plugins";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -36,6 +41,18 @@ const locales = Object.fromEntries(
 );
 
 const IS_DEV = process.env.APP_VARIANT === "development";
+
+const withReminderStrings: ConfigPlugin = (config) =>
+  withStringsXml(config, (mod) => {
+    mod.modResults = AndroidConfig.Strings.setStringItem(
+      Object.entries(locales.en.android).map(([name, value]) => ({
+        $: { name },
+        _: value,
+      })),
+      mod.modResults,
+    );
+    return mod;
+  });
 
 export default {
   name: IS_DEV ? "subcycle (DEV)" : "subcycle",
@@ -80,6 +97,7 @@ export default {
     "expo-router",
     "expo-sharing",
     ["expo-localization", { supportedLocales: Object.keys(locales) }],
+    withReminderStrings,
     "expo-sqlite",
     [
       "expo-build-properties",
