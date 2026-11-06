@@ -91,7 +91,7 @@ const PartnerScreen: FC = () => {
           <Typography>{todayInsight.description}</Typography>
         </Card>
       )}
-      {mode === "view" && (!todayInsight || !dayInCycle) && (
+      {mode === "view" && !todayInsight && (
         <Typography variant="titleSmall" style={{ textAlign: "center" }}>
           {t("partner.noInsightsFound")}
         </Typography>
