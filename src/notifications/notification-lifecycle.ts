@@ -14,35 +14,34 @@ import { compareTimesAsc } from "@/types/time";
 
 import NativeReminders from "@modules/subcycle-reminders";
 
-function syncSchedules(): void {
-  const { settings } = useSettingsStore.getState();
-  const pillSchedules = settings.pillNotificationsEnabled
-    ? [...settings.pillNotificationTimes]
-        .sort(compareTimesAsc)
-        .map((time, index) => ({
-          id: `pill-${index}`,
-          hour: time.hour,
-          minute: time.minute,
-        }))
-    : [];
-  const menstruationSchedules = buildMenstruationSchedules(
-    settings,
-    getMenstruationPredictions(getEvents(), settings.predictionTimespan),
-  );
+async function syncSchedules(): Promise<void> {
+  try {
+    const { settings } = useSettingsStore.getState();
+    const pillSchedules = settings.pillNotificationsEnabled
+      ? [...settings.pillNotificationTimes]
+          .sort(compareTimesAsc)
+          .map((time, index) => ({
+            id: `pill-${index}`,
+            hour: time.hour,
+            minute: time.minute,
+          }))
+      : [];
+    const menstruationSchedules = buildMenstruationSchedules(
+      settings,
+      getMenstruationPredictions(getEvents(), settings.predictionTimespan),
+    );
 
-  void Promise.all([
-    NativeReminders.replacePillSchedules(pillSchedules),
-    NativeReminders.replaceMenstruationSchedules(menstruationSchedules),
-  ]).catch((error) => {
-    logError("notification.lifecycle", "replace-schedules-failed", error, {
-      menstruationScheduleCount: menstruationSchedules.length,
-      pillScheduleCount: pillSchedules.length,
-    });
-  });
+    await Promise.all([
+      NativeReminders.replacePillSchedules(pillSchedules),
+      NativeReminders.replaceMenstruationSchedules(menstruationSchedules),
+    ]);
+  } catch (error) {
+    logError("notification.lifecycle", "replace-schedules-failed", error);
+  }
 }
 
 export function startNotificationLifecycle(): () => void {
-  syncSchedules();
+  void syncSchedules();
 
   const actionSubscription = NativeReminders.addListener(
     "reminderAction",
@@ -54,7 +53,7 @@ export function startNotificationLifecycle(): () => void {
     },
   );
   const databaseSubscription = addDatabaseChangeListener((change) => {
-    if (change.tableName === "events") syncSchedules();
+    if (change.tableName === "events") void syncSchedules();
   });
   const unsubscribeSettings = useSettingsStore.subscribe((state, previous) => {
     const current = state.settings;
@@ -67,7 +66,7 @@ export function startNotificationLifecycle(): () => void {
         before.menstruationNotificationsEnabled ||
       current.menstruationNotifications !== before.menstruationNotifications
     ) {
-      syncSchedules();
+      void syncSchedules();
     }
   });
 

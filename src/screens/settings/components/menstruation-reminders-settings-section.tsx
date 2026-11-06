@@ -19,8 +19,11 @@ import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
 import { type MenstruationNotification } from "@/types/settings";
-import { compareTimesAsc, getCurrentTime } from "@/types/time";
-import { formatHourMinute } from "@/types/time";
+import {
+  compareTimesAsc,
+  formatHourMinute,
+  getCurrentTime,
+} from "@/types/time";
 
 type RuleTarget = { rule?: MenstruationNotification } | null;
 

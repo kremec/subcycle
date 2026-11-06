@@ -7,7 +7,7 @@ import { logError, logInfo } from "@/logging/logger";
 
 import NativeReminders from "@modules/subcycle-reminders";
 
-export async function backupDatabaseAfterWrite(): Promise<void> {
+export function backupDatabaseAfterWrite(): Promise<void> {
   const name = `subcycle-checkpoint_automatic_${format(new Date(), "yyyy-MM-dd")}.db`;
   return NativeReminders.getBackupDirectoryUri()
     .then((directory) =>

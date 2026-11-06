@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Icon, IconName } from "@/components/ui/icon";
 import { exportDatabase } from "@/db/export-database";
 import { importLatestNativeDatabase } from "@/db/import-database";
+import { logError } from "@/logging/logger";
 import { SettingsSectionCard } from "@/screens/settings/components/settings-section-card";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
@@ -30,9 +31,10 @@ export const BackupsSection: FC = () => {
               />
             }
             onPress={() =>
-              importLatestNativeDatabase().catch(() =>
-                Alert.alert(t("settings.importFailed")),
-              )
+              importLatestNativeDatabase().catch((error) => {
+                logError("db.import", "failed", error);
+                Alert.alert(t("settings.importFailed"));
+              })
             }
           >
             {t("settings.importData")}
@@ -49,9 +51,10 @@ export const BackupsSection: FC = () => {
               />
             }
             onPress={() =>
-              exportDatabase().catch(() =>
-                Alert.alert(t("settings.exportFailed")),
-              )
+              exportDatabase().catch((error) => {
+                logError("db.export", "failed", error);
+                Alert.alert(t("settings.exportFailed"));
+              })
             }
           >
             {t("settings.exportData")}

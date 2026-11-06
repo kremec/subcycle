@@ -8,8 +8,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Typography } from "@/components/ui/typography";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
-import { timeToDate } from "@/types/time";
-import { formatHourMinute, type Time } from "@/types/time";
+import { timeToDate, formatHourMinute, type Time } from "@/types/time";
 
 interface TimePickerDialogProps {
   visible: boolean;

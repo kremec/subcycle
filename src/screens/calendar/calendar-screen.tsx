@@ -1,7 +1,7 @@
 import { type FC, useState } from "react";
 import { View } from "react-native";
 
-import { isSameDay, startOfDay } from "date-fns";
+import { isSameDay } from "date-fns";
 
 import { Screen } from "@/components/ui/screen";
 import { useEventsQuery } from "@/db/repositories/events-repository";
@@ -24,16 +24,10 @@ const CalendarScreen: FC = () => {
   const theme = useTheme();
   const { data: events } = useEventsQuery();
   const { data: symptoms } = useSymptomsQuery();
-  const [selectedDate, setSelectedDateState] = useState(() =>
-    startOfDay(new Date()),
-  );
+  const [selectedDate, setSelectedDate] = useState(() => new Date());
   const predictionTimespan = useSettingsStore(
     (state) => state.settings.predictionTimespan,
   );
-
-  const setSelectedDate = (date: Date) => {
-    setSelectedDateState(startOfDay(date));
-  };
 
   const allEvents = getAllPredictions(events, predictionTimespan);
 
