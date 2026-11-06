@@ -3,7 +3,7 @@ import * as FileSystem from "expo-file-system/legacy";
 import {
   backupDatabaseAsync,
   defaultDatabaseDirectory,
-  openDatabaseSync,
+  openDatabaseAsync,
   type SQLiteDatabase,
 } from "expo-sqlite";
 
@@ -52,7 +52,7 @@ export async function importLatestNativeDatabase(): Promise<void> {
       to: importUri,
     });
 
-    importDb = openDatabaseSync(
+    importDb = await openDatabaseAsync(
       IMPORT_DB_NAME,
       { useNewConnection: true },
       defaultDatabaseDirectory,
@@ -73,15 +73,10 @@ export async function importLatestNativeDatabase(): Promise<void> {
     await notifyLiveQueriesChanged();
     backupDatabaseAfterWrite();
     logInfo("db.import", "complete");
-  } catch (error) {
-    logError("db.import", "failed", error);
-    throw error;
   } finally {
-    try {
-      importDb?.closeSync();
-    } catch (error) {
+    await importDb?.closeAsync().catch((error) => {
       logError("db.import", "close-failed", error);
-    }
+    });
     await FileSystem.deleteAsync(importUri, { idempotent: true }).catch(
       (error) => {
         logError("db.import", "cleanup-failed", error);

@@ -10,8 +10,6 @@ type LogValue =
 
 type LogPayload = { [key: string]: LogValue };
 
-let appendQueue: Promise<void> = Promise.resolve();
-
 function serializeError(error: unknown) {
   return error instanceof Error
     ? { message: error.message, name: error.name, stack: error.stack }
@@ -34,11 +32,11 @@ function log(
     source: "js",
     time: new Date().toISOString(),
   };
-  appendQueue = appendQueue
-    .then(() => NativeReminders.appendDebugLog(`${JSON.stringify(entry)}\n`))
-    .catch(() => {
+  void NativeReminders.appendDebugLog(`${JSON.stringify(entry)}\n`).catch(
+    () => {
       // Logging must never break app behavior.
-    });
+    },
+  );
 }
 
 export function logInfo(
