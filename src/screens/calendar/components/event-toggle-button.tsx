@@ -1,7 +1,7 @@
 import { type FC, type ReactNode } from "react";
 import { Pressable, View } from "react-native";
 
-import { Typography } from "@/components/ui";
+import { Typography } from "@/components/ui/typography";
 import { useTheme } from "@/theme/use-theme";
 
 interface EventToggleButtonProps {

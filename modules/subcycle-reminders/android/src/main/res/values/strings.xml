@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="subcycle_pill_reminders">Pill reminders</string>
+    <string name="subcycle_menstruation_reminders">Menstruation reminders</string>
+    <string name="subcycle_pill_body">Don\'t forget to take your pill.</string>
+    <string name="subcycle_check_pill">Check pill for today</string>
+    <string name="subcycle_menstruation_today">Menstruation coming today.</string>
+    <plurals name="subcycle_menstruation_in_days">
+        <item quantity="one">Menstruation coming in %d day.</item>
+        <item quantity="other">Menstruation coming in %d days.</item>
+    </plurals>
+</resources>

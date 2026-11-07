@@ -3,116 +3,122 @@ import { getLocales } from "expo-localization";
 import {
   I18n,
   useMakePlural as createPluralizer,
-  type MissingTranslationStrategy,
   type TranslateOptions,
 } from "i18n-js";
-import { en as enPlural } from "make-plural";
-import { create } from "zustand";
+import * as plurals from "make-plural";
+import { LocaleConfig } from "react-native-calendars";
 
-import en from "@/translation/locales/en.json";
+import type en from "@/translation/locales/en.json";
 import type { TranslationKeys } from "@/translation/translation-keys";
 
-type Language = "en";
+type Translation = string | { [key: string]: Translation } | null;
 
-const translations = { en };
+const pluralizers: Partial<
+  Record<string, Parameters<typeof createPluralizer>[0]["pluralizer"]>
+> = plurals;
 
-const i18n = new I18n(translations);
-i18n.enableFallback = true;
-i18n.defaultLocale = "en";
-i18n.placeholder = /(?:\{\{)(.*?)(?:\}\})/gm;
-
-const ordinalI18n = new I18n({ en: { ordinal: en.ordinal } });
-ordinalI18n.enableFallback = true;
-ordinalI18n.defaultLocale = "en";
-ordinalI18n.placeholder = i18n.placeholder;
-ordinalI18n.pluralization.register(
-  "en",
-  createPluralizer({ pluralizer: enPlural, includeZero: false, ordinal: true }),
+const files = require.context("./locales", false, /\.json$/);
+const translations: Record<string, Translation> = Object.fromEntries(
+  files
+    .keys()
+    .map((file) => [
+      Intl.getCanonicalLocales(file.slice(2, -5))[0],
+      files<typeof en>(file),
+    ]),
 );
+const preferredLocales = getLocales().flatMap((device) => {
+  const parts = Intl.getCanonicalLocales(device.languageTag)[0].split("-");
+  return parts.map((_, index) =>
+    parts.slice(0, parts.length - index).join("-"),
+  );
+});
+export const locale =
+  preferredLocales.find((name) => Object.hasOwn(translations, name)) ?? "en";
 
-const getInitialLanguage = (): Language => {
-  const baseLanguage = getLocales()[0]?.languageCode?.toLowerCase();
+const i18n = new I18n(translations, { locale, enableFallback: true });
+const ordinalI18n = new I18n(translations, { locale, enableFallback: true });
 
-  if (baseLanguage === "en") {
-    return "en";
-  }
+for (const name of Object.keys(translations)) {
+  const pluralizer =
+    pluralizers[name.replaceAll("-", "_")] ??
+    pluralizers[name.split("-")[0]] ??
+    plurals.en;
 
-  return "en";
-};
+  i18n.pluralization.register(name, createPluralizer({ pluralizer }));
+  ordinalI18n.pluralization.register(
+    name,
+    createPluralizer({ pluralizer, includeZero: false, ordinal: true }),
+  );
+}
 
-const initialLanguage = getInitialLanguage();
-
-i18n.locale = initialLanguage;
-ordinalI18n.locale = initialLanguage;
-
-const missingTranslationHandler: MissingTranslationStrategy = (
-  _i18n,
-  scope,
-) => {
-  const key = typeof scope === "string" ? scope : scope.join(".");
-  if (__DEV__) return `missing:${key}`;
-  return key;
-};
-
-i18n.missingTranslation.register("subcycle", missingTranslationHandler);
-i18n.missingBehavior = "subcycle";
-ordinalI18n.missingTranslation.register("subcycle", missingTranslationHandler);
-ordinalI18n.missingBehavior = "subcycle";
-
-type TranslationState = {
-  language: Language;
-  setLanguage: (language: Language) => void;
-};
-
-const useTranslationStore = create<TranslationState>((set) => ({
-  language: initialLanguage,
-  setLanguage: (language) => {
-    i18n.locale = language;
-    ordinalI18n.locale = language;
-    set({ language });
-  },
-}));
-
-const translate = (key: TranslationKeys, options?: TranslateOptions) =>
-  i18n.t(key, options);
-
-const setLanguage = useTranslationStore.getState().setLanguage;
-
-const initializeI18n = () => {
-  const language = useTranslationStore.getState().language;
-  i18n.locale = language;
-  ordinalI18n.locale = language;
-};
-
-export const useTranslation = () => {
-  const t = useT();
-  const language = useTranslationStore((state) => state.language);
-
-  return {
-    t,
-    setLanguage,
-    language,
-  };
-};
-
-export const useT = () => {
-  useTranslationStore((state) => state.language);
-  return t;
-};
-
-export const useLanguage = () => useTranslationStore((state) => state.language);
-
-export const t = (key: TranslationKeys, options?: TranslateOptions) =>
-  translate(key, options);
-
-export const formatOrdinal = (value: number) =>
-  ordinalI18n.t("ordinal", { count: value });
-
-export const getCurrentLanguage = () => useTranslationStore.getState().language;
-
-export type TranslateFn = (
+function translate(
+  translator: I18n,
   key: TranslationKeys,
   options?: TranslateOptions,
-) => string;
+): string {
+  const sourceLocale = translator.locales
+    .get(options?.locale ?? locale)
+    .find((name) => {
+      let value: Translation | undefined = translations[name];
+      for (const part of key.split(".")) {
+        value =
+          typeof value === "object" && value !== null ? value[part] : undefined;
+      }
+      if (
+        typeof value === "object" &&
+        value !== null &&
+        options?.count != null
+      ) {
+        const forms = value;
+        return translator.pluralization
+          .get(name)(translator, options.count)
+          .some((category) => forms[category] != null);
+      }
+      return value != null;
+    });
 
-initializeI18n();
+  return translator.t(key, { ...options, locale: sourceLocale });
+}
+
+export const t = (key: TranslationKeys, options?: TranslateOptions) =>
+  translate(i18n, key, options);
+
+export const formatOrdinal = (value: number) =>
+  translate(ordinalI18n, "ordinal", { count: value });
+
+export const dateFormatter = new Intl.DateTimeFormat(locale, {
+  calendar: "gregory",
+  weekday: "short",
+  day: "2-digit",
+  month: "short",
+});
+
+export const monthFormatter = new Intl.DateTimeFormat(locale, {
+  calendar: "gregory",
+  month: "long",
+  year: "numeric",
+});
+
+const months = Array.from(
+  { length: 12 },
+  (_, month) => new Date(2000, month, 1),
+);
+const days = Array.from({ length: 7 }, (_, day) => new Date(2000, 0, day + 2));
+
+LocaleConfig.locales[locale] = {
+  monthNames: months.map(
+    new Intl.DateTimeFormat(locale, { month: "long", calendar: "gregory" })
+      .format,
+  ),
+  monthNamesShort: months.map(
+    new Intl.DateTimeFormat(locale, { month: "short", calendar: "gregory" })
+      .format,
+  ),
+  dayNames: days.map(
+    new Intl.DateTimeFormat(locale, { weekday: "long" }).format,
+  ),
+  dayNamesShort: days.map(
+    new Intl.DateTimeFormat(locale, { weekday: "short" }).format,
+  ),
+};
+LocaleConfig.defaultLocale = locale;

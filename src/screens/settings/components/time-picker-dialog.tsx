@@ -2,92 +2,77 @@ import { type FC, useState } from "react";
 import { Platform, View } from "react-native";
 
 import { DateTimePicker } from "@expo/ui/community/datetime-picker";
+import { format, parse } from "date-fns";
 
-import { Button, Dialog, Stack, Typography } from "@/components/ui";
-import { createTime, timeToDate } from "@/domain/time";
+import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
+import { Typography } from "@/components/ui/typography";
 import { useTheme } from "@/theme/use-theme";
-import { useT } from "@/translation/use-translation";
-import { formatHourMinute, type Time } from "@/types";
+import { t } from "@/translation/use-translation";
 
 interface TimePickerDialogProps {
   visible: boolean;
-  value: Time;
+  value: string;
   onClose: () => void;
-  onSave: (time: Time) => void;
+  onSave: (time: string) => void;
 }
 
 export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
   const { visible, value, onClose, onSave } = props;
   const theme = useTheme();
-  const t = useT();
-  const [draftValue, setDraftValue] = useState<Time | null>(null);
+  const [draftValue, setDraftValue] = useState<string | null>(null);
   const selectedValue = draftValue ?? value;
+  // Android resets its dial when the initial value changes.
+  const selectedDate = parse(
+    Platform.OS === "android" ? value : selectedValue,
+    "HH:mm",
+    0,
+  );
 
   function handleClose() {
     setDraftValue(null);
     onClose();
   }
 
-  function handleSave(time: Time) {
+  function handleSave() {
     setDraftValue(null);
-    onSave(time);
-  }
-
-  if (Platform.OS === "android") {
-    return visible ? (
-      <DateTimePicker
-        value={timeToDate(value)}
-        mode="time"
-        is24Hour
-        accentColor={theme.colors.accent}
-        presentation="dialog"
-        positiveButton={{ label: t("common.save") }}
-        negativeButton={{ label: t("common.cancel") }}
-        onValueChange={(_, nextValue) => {
-          handleSave(createTime(nextValue.getHours(), nextValue.getMinutes()));
-        }}
-        onDismiss={handleClose}
-      />
-    ) : null;
+    onSave(selectedValue);
   }
 
   return (
     <Dialog visible={visible} onClose={handleClose}>
-      <Stack gap={theme.spacing.md}>
+      <View style={{ gap: theme.spacing.md }}>
         <Typography variant="titleSmall">
           {t("settings.notificationTime")}
         </Typography>
         <Typography variant="bodySmall" color={theme.colors.textSecondary}>
-          {formatHourMinute(selectedValue)}
+          {selectedValue}
         </Typography>
         {visible && (
           <DateTimePicker
-            value={timeToDate(selectedValue)}
+            value={selectedDate}
             mode="time"
+            presentation="inline"
             is24Hour
             display="spinner"
             themeVariant={theme.themeName}
             accentColor={theme.colors.accent}
             onValueChange={(_, nextValue) => {
-              setDraftValue(
-                createTime(nextValue.getHours(), nextValue.getMinutes()),
-              );
+              setDraftValue(format(nextValue, "HH:mm"));
             }}
           />
         )}
-        <Stack direction="row" gap={theme.spacing.sm}>
+        <View style={{ flexDirection: "row", gap: theme.spacing.sm }}>
           <View style={{ flex: 1 }}>
             <Button variant="ghost" onPress={handleClose}>
               {t("common.cancel")}
             </Button>
           </View>
           <View style={{ flex: 1 }}>
-            <Button onPress={() => handleSave(selectedValue)}>
-              {t("common.save")}
-            </Button>
+            <Button onPress={handleSave}>{t("common.save")}</Button>
           </View>
-        </Stack>
-      </Stack>
+        </View>
+      </View>
     </Dialog>
   );
 };

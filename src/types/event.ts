@@ -1,13 +1,11 @@
-export type Event = {
-  date: Date;
-  menstruationLight: boolean;
-  menstruationModerate: boolean;
-  menstruationHeavy: boolean;
-  menstruationSpotting: boolean;
-  ovulation: boolean;
-  pill: boolean;
-  prediction: boolean;
-};
+import { z } from "zod";
+
+export enum MenstruationFlow {
+  HEAVY = "menstruationHeavy",
+  MODERATE = "menstruationModerate",
+  LIGHT = "menstruationLight",
+  SPOTTING = "menstruationSpotting",
+}
 
 export enum EventKind {
   NONE = "NONE",
@@ -15,55 +13,35 @@ export enum EventKind {
   OVULATION = "OVULATION",
 }
 
-export function createDefaultEvent(date: Date): Event {
-  return {
-    date,
-    menstruationLight: false,
-    menstruationModerate: false,
-    menstruationHeavy: false,
-    menstruationSpotting: false,
-    ovulation: false,
-    pill: false,
-    prediction: false,
-  };
-}
+const flag = z.boolean().default(false);
 
-export function hasAnyEventFlags(event: Event): boolean {
-  return (
-    event.menstruationLight ||
-    event.menstruationModerate ||
-    event.menstruationHeavy ||
-    event.menstruationSpotting ||
-    event.ovulation ||
-    event.pill
-  );
-}
+export const eventSchema = z
+  .object({
+    date: z.date(),
+    menstruationLight: flag,
+    menstruationModerate: flag,
+    menstruationHeavy: flag,
+    menstruationSpotting: flag,
+    ovulation: flag,
+    pill: flag,
+    prediction: flag,
+  })
+  .transform((event) => {
+    const menstruation =
+      event.menstruationLight ||
+      event.menstruationModerate ||
+      event.menstruationHeavy ||
+      event.menstruationSpotting;
+    let kind = EventKind.NONE;
+    if (menstruation) kind = EventKind.MENSTRUATION;
+    else if (event.ovulation) kind = EventKind.OVULATION;
 
-export function isMenstruationEvent(event: Event): boolean {
-  return (
-    event.menstruationLight ||
-    event.menstruationModerate ||
-    event.menstruationHeavy ||
-    event.menstruationSpotting
-  );
-}
+    return {
+      ...event,
+      kind,
+      hasFlags: menstruation || event.ovulation || event.pill,
+    };
+  })
+  .readonly();
 
-export function isHeavyMenstruationEvent(event: Event): boolean {
-  return event.menstruationHeavy;
-}
-
-export function isOvulationEvent(event: Event): boolean {
-  return event.ovulation;
-}
-
-export function getEventKind(event: Event | null | undefined): EventKind {
-  if (!event) {
-    return EventKind.NONE;
-  }
-
-  if (isMenstruationEvent(event)) {
-    return EventKind.MENSTRUATION;
-  }
-
-  return isOvulationEvent(event) ? EventKind.OVULATION : EventKind.NONE;
-}
+export type Event = z.infer<typeof eventSchema>;

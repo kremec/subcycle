@@ -1,13 +1,13 @@
 import { Fragment, type FC } from "react";
 import { View } from "react-native";
 
-import { differenceInCalendarDays, startOfDay } from "date-fns";
+import { differenceInCalendarDays } from "date-fns";
 
-import { Typography } from "@/components/ui";
-import { getEventPeriods } from "@/domain/events/get-event-periods";
+import { Typography } from "@/components/ui/typography";
+import { getEventPeriods } from "@/domain/cycle";
 import { useTheme } from "@/theme/use-theme";
-import { useT } from "@/translation/use-translation";
-import { isMenstruationEvent, type Event } from "@/types";
+import { t } from "@/translation/use-translation";
+import { type Event } from "@/types/event";
 
 interface CycleStatusProps {
   events: Event[];
@@ -16,10 +16,9 @@ interface CycleStatusProps {
 export const CycleStatus: FC<CycleStatusProps> = (props) => {
   const { events } = props;
   const theme = useTheme();
-  const t = useT();
 
-  const today = startOfDay(new Date());
-  const currentOrNextPeriod = getEventPeriods(events, isMenstruationEvent).find(
+  const today = new Date();
+  const currentOrNextPeriod = getEventPeriods(events).find(
     (entry) => differenceInCalendarDays(entry.end, today) >= 0,
   );
   const isMenstruating =
@@ -36,7 +35,7 @@ export const CycleStatus: FC<CycleStatusProps> = (props) => {
         paddingBottom: theme.spacing.lg,
       }}
     >
-      {days ? (
+      {days !== null && (
         <Fragment>
           <Typography variant="display" style={{ textAlign: "center" }}>
             {t("common.days", { count: days })}
@@ -47,7 +46,8 @@ export const CycleStatus: FC<CycleStatusProps> = (props) => {
               : t("calendar.cycleStatus.untilNextMenstruation")}
           </Typography>
         </Fragment>
-      ) : (
+      )}
+      {days === null && (
         <Typography
           variant="bodySmall"
           color={theme.colors.textSecondary}

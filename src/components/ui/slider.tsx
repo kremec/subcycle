@@ -1,5 +1,4 @@
 import { type FC } from "react";
-import { type StyleProp, type ViewStyle } from "react-native";
 
 import {
   Host,
@@ -11,7 +10,6 @@ import { useTheme } from "@/theme/use-theme";
 
 interface SliderProps extends ExpoSliderProps {
   commitOnEnd?: boolean;
-  style?: StyleProp<ViewStyle>;
 }
 
 export const Slider: FC<SliderProps> = (props) => {
@@ -19,13 +17,12 @@ export const Slider: FC<SliderProps> = (props) => {
     commitOnEnd = false,
     onSlidingComplete,
     onValueChange,
-    style,
     ...sliderProps
   } = props;
   const theme = useTheme();
 
   return (
-    <Host matchContents={{ vertical: true }} style={[{ width: "100%" }, style]}>
+    <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
       <ExpoSlider
         maximumTrackTintColor={theme.colors.backgroundSelected}
         minimumTrackTintColor={theme.colors.accent}

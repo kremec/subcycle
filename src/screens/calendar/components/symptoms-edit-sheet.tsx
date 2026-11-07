@@ -1,15 +1,18 @@
 import { type FC } from "react";
 import { ScrollView, View } from "react-native";
 
-import { format } from "date-fns";
-
-import { BottomSheet, Typography } from "@/components/ui";
+import { BottomSheet } from "@/components/ui/bottom-sheet";
+import { Typography } from "@/components/ui/typography";
 import { symptomGroups } from "@/domain/symptom-groups";
-import { toggleSymptom } from "@/domain/toggle-symptom";
 import { SymptomCard } from "@/screens/calendar/components/symptom-card";
 import { useTheme } from "@/theme/use-theme";
-import { useT } from "@/translation/use-translation";
-import type { Symptoms } from "@/types";
+import { dateFormatter, t } from "@/translation/use-translation";
+import {
+  symptomsSchema,
+  type Symptoms,
+  type Symptom,
+  type SymptomGroupDefinition,
+} from "@/types/symptom";
 
 interface SymptomsEditSheetProps {
   visible: boolean;
@@ -21,21 +24,27 @@ interface SymptomsEditSheetProps {
 export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
   const { visible, symptoms, onClose, onChange } = props;
   const theme = useTheme();
-  const t = useT();
-  const tokenToColor = {
-    symptomsSymptoms: theme.colors.symptomsSymptoms,
-    symptomsDischarge: theme.colors.symptomsDischarge,
-    symptomsLibido: theme.colors.symptomsLibido,
-    symptomsExercise: theme.colors.symptomsExercise,
-    symptomsMoods: theme.colors.symptomsMoods,
-  };
+
+  function toggleSymptom(group: SymptomGroupDefinition, key: Symptom) {
+    const selected = !symptoms[key];
+    const next = { ...symptoms };
+
+    if (group.exclusive && selected) {
+      for (const symptom of group.types) {
+        next[symptom.key] = false;
+      }
+    }
+
+    next[key] = selected;
+    onChange(symptomsSchema.parse(next));
+  }
 
   return (
-    <BottomSheet visible={visible} onClose={onClose} snapPoints={["full"]}>
+    <BottomSheet visible={visible} onClose={onClose}>
       <View style={{ gap: theme.spacing.lg, paddingBottom: theme.spacing.lg }}>
         <Typography variant="title">
           {t("calendar.symptoms.title", {
-            date: format(symptoms.date, "EEE, dd MMM"),
+            date: dateFormatter.format(symptoms.date),
           })}
         </Typography>
         {symptomGroups.map((group) => (
@@ -50,20 +59,17 @@ export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
               contentContainerStyle={{ paddingRight: theme.spacing.xs }}
             >
               <View style={{ flexDirection: "row" }}>
-                {group.types.map((symptom) => {
-                  const key = symptom.key;
-                  return (
-                    <SymptomCard
-                      key={symptom.key}
-                      icon={symptom.icon}
-                      text={symptom.label}
-                      backgroundColor={tokenToColor[group.colorToken]}
-                      filled={symptom.filled}
-                      selected={symptoms[key]}
-                      onPress={() => onChange(toggleSymptom(symptoms, key))}
-                    />
-                  );
-                })}
+                {group.types.map((symptom) => (
+                  <SymptomCard
+                    key={symptom.key}
+                    icon={symptom.icon}
+                    text={symptom.label}
+                    backgroundColor={group.color}
+                    filled={symptom.filled}
+                    selected={symptoms[symptom.key]}
+                    onPress={() => toggleSymptom(group, symptom.key)}
+                  />
+                ))}
               </View>
             </ScrollView>
           </View>

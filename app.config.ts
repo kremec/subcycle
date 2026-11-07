@@ -1,4 +1,10 @@
+/// <reference types="node" />
+
+import { locales, withReminderStrings } from "./plugins/localization.js";
+
 const IS_DEV = process.env.APP_VARIANT === "development";
+const appId = IS_DEV ? "com.subbyte.subcycle.dev" : "com.subbyte.subcycle";
+const projectId = "48d6445a-942c-474d-be16-5d46d6f25603";
 
 export default {
   name: IS_DEV ? "subcycle (DEV)" : "subcycle",
@@ -8,16 +14,15 @@ export default {
     policy: "fingerprint",
   },
   updates: {
-    url: "https://u.expo.dev/48d6445a-942c-474d-be16-5d46d6f25603",
+    url: `https://u.expo.dev/${projectId}`,
   },
   orientation: "portrait",
   icon: "./assets/icon.png",
   scheme: "subcycle",
   userInterfaceStyle: "automatic",
+  locales,
   ios: {
-    bundleIdentifier: IS_DEV
-      ? "com.subbyte.subcycle.dev"
-      : "com.subbyte.subcycle",
+    bundleIdentifier: appId,
     entitlements: {
       "com.apple.developer.usernotifications.critical-alerts": true,
       "com.apple.developer.usernotifications.time-sensitive": true,
@@ -28,7 +33,7 @@ export default {
     },
   },
   android: {
-    package: IS_DEV ? "com.subbyte.subcycle.dev" : "com.subbyte.subcycle",
+    package: appId,
     predictiveBackGestureEnabled: false,
     permissions: [
       "android.permission.POST_NOTIFICATIONS",
@@ -41,7 +46,8 @@ export default {
   plugins: [
     "expo-router",
     "expo-sharing",
-    "expo-localization",
+    ["expo-localization", { supportedLocales: Object.keys(locales) }],
+    withReminderStrings,
     "expo-sqlite",
     [
       "expo-build-properties",
@@ -55,16 +61,14 @@ export default {
       "expo-splash-screen",
       {
         backgroundColor: "#208AEF",
-        android: {
-          image: "./assets/splash-icon.png",
-          imageWidth: 76,
-        },
+        image: "./assets/splash-icon.png",
+        imageWidth: 76,
       },
     ],
     [
       "expo-dev-client",
       {
-        addGeneratedScheme: !!IS_DEV,
+        addGeneratedScheme: IS_DEV,
       },
     ],
   ],
@@ -74,7 +78,7 @@ export default {
   },
   extra: {
     eas: {
-      projectId: "48d6445a-942c-474d-be16-5d46d6f25603",
+      projectId,
     },
   },
 };

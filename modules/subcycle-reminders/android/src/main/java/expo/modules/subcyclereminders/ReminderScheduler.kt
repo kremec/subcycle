@@ -249,18 +249,18 @@ class ReminderScheduler(private val context: Context) {
 
         createChannel(
             CHANNEL_PILL,
-            "Pill reminders"
+            context.getString(R.string.subcycle_pill_reminders)
         )
 
         val notificationId = requestCode(schedule.id)
         val notificationBuilder = NotificationCompat.Builder(context, CHANNEL_PILL)
             .setSmallIcon(R.drawable.pill)
             .setContentTitle("subcycle")
-            .setContentText("Don't forget to take your pill.")
+            .setContentText(context.getString(R.string.subcycle_pill_body))
             .setAutoCancel(true)
             .addAction(
                 R.drawable.pill,
-                "Check pill for today",
+                context.getString(R.string.subcycle_check_pill),
                 checkPillActionPendingIntent(today, notificationId)
             )
 
@@ -298,13 +298,17 @@ class ReminderScheduler(private val context: Context) {
     ) {
         createChannel(
             CHANNEL_MENSTRUATION,
-            "Menstruation reminders"
+            context.getString(R.string.subcycle_menstruation_reminders)
         )
 
-        val message = customMessage ?: when (daysBefore) {
-            0 -> "Menstruation coming today."
-            1 -> "Menstruation coming in 1 day."
-            else -> "Menstruation coming in $daysBefore days."
+        val message = customMessage ?: if (daysBefore == 0) {
+            context.getString(R.string.subcycle_menstruation_today)
+        } else {
+            context.resources.getQuantityString(
+                R.plurals.subcycle_menstruation_in_days,
+                daysBefore,
+                daysBefore
+            )
         }
 
         val notificationId = requestCode("menstruation-$date")

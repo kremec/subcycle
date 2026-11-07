@@ -1,44 +1,104 @@
 import { type FC, useState } from "react";
 import { View } from "react-native";
 
-import { format } from "date-fns";
-
-import { Button, Dialog, Icon, Stack, Typography } from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
+import { Icon, IconName } from "@/components/ui/icon";
+import { Typography } from "@/components/ui/typography";
 import { EventToggleButton } from "@/screens/calendar/components/event-toggle-button";
 import { useTheme } from "@/theme/use-theme";
-import { formatOrdinal, useT } from "@/translation/use-translation";
-import { createDefaultEvent, hasAnyEventFlags, type Event } from "@/types";
+import { dateFormatter, formatOrdinal, t } from "@/translation/use-translation";
+import { eventSchema, MenstruationFlow, type Event } from "@/types/event";
 
 interface CalendarEditDialogProps {
-  visible: boolean;
-  selectedEvent: Event | null;
+  event: Event;
   dayInCycle: number | null;
   onClose: () => void;
   onSave: (event: Event) => void;
 }
 
 export const CalendarEditDialog: FC<CalendarEditDialogProps> = (props) => {
-  const { visible, selectedEvent, dayInCycle, onClose, onSave } = props;
+  const { event, dayInCycle, onClose, onSave } = props;
   const theme = useTheme();
-  const t = useT();
-  const [draft, setDraft] = useState<Event | null>(selectedEvent);
+  const [draft, setDraft] = useState(event);
 
-  if (!draft) {
-    return null;
+  const toggleGroups = [
+    [
+      {
+        key: MenstruationFlow.LIGHT,
+        label: t("calendar.edit.light"),
+        icon: IconName.DROPLET,
+        filled: false,
+        color: theme.colors.calendarMenstruationLight,
+      },
+      {
+        key: MenstruationFlow.MODERATE,
+        label: t("calendar.edit.moderate"),
+        icon: IconName.DROPLET_HALF,
+        filled: true,
+        color: theme.colors.calendarMenstruationModerate,
+      },
+      {
+        key: MenstruationFlow.HEAVY,
+        label: t("calendar.edit.heavy"),
+        icon: IconName.DROPLET,
+        filled: true,
+        color: theme.colors.calendarMenstruationHeavy,
+      },
+      {
+        key: MenstruationFlow.SPOTTING,
+        label: t("calendar.edit.spotting"),
+        icon: IconName.CHART_BUBBLE,
+        filled: true,
+        color: theme.colors.calendarMenstruationLight,
+      },
+    ],
+    [
+      {
+        key: "ovulation",
+        label: t("calendar.edit.ovulation"),
+        icon: IconName.EGG,
+        filled: false,
+        color: theme.colors.calendarOvulation,
+      },
+    ],
+    [
+      {
+        key: "pill",
+        label: t("calendar.edit.pill"),
+        icon: IconName.PILL,
+        filled: true,
+        color: theme.colors.calendarPill,
+      },
+    ],
+  ] as const;
+
+  function toggleEvent(key: MenstruationFlow | "ovulation" | "pill") {
+    if (key === "pill") {
+      setDraft(eventSchema.parse({ ...draft, pill: !draft.pill }));
+      return;
+    }
+
+    setDraft(
+      eventSchema.parse({
+        ...draft,
+        menstruationLight: false,
+        menstruationModerate: false,
+        menstruationHeavy: false,
+        menstruationSpotting: false,
+        ovulation: false,
+        [key]: !draft[key],
+      }),
+    );
   }
 
-  const updateDraft = (patch: Partial<Event>) => {
-    setDraft({ ...draft, ...patch });
-  };
-
   const save = () => {
-    const finalEvent = {
-      ...createDefaultEvent(draft.date),
+    const finalEvent = eventSchema.parse({
       ...draft,
       prediction: false,
-    };
+    });
 
-    if (selectedEvent?.prediction && !hasAnyEventFlags(finalEvent)) {
+    if (event.prediction && !finalEvent.hasFlags) {
       onClose();
       return;
     }
@@ -47,15 +107,15 @@ export const CalendarEditDialog: FC<CalendarEditDialogProps> = (props) => {
   };
 
   return (
-    <Dialog visible={visible} onClose={onClose}>
-      <Stack gap={theme.spacing.md}>
+    <Dialog visible onClose={onClose}>
+      <View style={{ gap: theme.spacing.md }}>
         <View>
           <Typography variant="title">
             {t(
               draft.prediction
                 ? "calendar.edit.predictionsTitle"
                 : "calendar.edit.eventsTitle",
-              { date: format(draft.date, "EEE, dd MMM") },
+              { date: dateFormatter.format(draft.date) },
             )}
           </Typography>
           {dayInCycle && (
@@ -67,110 +127,29 @@ export const CalendarEditDialog: FC<CalendarEditDialogProps> = (props) => {
           )}
         </View>
 
-        <Stack gap={theme.spacing.sm}>
-          <EventToggleButton
-            label={t("calendar.edit.light")}
-            icon={<Icon name="droplet" color={theme.colors.text} size={18} />}
-            active={draft.menstruationLight}
-            color={theme.colors.calendarMenstruationLight}
-            onPress={() =>
-              updateDraft({
-                menstruationLight: !draft.menstruationLight,
-                menstruationModerate: false,
-                menstruationHeavy: false,
-                menstruationSpotting: false,
-                ovulation: false,
-              })
-            }
-          />
-          <EventToggleButton
-            label={t("calendar.edit.moderate")}
-            icon={
-              <Icon
-                name="droplet-half"
-                color={theme.colors.text}
-                size={18}
-                filled
+        {toggleGroups.map((toggles) => (
+          <View key={toggles[0].key} style={{ gap: theme.spacing.sm }}>
+            {toggles.map((toggle) => (
+              <EventToggleButton
+                key={toggle.key}
+                label={toggle.label}
+                icon={
+                  <Icon
+                    name={toggle.icon}
+                    color={theme.colors.text}
+                    size={18}
+                    filled={toggle.filled}
+                  />
+                }
+                active={draft[toggle.key]}
+                color={toggle.color}
+                onPress={() => toggleEvent(toggle.key)}
               />
-            }
-            active={draft.menstruationModerate}
-            color={theme.colors.calendarMenstruationModerate}
-            onPress={() =>
-              updateDraft({
-                menstruationLight: false,
-                menstruationModerate: !draft.menstruationModerate,
-                menstruationHeavy: false,
-                menstruationSpotting: false,
-                ovulation: false,
-              })
-            }
-          />
-          <EventToggleButton
-            label={t("calendar.edit.heavy")}
-            icon={
-              <Icon name="droplet" color={theme.colors.text} size={18} filled />
-            }
-            active={draft.menstruationHeavy}
-            color={theme.colors.calendarMenstruationHeavy}
-            onPress={() =>
-              updateDraft({
-                menstruationLight: false,
-                menstruationModerate: false,
-                menstruationHeavy: !draft.menstruationHeavy,
-                menstruationSpotting: false,
-                ovulation: false,
-              })
-            }
-          />
-          <EventToggleButton
-            label={t("calendar.edit.spotting")}
-            icon={
-              <Icon
-                name="chart-bubble"
-                color={theme.colors.text}
-                size={18}
-                filled
-              />
-            }
-            active={draft.menstruationSpotting}
-            color={theme.colors.calendarMenstruationLight}
-            onPress={() =>
-              updateDraft({
-                menstruationLight: false,
-                menstruationModerate: false,
-                menstruationHeavy: false,
-                menstruationSpotting: !draft.menstruationSpotting,
-                ovulation: false,
-              })
-            }
-          />
-        </Stack>
+            ))}
+          </View>
+        ))}
 
-        <EventToggleButton
-          label={t("calendar.edit.ovulation")}
-          icon={<Icon name="egg" color={theme.colors.text} size={18} />}
-          active={draft.ovulation}
-          color={theme.colors.calendarOvulation}
-          onPress={() =>
-            updateDraft({
-              menstruationLight: false,
-              menstruationModerate: false,
-              menstruationHeavy: false,
-              menstruationSpotting: false,
-              ovulation: !draft.ovulation,
-            })
-          }
-        />
-
-        <EventToggleButton
-          label={t("calendar.edit.pill")}
-          icon={<Icon name="pill" color={theme.colors.text} size={18} filled />}
-          active={draft.pill}
-          color={theme.colors.calendarPill}
-          onPress={() => updateDraft({ pill: !draft.pill })}
-        />
-
-        <Stack direction="row" gap={theme.spacing.sm}>
+        <View style={{ flexDirection: "row", gap: theme.spacing.sm }}>
           <View style={{ flex: 1 }}>
             <Button variant="ghost" onPress={onClose}>
               {t("common.close")}
@@ -179,8 +158,8 @@ export const CalendarEditDialog: FC<CalendarEditDialogProps> = (props) => {
           <View style={{ flex: 1 }}>
             <Button onPress={save}>{t("common.save")}</Button>
           </View>
-        </Stack>
-      </Stack>
+        </View>
+      </View>
     </Dialog>
   );
 };

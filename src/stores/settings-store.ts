@@ -2,14 +2,12 @@ import "expo-sqlite/localStorage/install";
 import { create } from "zustand";
 import { combine, createJSONStorage, persist } from "zustand/middleware";
 
-import { createDefaultSettings, type Settings } from "@/types";
+import { migrateSettings } from "@/stores/settings-migrations";
+import { settingsSchema, type Settings } from "@/types/settings";
 
 export const useSettingsStore = create(
   persist(
-    combine({ settings: createDefaultSettings() }, (set, get) => ({
-      setSettings: (next: Settings) => {
-        set({ settings: next });
-      },
+    combine({ settings: settingsSchema.parse({}) }, (set, get) => ({
       updateSettings: (patch: Partial<Settings>) => {
         set({
           settings: {
@@ -20,16 +18,10 @@ export const useSettingsStore = create(
       },
     })),
     {
-      merge: (persistedState, currentState) => ({
-        ...currentState,
-        ...(persistedState as Partial<typeof currentState>),
-        settings: {
-          ...createDefaultSettings(),
-          ...(persistedState as Partial<typeof currentState>)?.settings,
-        },
-      }),
       name: "subcycle.settings",
       storage: createJSONStorage(() => localStorage),
+      version: 1,
+      migrate: migrateSettings,
     },
   ),
 );

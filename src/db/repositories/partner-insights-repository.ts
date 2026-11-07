@@ -1,43 +1,45 @@
 import { eq } from "drizzle-orm";
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
 import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
 import { db } from "@/db/client";
 import { partnerInsightsTable } from "@/db/schema";
-import { type PartnerInsight } from "@/types";
+import { type PartnerInsight } from "@/types/partner-insight";
 
-export async function upsertPartnerInsight(
+export function usePartnerInsightsQuery(): {
+  data: PartnerInsight[];
+  error?: Error;
+} {
+  return useLiveQuery(
+    db
+      .select()
+      .from(partnerInsightsTable)
+      .orderBy(partnerInsightsTable.dayInCycle),
+  );
+}
+
+export async function savePartnerInsight(
   insight: PartnerInsight,
+  previousDayInCycle?: number,
 ): Promise<void> {
-  await db
-    .insert(partnerInsightsTable)
-    .values({
-      dayInCycle: insight.dayInCycle,
-      name: insight.name,
-      description: insight.description,
-    })
-    .onConflictDoUpdate({
-      target: partnerInsightsTable.dayInCycle,
-      set: {
-        name: insight.name,
-        description: insight.description,
-      },
-    });
-  backupDatabaseAfterWrite();
+  const query =
+    previousDayInCycle === undefined
+      ? db.insert(partnerInsightsTable).values(insight)
+      : db
+          .update(partnerInsightsTable)
+          .set(insight)
+          .where(eq(partnerInsightsTable.dayInCycle, previousDayInCycle));
+
+  return query.then(() => {
+    backupDatabaseAfterWrite();
+  });
 }
 
 export async function deletePartnerInsight(dayInCycle: number): Promise<void> {
-  await db
+  return db
     .delete(partnerInsightsTable)
-    .where(eq(partnerInsightsTable.dayInCycle, dayInCycle));
-  backupDatabaseAfterWrite();
-}
-
-export async function replaceAllPartnerInsights(
-  insights: PartnerInsight[],
-): Promise<void> {
-  await db.delete(partnerInsightsTable);
-  for (const insight of insights) {
-    await upsertPartnerInsight(insight);
-  }
-  backupDatabaseAfterWrite();
+    .where(eq(partnerInsightsTable.dayInCycle, dayInCycle))
+    .then(() => {
+      backupDatabaseAfterWrite();
+    });
 }

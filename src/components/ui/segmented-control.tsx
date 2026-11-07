@@ -4,11 +4,11 @@ import { Pressable, View } from "react-native";
 import { Typography } from "@/components/ui/typography";
 import { useTheme } from "@/theme/use-theme";
 
-export type SegmentedControlItem<T extends string> = {
+export interface SegmentedControlItem<T extends string> {
   value: T;
   label: string;
   icon?: ReactNode;
-};
+}
 
 interface SegmentedControlProps<T extends string> {
   items: SegmentedControlItem<T>[];
