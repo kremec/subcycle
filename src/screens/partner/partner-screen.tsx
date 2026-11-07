@@ -45,7 +45,7 @@ const PartnerScreen: FC = () => {
   );
 
   return (
-    <Screen>
+    <Screen edges={["bottom", "left", "right"]}>
       <SegmentedControl
         value={mode}
         onChange={setMode}

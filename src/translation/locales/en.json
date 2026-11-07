@@ -11,10 +11,11 @@
     "save": "Save"
   },
   "calendar": {
+    "today": "Today",
     "cycleStatus": {
       "menstruationLeft": "of menstruation left",
       "untilNextMenstruation": "until next menstruation",
-      "noMenstruationEvents": "No menstruation events"
+      "noMenstruationEvents": "Start by logging your last period below."
     },
     "edit": {
       "eventsTitle": "Events for {{date}}",
@@ -65,14 +66,24 @@
         "moodAnnoyed": "Annoyed",
         "moodSensitive": "Sensitive",
         "moodIrritated": "Irritated"
-      }
+      },
+      "empty": "Add how you feel"
+    },
+    "dayTitle": "{{date}}",
+    "logEvents": "Log period / pill",
+    "legend": {
+      "period": "Period",
+      "pill": "Pill taken",
+      "predicted": "Predicted"
     }
   },
   "navigation": {
     "calendar": "Calendar",
     "partner": "Partner",
     "settings": "Settings",
-    "stats": "Stats"
+    "stats": "Stats",
+    "menu": "Open menu",
+    "guide": "Getting started"
   },
   "ordinal": {
     "one": "{{count}}st",
@@ -142,5 +153,16 @@
       "one": "Menstruation coming in {{count}} day.",
       "other": "Menstruation coming in {{count}} days."
     }
+  },
+  "appName": "subcycle",
+  "onboarding": {
+    "title": "Your cycle, at your pace.",
+    "description": "Keep track of your period, pills and how you feel.",
+    "logTitle": "A little check-in",
+    "logDescription": "Choose a date, then log your flow, ovulation or pill. Add symptoms whenever you like.",
+    "remindersTitle": "Make it yours",
+    "remindersDescription": "Predictions, reminders and partner insights are optional. Find them in Settings.",
+    "start": "Open calendar",
+    "menuHint": "Stats, settings and this guide are in the \u2022\u2022\u2022 menu."
   }
 }

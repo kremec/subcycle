@@ -1,15 +1,41 @@
 import { type FC } from "react";
 
+import { Stack } from "expo-router";
+
 import { useAppBootstrap } from "@/bootstrap/use-app-bootstrap";
 import { AppLoadingScreen } from "@/components/app-loading-screen";
-import { AppTabs } from "@/components/app-tabs";
+import { useTheme } from "@/theme/use-theme";
+import { t } from "@/translation/use-translation";
 
 export const AppRoot: FC = () => {
   const { ready } = useAppBootstrap();
+  const theme = useTheme();
 
   if (!ready) {
     return <AppLoadingScreen />;
   }
 
-  return <AppTabs />;
+  return (
+    <Stack
+      screenOptions={{
+        contentStyle: { backgroundColor: theme.colors.background },
+        headerStyle: { backgroundColor: theme.colors.background },
+        headerTintColor: theme.colors.text,
+        headerShadowVisible: false,
+        headerBackButtonDisplayMode: "minimal",
+      }}
+    >
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="stats" options={{ title: t("navigation.stats") }} />
+      <Stack.Screen
+        name="partner"
+        options={{ title: t("navigation.partner") }}
+      />
+      <Stack.Screen
+        name="settings"
+        options={{ title: t("navigation.settings") }}
+      />
+      <Stack.Screen name="welcome" options={{ headerShown: false }} />
+    </Stack>
+  );
 };

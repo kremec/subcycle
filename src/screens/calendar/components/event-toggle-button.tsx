@@ -1,6 +1,7 @@
 import { type FC, type ReactNode } from "react";
 import { Pressable, View } from "react-native";
 
+import { Icon, IconName } from "@/components/ui/icon";
 import { Typography } from "@/components/ui/typography";
 import { useTheme } from "@/theme/use-theme";
 
@@ -19,11 +20,15 @@ export const EventToggleButton: FC<EventToggleButtonProps> = (props) => {
   return (
     <Pressable
       onPress={onPress}
+      accessibilityRole="checkbox"
+      accessibilityState={{ checked: active }}
       style={{
         borderRadius: theme.radius.lg,
         borderWidth: 1,
-        borderColor: active ? color : theme.colors.border,
-        backgroundColor: active ? color : "transparent",
+        borderColor: active ? theme.colors.text : theme.colors.border,
+        backgroundColor: active
+          ? theme.colors.backgroundSelected
+          : "transparent",
         paddingHorizontal: theme.spacing.lg,
         paddingVertical: theme.spacing.md,
       }}
@@ -36,7 +41,20 @@ export const EventToggleButton: FC<EventToggleButtonProps> = (props) => {
         }}
       >
         {icon}
-        <Typography color={theme.colors.text}>{label}</Typography>
+        <Typography color={theme.colors.text} style={{ flex: 1 }}>
+          {label}
+        </Typography>
+        <View
+          style={{
+            width: 12,
+            height: 12,
+            borderRadius: theme.radius.full,
+            backgroundColor: color,
+          }}
+        />
+        {active && (
+          <Icon name={IconName.CHECK} size={18} color={theme.colors.text} />
+        )}
       </View>
     </Pressable>
   );

@@ -1,5 +1,5 @@
 import { type FC, useState } from "react";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 
 import { isSameDay } from "date-fns";
 
@@ -13,6 +13,8 @@ import { getDayInCycle } from "@/domain/cycle";
 import { getAllPredictions } from "@/domain/cycle-predictions";
 import { Calendar } from "@/screens/calendar/components/calendar";
 import { CalendarEditDialog } from "@/screens/calendar/components/calendar-edit-dialog";
+import { CalendarHeader } from "@/screens/calendar/components/calendar-header";
+import { CalendarLegend } from "@/screens/calendar/components/calendar-legend";
 import { CycleStatus } from "@/screens/calendar/components/cycle-status";
 import { SymptomsEditSheet } from "@/screens/calendar/components/symptoms-edit-sheet";
 import { SymptomsOverview } from "@/screens/calendar/components/symptoms-overview";
@@ -41,8 +43,17 @@ const CalendarScreen: FC = () => {
   const [symptomsEditorVisible, setSymptomsEditorVisible] = useState(false);
 
   return (
-    <Screen>
-      <View style={{ flex: 1, justifyContent: "space-between" }}>
+    <Screen style={{ paddingTop: 0 }}>
+      <CalendarHeader />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={{ marginHorizontal: -theme.spacing.lg }}
+        contentContainerStyle={{
+          paddingHorizontal: theme.spacing.lg,
+          paddingBottom: theme.spacing.lg,
+          gap: theme.spacing.lg,
+        }}
+      >
         <CycleStatus events={allEvents} />
 
         <View>
@@ -64,12 +75,20 @@ const CalendarScreen: FC = () => {
               }}
             />
           </View>
+          <CalendarLegend />
           <SymptomsOverview
             symptoms={selectedSymptoms}
             onPressEdit={() => setSymptomsEditorVisible(true)}
+            onPressLog={() =>
+              setEditingEvent(
+                allEvents.find((entry) =>
+                  isSameDay(entry.date, selectedDate),
+                ) ?? eventSchema.parse({ date: selectedDate }),
+              )
+            }
           />
         </View>
-      </View>
+      </ScrollView>
 
       <SymptomsEditSheet
         visible={symptomsEditorVisible}

@@ -32,15 +32,22 @@ export const CycleStatus: FC<CycleStatusProps> = (props) => {
   return (
     <View
       style={{
-        paddingBottom: theme.spacing.lg,
+        padding: theme.spacing.lg,
+        backgroundColor: theme.colors.backgroundElement,
+        borderRadius: theme.radius.lg,
+        gap: theme.spacing.xs,
       }}
     >
       {days !== null && (
         <Fragment>
-          <Typography variant="display" style={{ textAlign: "center" }}>
+          <Typography variant="title" style={{ textAlign: "center" }}>
             {t("common.days", { count: days })}
           </Typography>
-          <Typography variant="titleSmall" style={{ textAlign: "center" }}>
+          <Typography
+            variant="bodySmall"
+            color={theme.colors.textSecondary}
+            style={{ textAlign: "center" }}
+          >
             {isMenstruating
               ? t("calendar.cycleStatus.menstruationLeft")
               : t("calendar.cycleStatus.untilNextMenstruation")}

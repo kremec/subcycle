@@ -1,3 +1,5 @@
+import { type Event } from "@/types/event";
+
 export enum EventGroupShape {
   NONE = "NONE",
   SINGLE = "SINGLE",
@@ -12,6 +14,7 @@ export type CalendarMarker = {
   group: EventGroupShape;
   prediction: boolean;
   textColor: string;
-  dotColor: string;
+  pill: boolean;
+  event: Event | undefined;
   selected: boolean;
 };

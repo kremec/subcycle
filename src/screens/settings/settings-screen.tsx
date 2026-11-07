@@ -9,7 +9,11 @@ import { PredictionSettingsSection } from "@/screens/settings/components/predict
 
 const SettingsScreen: FC = () => {
   return (
-    <Screen scroll>
+    <Screen
+      scroll
+      edges={["bottom", "left", "right"]}
+      style={{ paddingBottom: 24 }}
+    >
       <PredictionSettingsSection />
       <PillRemindersSettingsSection />
       <MenstruationRemindersSettingsSection />

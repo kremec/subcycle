@@ -11,7 +11,7 @@ const StatsScreen: FC = () => {
   const { data: events } = useEventsQuery();
 
   return (
-    <Screen>
+    <Screen scroll edges={["bottom", "left", "right"]}>
       <StatCard
         icon={IconName.RELOAD}
         title={t("stats.averageCycleLength")}

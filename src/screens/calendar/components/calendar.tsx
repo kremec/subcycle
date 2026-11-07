@@ -1,5 +1,5 @@
-import { type FC, useRef } from "react";
-import { Pressable } from "react-native";
+import { type FC, useRef, useState } from "react";
+import { Pressable, View } from "react-native";
 
 import { format } from "date-fns";
 import { CalendarList } from "react-native-calendars";
@@ -8,7 +8,7 @@ import { Typography } from "@/components/ui/typography";
 import { createCalendarMarkers } from "@/domain/calendar-markers";
 import { CalendarDay } from "@/screens/calendar/components/calendar-day";
 import { useTheme } from "@/theme/use-theme";
-import { monthFormatter } from "@/translation/use-translation";
+import { monthFormatter, t } from "@/translation/use-translation";
 import { type Event } from "@/types/event";
 
 interface CalendarProps {
@@ -21,6 +21,9 @@ interface CalendarProps {
 export const Calendar: FC<CalendarProps> = (props) => {
   const { events, selectedDate, onPressDate, onPressToday } = props;
   const theme = useTheme();
+  const [visibleMonth, setVisibleMonth] = useState(() =>
+    format(selectedDate, "yyyy-MM-dd"),
+  );
   const calendarRef = useRef<{ scrollToMonth?: (date: string) => void } | null>(
     null,
   );
@@ -29,14 +32,16 @@ export const Calendar: FC<CalendarProps> = (props) => {
 
   return (
     <CalendarList
+      key={theme.themeName}
       ref={calendarRef}
-      current={format(selectedDate, "yyyy-MM-dd")}
+      current={visibleMonth}
+      onMonthChange={(month) => setVisibleMonth(month.dateString)}
       horizontal
       pagingEnabled
       staticHeader
       pastScrollRange={120}
       futureScrollRange={120}
-      hideArrows
+      hideArrows={false}
       showSixWeeks
       hideExtraDays
       firstDay={1}
@@ -45,19 +50,31 @@ export const Calendar: FC<CalendarProps> = (props) => {
       headerStyle={{ backgroundColor: theme.colors.background }}
       renderHeader={(date) => (
         <Pressable
+          accessibilityRole="button"
           onPress={() => {
             const today = new Date();
             onPressToday(today);
             calendarRef.current?.scrollToMonth?.(format(today, "yyyy-MM-dd"));
           }}
         >
-          <Typography variant="titleSmall" style={{ textAlign: "center" }}>
-            {monthFormatter.format(
-              date
-                ? new Date(date.getFullYear(), date.getMonth(), 1)
-                : selectedDate,
-            )}
-          </Typography>
+          <View
+            style={{
+              minHeight: 44,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="titleSmall" style={{ textAlign: "center" }}>
+              {monthFormatter.format(
+                date
+                  ? new Date(date.getFullYear(), date.getMonth(), 1)
+                  : selectedDate,
+              )}
+            </Typography>
+            <Typography variant="caption" color={theme.colors.accent}>
+              {t("calendar.today")}
+            </Typography>
+          </View>
         </Pressable>
       )}
       dayComponent={(dayProps) => {
@@ -80,6 +97,7 @@ export const Calendar: FC<CalendarProps> = (props) => {
         dayTextColor: theme.colors.text,
         monthTextColor: theme.colors.text,
         todayTextColor: theme.colors.accent,
+        arrowColor: theme.colors.textSecondary,
         textDayHeaderFontSize: theme.typography.bodySmall.fontSize,
         textMonthFontSize: theme.typography.title.fontSize,
         weekVerticalMargin: 2,

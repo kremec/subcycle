@@ -59,8 +59,9 @@ export function createCalendarMarkers(
       color: getColor(event, colors),
       group: getGroupShape(date, visibleEvents, event?.kind ?? EventKind.NONE),
       prediction,
-      textColor: prediction ? colors.text : colors.surface,
-      dotColor: actual?.pill ? colors.calendarPill : "transparent",
+      textColor: colors.text,
+      pill: actual?.pill ?? false,
+      event,
       selected: isSameDay(date, selectedDate),
     };
   };

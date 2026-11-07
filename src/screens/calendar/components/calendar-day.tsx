@@ -4,7 +4,8 @@ import { Pressable, View } from "react-native";
 import { isLastDayOfMonth } from "date-fns";
 
 import { Typography } from "@/components/ui/typography";
-import { typography } from "@/theme/tokens";
+import { useTheme } from "@/theme/use-theme";
+import { dateFormatter, t } from "@/translation/use-translation";
 import { EventGroupShape, type CalendarMarker } from "@/types/calendar-marker";
 
 interface CalendarDayProps {
@@ -14,7 +15,17 @@ interface CalendarDayProps {
 
 export const CalendarDay: FC<CalendarDayProps> = (props) => {
   const { marker, onPress } = props;
+  const theme = useTheme();
   const { date, group, prediction, color } = marker;
+  const event = marker.event;
+  const labels = [dateFormatter.format(date)];
+  if (event?.menstruationLight) labels.push(t("calendar.edit.light"));
+  if (event?.menstruationModerate) labels.push(t("calendar.edit.moderate"));
+  if (event?.menstruationHeavy) labels.push(t("calendar.edit.heavy"));
+  if (event?.menstruationSpotting) labels.push(t("calendar.edit.spotting"));
+  if (event?.ovulation) labels.push(t("calendar.edit.ovulation"));
+  if (color && prediction) labels.push(t("calendar.legend.predicted"));
+  if (marker.pill) labels.push(t("calendar.legend.pill"));
   const single = group === EventGroupShape.SINGLE;
   const roundedLeft =
     single ||
@@ -28,11 +39,14 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
     isLastDayOfMonth(date);
   const leftRadius = roundedLeft ? 1000 : 0;
   const rightRadius = roundedRight ? 1000 : 0;
-  const borderWidth = prediction ? 4 : 0;
+  const borderWidth = prediction ? 1.5 : 0;
 
   return (
     <Pressable
       onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={labels.join(", ")}
+      accessibilityState={{ selected: marker.selected }}
       style={{
         width: "100%",
         justifyContent: "center",
@@ -40,7 +54,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
     >
       <View
         style={{
-          minHeight: 44,
+          minHeight: 52,
           alignItems: "center",
           justifyContent: "center",
         }}
@@ -49,14 +63,16 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
           <View
             style={{
               position: "absolute",
-              top: 0,
-              bottom: 0,
+              top: 4,
+              bottom: 14,
               left: single ? "50%" : roundedLeft ? 1 : 0,
               right: single ? undefined : roundedRight ? 1 : 0,
-              width: single ? 44 : undefined,
-              marginLeft: single ? -22 : 0,
+              width: single ? 34 : undefined,
+              marginLeft: single ? -17 : 0,
               backgroundColor: prediction ? undefined : color,
-              borderColor: prediction ? color : undefined,
+              borderColor: event?.ovulation
+                ? theme.colors.calendarOvulationOutline
+                : theme.colors.accent,
               borderTopWidth: borderWidth,
               borderBottomWidth: borderWidth,
               borderLeftWidth: roundedLeft ? borderWidth : 0,
@@ -69,29 +85,39 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
           />
         )}
 
-        <Typography
-          variant="bodySmall"
-          color={marker.textColor}
-          style={{
-            fontWeight: marker.selected ? "900" : "400",
-            fontSize: marker.selected ? typography.body.fontSize : undefined,
-            lineHeight: marker.selected ? 18 : undefined,
-            transform: marker.selected ? [{ scale: 1.08 }] : undefined,
-          }}
-        >
-          {date.getDate()}
-        </Typography>
-
         <View
           style={{
             position: "absolute",
-            bottom: 6,
-            width: 6,
-            height: 6,
-            borderRadius: 3,
-            backgroundColor: marker.dotColor,
+            top: 5,
+            width: 32,
+            height: 32,
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: theme.radius.full,
+            borderWidth: marker.selected ? 2 : 0,
+            borderColor: marker.textColor,
           }}
-        />
+        >
+          <Typography
+            variant="bodySmall"
+            color={marker.textColor}
+            style={{ fontWeight: marker.selected ? "700" : "500" }}
+          >
+            {date.getDate()}
+          </Typography>
+        </View>
+        {marker.pill && (
+          <View
+            style={{
+              position: "absolute",
+              bottom: 3,
+              width: 12,
+              height: 6,
+              borderRadius: theme.radius.full,
+              backgroundColor: theme.colors.calendarPill,
+            }}
+          />
+        )}
       </View>
     </Pressable>
   );
