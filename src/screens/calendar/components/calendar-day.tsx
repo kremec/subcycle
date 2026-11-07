@@ -100,6 +100,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
         >
           <Typography
             variant="bodySmall"
+            allowFontScaling={false}
             color={marker.textColor}
             style={{ fontWeight: marker.selected ? "700" : "500" }}
           >

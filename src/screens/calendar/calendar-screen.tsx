@@ -42,6 +42,13 @@ const CalendarScreen: FC = () => {
 
   const [symptomsEditorVisible, setSymptomsEditorVisible] = useState(false);
 
+  const editDate = (date: Date) => {
+    setEditingEvent(
+      allEvents.find((entry) => isSameDay(entry.date, date)) ??
+        eventSchema.parse({ date }),
+    );
+  };
+
   return (
     <Screen style={{ paddingTop: 0 }}>
       <CalendarHeader />
@@ -68,10 +75,7 @@ const CalendarScreen: FC = () => {
                   return;
                 }
 
-                setEditingEvent(
-                  allEvents.find((entry) => isSameDay(entry.date, date)) ??
-                    eventSchema.parse({ date }),
-                );
+                editDate(date);
               }}
             />
           </View>
@@ -79,13 +83,7 @@ const CalendarScreen: FC = () => {
           <SymptomsOverview
             symptoms={selectedSymptoms}
             onPressEdit={() => setSymptomsEditorVisible(true)}
-            onPressLog={() =>
-              setEditingEvent(
-                allEvents.find((entry) =>
-                  isSameDay(entry.date, selectedDate),
-                ) ?? eventSchema.parse({ date: selectedDate }),
-              )
-            }
+            onPressLog={() => editDate(selectedDate)}
           />
         </View>
       </ScrollView>

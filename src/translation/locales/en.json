@@ -15,7 +15,7 @@
     "cycleStatus": {
       "menstruationLeft": "of menstruation left",
       "untilNextMenstruation": "until next menstruation",
-      "noMenstruationEvents": "Start by logging your last period below."
+      "noMenstruationEvents": "Log a period or turn on predictions to see what's next."
     },
     "edit": {
       "eventsTitle": "Events for {{date}}",

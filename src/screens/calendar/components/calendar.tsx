@@ -1,7 +1,7 @@
 import { type FC, useRef, useState } from "react";
 import { Pressable, View } from "react-native";
 
-import { format } from "date-fns";
+import { format, startOfMonth } from "date-fns";
 import { CalendarList } from "react-native-calendars";
 
 import { Typography } from "@/components/ui/typography";
@@ -21,27 +21,42 @@ interface CalendarProps {
 export const Calendar: FC<CalendarProps> = (props) => {
   const { events, selectedDate, onPressDate, onPressToday } = props;
   const theme = useTheme();
-  const [visibleMonth, setVisibleMonth] = useState(() =>
-    format(selectedDate, "yyyy-MM-dd"),
-  );
+  const [view, setView] = useState(() => {
+    const month = format(startOfMonth(selectedDate), "yyyy-MM-dd");
+    return {
+      themeName: theme.themeName,
+      initialMonth: month,
+      visibleMonth: month,
+    };
+  });
   const calendarRef = useRef<{ scrollToMonth?: (date: string) => void } | null>(
     null,
   );
 
   const getMarker = createCalendarMarkers(events, selectedDate, theme.colors);
 
+  // The library caches styles and scrolls when current changes. Reset it only for a new theme.
+  if (view.themeName !== theme.themeName) {
+    setView({
+      ...view,
+      themeName: theme.themeName,
+      initialMonth: view.visibleMonth,
+    });
+  }
+
   return (
     <CalendarList
       key={theme.themeName}
       ref={calendarRef}
-      current={visibleMonth}
-      onMonthChange={(month) => setVisibleMonth(month.dateString)}
+      current={view.initialMonth}
+      onMonthChange={(month) =>
+        setView((previous) => ({ ...previous, visibleMonth: month.dateString }))
+      }
       horizontal
       pagingEnabled
       staticHeader
       pastScrollRange={120}
       futureScrollRange={120}
-      hideArrows={false}
       showSixWeeks
       hideExtraDays
       firstDay={1}
