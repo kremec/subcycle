@@ -79,14 +79,22 @@ export const Calendar: FC<CalendarProps> = (props) => {
               alignItems: "center",
             }}
           >
-            <Typography variant="titleSmall" style={{ textAlign: "center" }}>
+            <Typography
+              variant="titleSmall"
+              allowFontScaling={false}
+              style={{ textAlign: "center" }}
+            >
               {monthFormatter.format(
                 date
                   ? new Date(date.getFullYear(), date.getMonth(), 1)
                   : selectedDate,
               )}
             </Typography>
-            <Typography variant="caption" color={theme.colors.accent}>
+            <Typography
+              variant="caption"
+              allowFontScaling={false}
+              color={theme.colors.accent}
+            >
               {t("calendar.today")}
             </Typography>
           </View>
