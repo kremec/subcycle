@@ -1,8 +1,8 @@
 import { type FC, useState } from "react";
 import { View } from "react-native";
 
-import { format, startOfMonth } from "date-fns";
-import { CalendarList } from "react-native-calendars";
+import { format } from "date-fns";
+import { Calendar as NativeCalendar } from "react-native-calendars";
 
 import { Typography } from "@/components/ui/typography";
 import { createCalendarMarkers } from "@/domain/calendar-markers";
@@ -14,119 +14,93 @@ import { type Event } from "@/types/event";
 interface CalendarProps {
   events: Event[];
   selectedDate: Date;
+  visibleMonth: Date;
   onPressDate: (date: Date) => void;
+  onChangeMonth: (date: Date) => void;
 }
 
 export const Calendar: FC<CalendarProps> = (props) => {
-  const { events, selectedDate, onPressDate } = props;
+  const { events, selectedDate, visibleMonth, onPressDate, onChangeMonth } =
+    props;
   const theme = useTheme();
-  const [view, setView] = useState(() => {
-    const month = format(startOfMonth(selectedDate), "yyyy-MM-dd");
-    return {
-      themeName: theme.themeName,
-      initialMonth: month,
-      visibleMonth: month,
-    };
-  });
-
+  const [dayHeight, setDayHeight] = useState(44);
   const getMarker = createCalendarMarkers(events, selectedDate, theme.colors);
 
-  // The library caches styles and scrolls when current changes. Reset it only for a new theme.
-  if (view.themeName !== theme.themeName) {
-    setView({
-      ...view,
-      themeName: theme.themeName,
-      initialMonth: view.visibleMonth,
-    });
-  }
-
   return (
-    <CalendarList
-      key={theme.themeName}
-      current={view.initialMonth}
-      onMonthChange={(month) =>
-        setView((previous) => ({ ...previous, visibleMonth: month.dateString }))
-      }
-      horizontal
-      pagingEnabled
-      staticHeader
-      pastScrollRange={120}
-      futureScrollRange={120}
-      showSixWeeks
-      hideExtraDays
-      firstDay={1}
-      markingType="period"
-      calendarStyle={{ backgroundColor: theme.colors.background }}
-      headerStyle={{ backgroundColor: theme.colors.background }}
-      renderHeader={(date) => (
-        <View
-          style={{
-            minHeight: 44,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Typography
-            variant="titleSmall"
-            allowFontScaling={false}
-            style={{ textAlign: "center" }}
-          >
+    <View
+      style={{ flex: 1, justifyContent: "flex-start" }}
+      onLayout={(event) => {
+        const available = event.nativeEvent.layout.height;
+        setDayHeight(
+          Math.max(32, Math.min(56, Math.floor((available - 80) / 6))),
+        );
+      }}
+    >
+      <NativeCalendar
+        key={theme.themeName}
+        current={format(visibleMonth, "yyyy-MM-dd")}
+        onMonthChange={(month) =>
+          onChangeMonth(new Date(month.year, month.month - 1, 1, 12))
+        }
+        enableSwipeMonths
+        hideExtraDays
+        firstDay={1}
+        testID="cycle-calendar"
+        style={{ backgroundColor: theme.colors.background }}
+        renderHeader={(date) => (
+          <Typography variant="titleSmall" allowFontScaling={false}>
             {monthFormatter.format(
               date
                 ? new Date(date.getFullYear(), date.getMonth(), 1)
-                : selectedDate,
+                : visibleMonth,
             )}
           </Typography>
-        </View>
-      )}
-      dayComponent={(dayProps) => {
-        const { date } = dayProps;
-        if (!date) {
-          return null;
-        }
-
-        const calendarDate = new Date(date.year, date.month - 1, date.day, 12);
-
-        return (
-          <CalendarDay
-            marker={getMarker(calendarDate)}
-            onPress={() => onPressDate(calendarDate)}
-          />
-        );
-      }}
-      theme={{
-        calendarBackground: theme.colors.background,
-        dayTextColor: theme.colors.text,
-        monthTextColor: theme.colors.text,
-        todayTextColor: theme.colors.accent,
-        arrowColor: theme.colors.textSecondary,
-        textDayHeaderFontSize: theme.typography.bodySmall.fontSize,
-        textMonthFontSize: theme.typography.title.fontSize,
-        weekVerticalMargin: 2,
-        textSectionTitleColor: theme.colors.textSecondary,
-        ...{
-          "stylesheet.calendar.header": {
-            week: {
-              marginTop: 7,
-              flexDirection: "row",
-              justifyContent: "space-around",
-            },
-            dayHeader: {
-              marginTop: 2,
-              marginBottom: 7,
-              width: 32,
-              textAlign: "center",
-              ...theme.typography.bodySmall,
-              color: theme.colors.textSecondary,
-            },
-          },
-          "stylesheet.calendar.main": {
-            monthView: {
-              backgroundColor: theme.colors.calendarOff,
+        )}
+        dayComponent={(dayProps) => {
+          const { date } = dayProps;
+          if (!date) return null;
+          const calendarDate = new Date(
+            date.year,
+            date.month - 1,
+            date.day,
+            12,
+          );
+          return (
+            <CalendarDay
+              marker={getMarker(calendarDate)}
+              height={dayHeight}
+              onPress={() => onPressDate(calendarDate)}
+            />
+          );
+        }}
+        theme={{
+          calendarBackground: theme.colors.background,
+          arrowColor: theme.colors.textSecondary,
+          textSectionTitleColor: theme.colors.textSecondary,
+          textDayHeaderFontSize: 12,
+          weekVerticalMargin: 0,
+          ...{
+            "stylesheet.calendar.header": {
+              header: {
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              },
+              week: {
+                flexDirection: "row",
+                justifyContent: "space-around",
+                marginBottom: 4,
+              },
+              dayHeader: {
+                width: 32,
+                textAlign: "center",
+                ...theme.typography.caption,
+                color: theme.colors.textSecondary,
+              },
             },
           },
-        },
-      }}
-    />
+        }}
+      />
+    </View>
   );
 };

@@ -16,6 +16,9 @@ export const CalendarHeader: FC = () => {
     <View style={{ minHeight: 64, flexDirection: "row", alignItems: "center" }}>
       <Typography
         variant="title"
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        maxFontSizeMultiplier={1.5}
         style={{
           flex: 1,
           fontFamily: Platform.select({ ios: "ui-rounded", default: "normal" }),

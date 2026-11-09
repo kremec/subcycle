@@ -1,11 +1,13 @@
-import { type FC } from "react";
-import { View } from "react-native";
+import { type FC, useState } from "react";
+import { Pressable, View } from "react-native";
+
+import { router } from "expo-router";
 
 import { differenceInCalendarDays } from "date-fns";
 
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
+import { Dialog } from "@/components/ui/dialog";
 import { Icon, IconName } from "@/components/ui/icon";
+import { IconButton } from "@/components/ui/icon-button";
 import { Typography } from "@/components/ui/typography";
 import { usePartnerInsightsQuery } from "@/db/repositories/partner-insights-repository";
 import {
@@ -25,6 +27,7 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
   const { events } = props;
   const theme = useTheme();
   const { data: insights } = usePartnerInsightsQuery();
+  const [readingInsight, setReadingInsight] = useState(false);
   const today = new Date();
   const visibleEvents = getVisibleCycleEvents(events);
   const dayInCycle = getDayInCycle(today, visibleEvents);
@@ -53,8 +56,6 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
             : "")
         : t("partner.noUpcomingPeriod"),
       predicted: period?.events.some((event) => event.prediction) ?? false,
-      icon: IconName.DROPLET,
-      color: theme.colors.accent,
     },
     {
       label: t(
@@ -64,76 +65,174 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
         ? dateFormatter.format(ovulation.date)
         : t("partner.noUpcomingOvulation"),
       predicted: ovulation?.prediction ?? false,
-      icon: IconName.EGG,
-      color: theme.colors.calendarOvulationOutline,
     },
   ];
 
   return (
-    <View style={{ gap: theme.spacing.lg }}>
-      <View
-        style={{
-          flexDirection: "row",
-          flexWrap: "wrap",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: theme.spacing.sm,
-        }}
-      >
-        <Typography variant="titleSmall">
-          {t("partner.todayInsights")}
+    <View
+      style={{
+        flex: 1,
+        gap: theme.spacing.lg,
+        paddingBottom: theme.spacing.sm,
+      }}
+    >
+      <View>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: theme.spacing.sm,
+          }}
+        >
+          <Typography
+            variant="titleSmall"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            maxFontSizeMultiplier={1.5}
+            style={{ flex: 1 }}
+          >
+            {t("partner.todayInsights")}
+          </Typography>
+          <IconButton
+            plain
+            size={44}
+            accessibilityLabel={t("partner.editInsights")}
+            onPress={() => router.push("/partner")}
+          >
+            <Icon name={IconName.EDIT} size={22} color={theme.colors.text} />
+          </IconButton>
+        </View>
+        <Typography
+          variant="bodySmall"
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          maxFontSizeMultiplier={1.5}
+          color={theme.colors.textSecondary}
+        >
+          {dateFormatter.format(today)}
+          {dayInCycle !== null &&
+            ` · ${t("partner.dayInCycle", { day: formatOrdinal(dayInCycle) })}`}
         </Typography>
-        {dayInCycle !== null && (
-          <Badge>
-            {t("partner.dayInCycle", { day: formatOrdinal(dayInCycle) })}
-          </Badge>
-        )}
       </View>
 
-      <Card style={{ gap: theme.spacing.md }}>
-        {todayInsight && (
-          <Typography variant="title">{todayInsight.name}</Typography>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={t(
+          todayInsight ? "partner.readInsight" : "partner.addInsight",
         )}
-        {todayInsight && <Typography>{todayInsight.description}</Typography>}
-        {!todayInsight && (
-          <Typography variant="titleSmall">
-            {t("partner.noInsightsFound")}
+        onPress={() => {
+          if (todayInsight) setReadingInsight(true);
+          else router.push("/partner");
+        }}
+        style={(state) => ({
+          flexShrink: 1,
+          minHeight: 160,
+          gap: theme.spacing.md,
+          padding: theme.spacing.lg,
+          borderRadius: theme.radius.lg,
+          backgroundColor: theme.colors.backgroundElement,
+          opacity: state.pressed ? 0.7 : 1,
+        })}
+      >
+        <Typography
+          variant="title"
+          numberOfLines={2}
+          adjustsFontSizeToFit
+          maxFontSizeMultiplier={1.5}
+        >
+          {todayInsight?.name ?? t("partner.noInsightsFound")}
+        </Typography>
+        <Typography
+          numberOfLines={5}
+          maxFontSizeMultiplier={1.5}
+          style={{ flexShrink: 1 }}
+          color={theme.colors.textSecondary}
+        >
+          {todayInsight?.description ?? t("partner.noInsightsDescription")}
+        </Typography>
+        <View
+          style={{
+            minHeight: 44,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: theme.spacing.sm,
+          }}
+        >
+          <Typography
+            variant="bodySmallSemibold"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            maxFontSizeMultiplier={1.5}
+          >
+            {t(todayInsight ? "partner.readInsight" : "partner.addInsight")}
           </Typography>
-        )}
-        {!todayInsight && (
-          <Typography color={theme.colors.textSecondary}>
-            {t("partner.noInsightsDescription")}
-          </Typography>
-        )}
-      </Card>
+          <Icon
+            name={IconName.CHEVRON_RIGHT}
+            size={18}
+            color={theme.colors.text}
+          />
+        </View>
+      </Pressable>
 
-      <Card style={{ gap: theme.spacing.md }}>
-        {upcoming.map((entry, index) => (
+      <View>
+        {upcoming.map((entry) => (
           <View
-            key={entry.icon}
+            key={entry.label}
             style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: theme.spacing.md,
-              borderTopWidth: index === 0 ? 0 : 1,
+              gap: theme.spacing.xs,
+              borderTopWidth: 1,
               borderTopColor: theme.colors.border,
-              paddingTop: index === 0 ? 0 : theme.spacing.md,
+              paddingVertical: theme.spacing.md,
             }}
           >
-            <Icon name={entry.icon} size={24} color={entry.color} />
-            <View style={{ flex: 1, gap: theme.spacing.xs }}>
-              <Typography
-                variant="bodySmall"
-                color={theme.colors.textSecondary}
-              >
-                {entry.label}
-              </Typography>
-              <Typography variant="bodySemibold">{entry.value}</Typography>
-            </View>
-            {entry.predicted && <Badge>{t("calendar.predicted")}</Badge>}
+            <Typography
+              variant="caption"
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              maxFontSizeMultiplier={1.5}
+              color={theme.colors.textSecondary}
+            >
+              {entry.label}
+              {entry.predicted && ` · ${t("calendar.predicted")}`}
+            </Typography>
+            <Typography
+              variant="bodySemibold"
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              maxFontSizeMultiplier={1.5}
+            >
+              {entry.value}
+            </Typography>
           </View>
         ))}
-      </Card>
+      </View>
+
+      {readingInsight && todayInsight && (
+        <Dialog visible onClose={() => setReadingInsight(false)}>
+          <View style={{ gap: theme.spacing.lg }}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: theme.spacing.sm,
+              }}
+            >
+              <Typography variant="title" style={{ flex: 1 }}>
+                {todayInsight.name}
+              </Typography>
+              <IconButton
+                plain
+                accessibilityLabel={t("common.close")}
+                onPress={() => setReadingInsight(false)}
+              >
+                <Icon name={IconName.X} size={22} color={theme.colors.text} />
+              </IconButton>
+            </View>
+            <Typography>{todayInsight.description}</Typography>
+          </View>
+        </Dialog>
+      )}
     </View>
   );
 };

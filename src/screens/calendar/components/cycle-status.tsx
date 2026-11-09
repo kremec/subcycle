@@ -1,5 +1,4 @@
-import { Fragment, type FC } from "react";
-import { View } from "react-native";
+import { type FC } from "react";
 
 import { differenceInCalendarDays } from "date-fns";
 
@@ -16,53 +15,31 @@ interface CycleStatusProps {
 export const CycleStatus: FC<CycleStatusProps> = (props) => {
   const { events } = props;
   const theme = useTheme();
-
   const today = new Date();
-  const currentOrNextPeriod = getEventPeriods(events).find(
+  const period = getEventPeriods(events).find(
     (entry) => differenceInCalendarDays(entry.end, today) >= 0,
   );
-  const isMenstruating =
-    currentOrNextPeriod !== undefined &&
-    differenceInCalendarDays(today, currentOrNextPeriod.start) >= 0;
-  const targetDate = isMenstruating
-    ? currentOrNextPeriod?.end
-    : currentOrNextPeriod?.start;
-  const days = targetDate ? differenceInCalendarDays(targetDate, today) : null;
+  const current =
+    period !== undefined && differenceInCalendarDays(today, period.start) >= 0;
+  const target = current ? period?.end : period?.start;
+  const days = target ? differenceInCalendarDays(target, today) : null;
 
   return (
-    <View
-      style={{
-        padding: theme.spacing.lg,
-        backgroundColor: theme.colors.backgroundElement,
-        borderRadius: theme.radius.lg,
-        gap: theme.spacing.xs,
-      }}
+    <Typography
+      variant="bodySemibold"
+      color={days === null ? theme.colors.textSecondary : theme.colors.text}
+      numberOfLines={1}
+      adjustsFontSizeToFit
+      style={{ textAlign: "center" }}
     >
-      {days !== null && (
-        <Fragment>
-          <Typography variant="title" style={{ textAlign: "center" }}>
-            {t("common.days", { count: days })}
-          </Typography>
-          <Typography
-            variant="bodySmall"
-            color={theme.colors.textSecondary}
-            style={{ textAlign: "center" }}
-          >
-            {isMenstruating
-              ? t("calendar.cycleStatus.menstruationLeft")
-              : t("calendar.cycleStatus.untilNextMenstruation")}
-          </Typography>
-        </Fragment>
-      )}
-      {days === null && (
-        <Typography
-          variant="bodySmall"
-          color={theme.colors.textSecondary}
-          style={{ textAlign: "center" }}
-        >
-          {t("calendar.cycleStatus.noMenstruationEvents")}
-        </Typography>
-      )}
-    </View>
+      {days === null
+        ? t("calendar.cycleStatus.noMenstruationEvents")
+        : t(
+            current
+              ? "calendar.cycleStatus.periodEndsIn"
+              : "calendar.cycleStatus.periodStartsIn",
+            { count: days },
+          )}
+    </Typography>
   );
 };

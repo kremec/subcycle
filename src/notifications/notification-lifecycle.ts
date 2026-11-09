@@ -24,7 +24,7 @@ async function syncSchedules(): Promise<void> {
       : [];
     const menstruationSchedules = buildMenstruationSchedules(
       settings,
-      getMenstruationPredictions(getEvents(), settings.predictionTimespan),
+      getMenstruationPredictions(getEvents(), settings.predictionsEnabled),
     );
 
     await Promise.all([
@@ -55,7 +55,7 @@ export function startNotificationLifecycle(): () => void {
     const current = state.settings;
     const before = previous.settings;
     if (
-      current.predictionTimespan !== before.predictionTimespan ||
+      current.predictionsEnabled !== before.predictionsEnabled ||
       current.pillNotificationsEnabled !== before.pillNotificationsEnabled ||
       current.pillNotificationTimes !== before.pillNotificationTimes ||
       current.menstruationNotificationsEnabled !==

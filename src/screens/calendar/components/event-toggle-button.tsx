@@ -1,19 +1,21 @@
 import { type FC } from "react";
 import { Pressable, View } from "react-native";
 
-import { Icon, IconName } from "@/components/ui/icon";
+import { Icon, type IconName } from "@/components/ui/icon";
 import { Typography } from "@/components/ui/typography";
 import { useTheme } from "@/theme/use-theme";
 
 interface EventToggleButtonProps {
   label: string;
   active: boolean;
+  icon?: IconName;
   onPress: () => void;
 }
 
 export const EventToggleButton: FC<EventToggleButtonProps> = (props) => {
-  const { label, active, onPress } = props;
+  const { label, active, icon, onPress } = props;
   const theme = useTheme();
+  const color = active ? theme.colors.background : theme.colors.textSecondary;
 
   return (
     <Pressable
@@ -22,17 +24,12 @@ export const EventToggleButton: FC<EventToggleButtonProps> = (props) => {
       accessibilityLabel={label}
       accessibilityState={{ checked: active }}
       style={(state) => ({
-        flexGrow: 1,
-        flexBasis: "45%",
+        flex: 1,
         minHeight: 44,
-        alignItems: "center",
         justifyContent: "center",
-        borderRadius: theme.radius.md,
-        borderWidth: 1,
-        borderColor: active ? theme.colors.accent : theme.colors.border,
-        backgroundColor: active ? theme.colors.accentSoft : "transparent",
-        paddingHorizontal: theme.spacing.md,
-        paddingVertical: theme.spacing.sm,
+        borderRadius: 10,
+        paddingHorizontal: 4,
+        backgroundColor: active ? theme.colors.text : "transparent",
         opacity: state.pressed ? 0.6 : 1,
       })}
     >
@@ -40,13 +37,22 @@ export const EventToggleButton: FC<EventToggleButtonProps> = (props) => {
         style={{
           flexDirection: "row",
           alignItems: "center",
-          gap: theme.spacing.sm,
+          justifyContent: "center",
+          gap: 4,
         }}
       >
-        <Typography variant="bodySmallSemibold">{label}</Typography>
-        {active && (
-          <Icon name={IconName.CHECK} size={16} color={theme.colors.text} />
+        {icon && (
+          <Icon name={icon} size={16} color={color} filled={icon === "pill"} />
         )}
+        <Typography
+          variant="captionSemibold"
+          color={color}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          style={{ flexShrink: 1 }}
+        >
+          {label}
+        </Typography>
       </View>
     </Pressable>
   );

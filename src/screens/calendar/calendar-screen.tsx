@@ -1,7 +1,7 @@
 import { type FC, useState } from "react";
-import { Alert, ScrollView, View } from "react-native";
+import { Alert, View } from "react-native";
 
-import { isSameDay } from "date-fns";
+import { isSameDay, startOfMonth } from "date-fns";
 
 import { Screen } from "@/components/ui/screen";
 import {
@@ -32,11 +32,14 @@ const CalendarScreen: FC = () => {
   const { data: events } = useEventsQuery();
   const { data: symptoms } = useSymptomsQuery();
   const [selectedDate, setSelectedDate] = useState(() => new Date());
-  const predictionTimespan = useSettingsStore(
-    (state) => state.settings.predictionTimespan,
+  const predictionsEnabled = useSettingsStore(
+    (state) => state.settings.predictionsEnabled,
+  );
+  const [visibleMonth, setVisibleMonth] = useState(() =>
+    startOfMonth(new Date()),
   );
   const partnerMode = useSettingsStore((state) => state.settings.partnerMode);
-  const allEvents = getAllPredictions(events, predictionTimespan);
+  const allEvents = getAllPredictions(events, predictionsEnabled, visibleMonth);
   const visibleEvents = getVisibleCycleEvents(allEvents);
   const selectedEvent =
     events.find((entry) => isSameDay(entry.date, selectedDate)) ??
@@ -47,31 +50,25 @@ const CalendarScreen: FC = () => {
   const [symptomsEditorVisible, setSymptomsEditorVisible] = useState(false);
 
   return (
-    <Screen style={{ paddingTop: 0 }}>
+    <Screen
+      style={{
+        paddingTop: 0,
+        paddingBottom: theme.spacing.sm,
+        gap: theme.spacing.sm,
+      }}
+    >
       <CalendarHeader />
-      <ScrollView
-        key={partnerMode ? "partner" : "calendar"}
-        showsVerticalScrollIndicator={false}
-        style={{ marginHorizontal: -theme.spacing.lg }}
-        contentContainerStyle={{
-          paddingHorizontal: theme.spacing.lg,
-          paddingBottom: theme.spacing.lg,
-          gap: theme.spacing.lg,
-        }}
-      >
-        {partnerMode && <PartnerHome events={allEvents} />}
-        <CycleAverages events={events} />
-        <CycleStatus events={visibleEvents} />
-        {!partnerMode && (
-          <View style={{ marginHorizontal: -theme.spacing.lg }}>
-            <Calendar
-              events={allEvents}
-              selectedDate={selectedDate}
-              onPressDate={setSelectedDate}
-            />
-          </View>
-        )}
-        {!partnerMode && (
+      {partnerMode && <PartnerHome events={allEvents} />}
+      {!partnerMode && (
+        <View style={{ flex: 1, gap: theme.spacing.sm }}>
+          <CycleStatus events={visibleEvents} />
+          <Calendar
+            events={allEvents}
+            selectedDate={selectedDate}
+            visibleMonth={visibleMonth}
+            onChangeMonth={setVisibleMonth}
+            onPressDate={setSelectedDate}
+          />
           <DayLogCard
             event={selectedEvent}
             symptoms={selectedSymptoms}
@@ -83,8 +80,9 @@ const CalendarScreen: FC = () => {
               );
             }}
           />
-        )}
-      </ScrollView>
+          <CycleAverages events={events} />
+        </View>
+      )}
       {!partnerMode && (
         <SymptomsEditSheet
           visible={symptomsEditorVisible}

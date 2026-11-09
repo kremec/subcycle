@@ -1,10 +1,7 @@
 import { type FC } from "react";
 import { View } from "react-native";
 
-import { router } from "expo-router";
-
 import { BottomSheet } from "@/components/ui/bottom-sheet";
-import { Button } from "@/components/ui/button";
 import { Icon, IconName } from "@/components/ui/icon";
 import { IconButton } from "@/components/ui/icon-button";
 import { Typography } from "@/components/ui/typography";
@@ -13,7 +10,6 @@ import { MenstruationRemindersSettingsSection } from "@/screens/settings/compone
 import { PartnerModeSettingsSection } from "@/screens/settings/components/partner-mode-settings-section";
 import { PillRemindersSettingsSection } from "@/screens/settings/components/pill-reminders-settings-section";
 import { PredictionSettingsSection } from "@/screens/settings/components/prediction-settings-section";
-import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
 
@@ -25,7 +21,6 @@ interface SettingsSheetProps {
 export const SettingsSheet: FC<SettingsSheetProps> = (props) => {
   const { visible, onClose } = props;
   const theme = useTheme();
-  const partnerMode = useSettingsStore((state) => state.settings.partnerMode);
 
   return (
     <BottomSheet visible={visible} onClose={onClose}>
@@ -59,17 +54,6 @@ export const SettingsSheet: FC<SettingsSheetProps> = (props) => {
         <PillRemindersSettingsSection />
         <MenstruationRemindersSettingsSection />
         <PartnerModeSettingsSection />
-        {partnerMode && (
-          <Button
-            variant="outline"
-            onPress={() => {
-              onClose();
-              router.push("/partner");
-            }}
-          >
-            {t("partner.editInsights")}
-          </Button>
-        )}
         <BackupsSection />
       </View>
     </BottomSheet>

@@ -15,7 +15,17 @@
     "cycleStatus": {
       "menstruationLeft": "of menstruation left",
       "untilNextMenstruation": "until next menstruation",
-      "noMenstruationEvents": "No current or upcoming period to show."
+      "noMenstruationEvents": "No upcoming period",
+      "periodStartsIn": {
+        "zero": "Period starts today",
+        "one": "Period in 1 day",
+        "other": "Period in {{count}} days"
+      },
+      "periodEndsIn": {
+        "zero": "Last day of period",
+        "one": "Period · 1 day left",
+        "other": "Period · {{count}} days left"
+      }
     },
     "edit": {
       "eventsTitle": "Events for {{date}}",
@@ -70,7 +80,11 @@
       "empty": "Add how you feel"
     },
     "predicted": "Predicted",
-    "pillTaken": "Pill taken"
+    "pillTaken": "Pill taken",
+    "cycleDay": "Day {{day}}",
+    "averageCycle": "{{count}}d cycle",
+    "averagePeriod": "{{count}}d period",
+    "averages": "Averages · {{values}}"
   },
   "navigation": {
     "calendar": "Calendar",
@@ -97,13 +111,14 @@
     "startDayInCycle": "Start day in cycle",
     "startDayAlreadyUsed": "An insight already starts on this day.",
     "todayInsights": "Today's insights",
-    "noInsightsDescription": "Add notes for different days of the cycle in Settings.",
+    "noInsightsDescription": "Add notes for different days of the cycle.",
     "currentPeriod": "Current period",
     "nextPeriod": "Next period",
     "todayOvulation": "Ovulation today",
     "nextOvulation": "Next ovulation",
     "noUpcomingPeriod": "No upcoming period logged or predicted",
-    "noUpcomingOvulation": "No upcoming ovulation logged or predicted"
+    "noUpcomingOvulation": "No upcoming ovulation logged or predicted",
+    "readInsight": "Read insight"
   },
   "settings": {
     "addReminder": "Add reminder",
@@ -113,21 +128,15 @@
     "editReminder": "Edit reminder",
     "exportData": "Export data",
     "importData": "Import data",
-    "menstrualCyclePrediction": "Menstrual cycle prediction",
+    "menstrualCyclePrediction": "Cycle predictions",
     "menstruationReminders": "Menstruation reminders",
-    "noPredictions": "No predictions",
     "notificationMessage": "Notification message",
     "notificationMessagePlaceholder": "Leave empty to use the default message.",
     "notificationTime": "Notification time",
     "reminderRuleAtTime": "{{rule}} at {{time}}",
-    "numberOfMonthsForPrediction": "Number of months for prediction",
     "partnerMode": "Partner mode",
     "partnerModeDescription": "Show insights based on day of cycle",
     "pillReminders": "Pill reminders",
-    "predictionMonths": {
-      "one": "{{count}} month",
-      "other": "{{count}} months"
-    },
     "reminderRule": {
       "zero": "On the day",
       "one": "{{count}} day before",
@@ -139,7 +148,8 @@
     "deleteReminder": "Delete reminder",
     "exportTitle": "Export subcycle database",
     "importFailed": "Could not import the database.",
-    "exportFailed": "Could not export the database."
+    "exportFailed": "Could not export the database.",
+    "predictionsDescription": "Estimate upcoming periods and ovulation from your logs."
   },
   "stats": {
     "averageCycleLength": "Average cycle length",

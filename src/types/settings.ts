@@ -12,7 +12,7 @@ export type MenstruationNotification = z.infer<
 
 export const settingsSchema = z.object({
   onboarded: z.boolean().default(false),
-  predictionTimespan: z.number().default(0),
+  predictionsEnabled: z.boolean().default(false),
   pillNotificationsEnabled: z.boolean().default(false),
   pillNotificationTimes: z.array(z.iso.time({ precision: -1 })).default([]),
   menstruationNotificationsEnabled: z.boolean().default(false),
