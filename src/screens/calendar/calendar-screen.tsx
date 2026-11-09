@@ -64,7 +64,7 @@ const CalendarScreen: FC = () => {
       }}
     >
       <CalendarHeader />
-      <CycleStatus events={visibleEvents} />
+      {!partnerMode && <CycleStatus events={visibleEvents} />}
       {partnerMode && <PartnerHome events={allEvents} />}
       {!partnerMode && (
         <View style={{ flex: 1, gap: theme.spacing.sm }}>

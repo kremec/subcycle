@@ -2,6 +2,10 @@
   "common": {
     "cancel": "Cancel",
     "close": "Close",
+    "days": {
+      "one": "{{count}} day",
+      "other": "{{count}} days"
+    },
     "loading": "Loading ...",
     "save": "Save",
     "saveFailed": "Could not save this change. Please try again."
@@ -10,17 +14,7 @@
     "cycleStatus": {
       "menstruationLeft": "of menstruation left",
       "untilNextMenstruation": "until next menstruation",
-      "noMenstruationEvents": "No upcoming period",
-      "periodStartsIn": {
-        "zero": "Period starts today",
-        "one": "Period in 1 day",
-        "other": "Period in {{count}} days"
-      },
-      "periodEndsIn": {
-        "zero": "Last day of period",
-        "one": "Period · 1 day left",
-        "other": "Period · {{count}} days left"
-      }
+      "noMenstruationEvents": "No upcoming period"
     },
     "edit": {
       "eventsTitle": "Events for {{date}}",
@@ -93,26 +87,41 @@
     "other": "{{count}}th"
   },
   "partner": {
-    "fromDay": "Day {{day}}+",
-    "addInsight": "Add insight",
-    "dayInCycle": "{{day}} day in cycle",
-    "description": "Description",
+    "editInsights": "Cycle notes",
+    "allNotes": "All notes",
+    "todayContext": "Today · cycle day {{day}}",
+    "today": "Today",
+    "readNote": "Read full note",
+    "editNote": "Edit note",
+    "newNote": "New note",
+    "addInsight": "Add note",
+    "addTodayNote": "Write a note for today",
+    "noNoteToday": "No note for today",
+    "noInsightsFound": "No notes yet",
+    "noNotesDescription": "Write short notes for different days of the cycle. The one for today shows here.",
+    "noNoteTodayDescription": "The first note starts on cycle day {{day}}.",
+    "noCycleDescription": "Notes follow the cycle once a period is logged.",
+    "managerDescription": "Each note shows from its start day until the next note begins.",
+    "day": "Day {{day}}",
+    "dayRange": "Days {{start}}–{{end}}",
+    "dayOnward": "Day {{day}} onward",
+    "name": "Title",
+    "description": "Note",
+    "startDayInCycle": "Starts on cycle day",
+    "startDayHint": "Shown until the next note starts.",
+    "startDayAlreadyUsed": "A note already starts on this day.",
     "delete": "Delete",
-    "editInsight": "Edit insight",
-    "editInsights": "Edit partner insights",
-    "name": "Name",
-    "noInsightsFound": "No insights yet",
-    "startDayInCycle": "Start day in cycle",
-    "startDayAlreadyUsed": "An insight already starts on this day.",
-    "todayInsights": "Today's insights",
-    "noInsightsDescription": "Add notes for different days of the cycle.",
-    "currentPeriod": "Current period",
+    "period": "Period",
     "nextPeriod": "Next period",
-    "todayOvulation": "Ovulation today",
+    "ovulation": "Ovulation",
     "nextOvulation": "Next ovulation",
-    "noUpcomingPeriod": "No upcoming period logged or predicted",
-    "noUpcomingOvulation": "No upcoming ovulation logged or predicted",
-    "readInsight": "Read insight"
+    "now": "Now",
+    "until": "Until {{date}}",
+    "inDays": {
+      "one": "Tomorrow",
+      "other": "In {{count}} days"
+    },
+    "notKnownYet": "Not known yet"
   },
   "settings": {
     "addReminder": "Add reminder",

@@ -81,7 +81,6 @@ export const DayLogCard: FC<DayLogCardProps> = (props) => {
       <View style={{ flexDirection: "row", gap: theme.spacing.xs }}>
         <EventToggleButton
           label={t("calendar.edit.ovulation")}
-          icon={IconName.CIRCLE_DOT}
           active={event.ovulation}
           onPress={() => onToggle("ovulation")}
         />

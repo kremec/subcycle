@@ -1,4 +1,5 @@
-import { type FC } from "react";
+import { Fragment, type FC } from "react";
+import { View } from "react-native";
 
 import { differenceInCalendarDays } from "date-fns";
 
@@ -25,22 +26,42 @@ export const CycleStatus: FC<CycleStatusProps> = (props) => {
   const days = target ? differenceInCalendarDays(target, today) : null;
 
   return (
-    <Typography
-      variant="title"
-      color={days === null ? theme.colors.textSecondary : theme.colors.text}
-      numberOfLines={2}
-      adjustsFontSizeToFit
-      maxFontSizeMultiplier={1.5}
-      style={{ textAlign: "center", paddingVertical: theme.spacing.md }}
-    >
-      {days === null
-        ? t("calendar.cycleStatus.noMenstruationEvents")
-        : t(
-            current
-              ? "calendar.cycleStatus.periodEndsIn"
-              : "calendar.cycleStatus.periodStartsIn",
-            { count: days },
-          )}
-    </Typography>
+    <View style={{ paddingVertical: theme.spacing.sm, gap: theme.spacing.xxs }}>
+      {days !== null && (
+        <Fragment>
+          <Typography
+            variant="display"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            maxFontSizeMultiplier={1.5}
+            style={{ textAlign: "center" }}
+          >
+            {t("common.days", { count: days })}
+          </Typography>
+          <Typography
+            variant="titleSmall"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            maxFontSizeMultiplier={1.5}
+            style={{ textAlign: "center" }}
+          >
+            {t(
+              current
+                ? "calendar.cycleStatus.menstruationLeft"
+                : "calendar.cycleStatus.untilNextMenstruation",
+            )}
+          </Typography>
+        </Fragment>
+      )}
+      {days === null && (
+        <Typography
+          variant="bodySmall"
+          color={theme.colors.textSecondary}
+          style={{ textAlign: "center" }}
+        >
+          {t("calendar.cycleStatus.noMenstruationEvents")}
+        </Typography>
+      )}
+    </View>
   );
 };

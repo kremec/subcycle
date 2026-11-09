@@ -70,14 +70,8 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
         style={{
           width: size,
           height: size,
-          borderRadius: 10,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor:
-            selected && !color ? theme.colors.backgroundSelected : undefined,
-          borderWidth: selected ? 1.5 : 0,
-          borderColor: theme.colors.text,
-          borderStyle: prediction && color ? "dashed" : "solid",
         }}
       >
         <Typography
