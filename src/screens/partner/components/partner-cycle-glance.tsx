@@ -11,20 +11,15 @@ import { type Event } from "@/types/event";
 
 interface PartnerCycleGlanceProps {
   events: Event[];
-  today: Date;
 }
-
-const formatDate = (date: Date, predicted: boolean) =>
-  predicted
-    ? `${dateFormatter.format(date)} · ${t("calendar.predicted")}`
-    : dateFormatter.format(date);
 
 const formatDistance = (days: number) =>
   days === 0 ? t("partner.today") : t("partner.inDays", { count: days });
 
 export const PartnerCycleGlance: FC<PartnerCycleGlanceProps> = (props) => {
-  const { events, today } = props;
+  const { events } = props;
   const theme = useTheme();
+  const today = new Date();
   const period = getPeriodHistory(events).periods.find(
     (entry) => differenceInCalendarDays(entry.end, today) >= 0,
   );
@@ -32,6 +27,9 @@ export const PartnerCycleGlance: FC<PartnerCycleGlanceProps> = (props) => {
     period?.events.some((event) => event.prediction) ?? false;
   const currentPeriod =
     period !== undefined && differenceInCalendarDays(period.start, today) <= 0;
+  const currentPeriodValue = t(
+    periodPredicted ? "partner.expectedNow" : "partner.now",
+  );
   const ovulation = events.find(
     (event) =>
       event.ovulation && differenceInCalendarDays(event.date, today) >= 0,
@@ -46,15 +44,16 @@ export const PartnerCycleGlance: FC<PartnerCycleGlanceProps> = (props) => {
         period === undefined
           ? t("partner.notKnownYet")
           : currentPeriod
-            ? t("partner.now")
+            ? currentPeriodValue
             : formatDistance(differenceInCalendarDays(period.start, today)),
       detail:
         period &&
         (currentPeriod
           ? t("partner.until", {
-              date: formatDate(period.end, periodPredicted),
+              date: dateFormatter.format(period.end),
             })
-          : formatDate(period.start, periodPredicted)),
+          : dateFormatter.format(period.start)),
+      predicted: periodPredicted,
     },
     {
       label: t(
@@ -64,7 +63,8 @@ export const PartnerCycleGlance: FC<PartnerCycleGlanceProps> = (props) => {
         ovulationDays === null
           ? t("partner.notKnownYet")
           : formatDistance(ovulationDays),
-      detail: ovulation && formatDate(ovulation.date, ovulation.prediction),
+      detail: ovulation && dateFormatter.format(ovulation.date),
+      predicted: ovulation?.prediction ?? false,
     },
   ];
 
@@ -100,11 +100,21 @@ export const PartnerCycleGlance: FC<PartnerCycleGlanceProps> = (props) => {
           {cell.detail && (
             <Typography
               variant="bodySmall"
-              numberOfLines={2}
+              numberOfLines={1}
+              adjustsFontSizeToFit
               maxFontSizeMultiplier={1.5}
               color={theme.colors.textSecondary}
             >
               {cell.detail}
+            </Typography>
+          )}
+          {cell.predicted && (
+            <Typography
+              variant="caption"
+              maxFontSizeMultiplier={1.5}
+              color={theme.colors.textSecondary}
+            >
+              {t("calendar.predicted")}
             </Typography>
           )}
         </View>

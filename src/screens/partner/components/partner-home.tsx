@@ -6,36 +6,28 @@ import { router } from "expo-router";
 import { Button } from "@/components/ui/button";
 import { Typography } from "@/components/ui/typography";
 import { usePartnerInsightsQuery } from "@/db/repositories/partner-insights-repository";
-import { getDayInCycle, getVisibleCycleEvents } from "@/domain/cycle";
-import { PartnerCycleGlance } from "@/screens/partner/components/partner-cycle-glance";
 import { PartnerInsightDialog } from "@/screens/partner/components/partner-insight-dialog";
 import { PartnerInsightReader } from "@/screens/partner/components/partner-insight-reader";
 import { useTheme } from "@/theme/use-theme";
-import { t } from "@/translation/use-translation";
-import { type Event } from "@/types/event";
+import { dateFormatter, t } from "@/translation/use-translation";
 import {
   PartnerInsightMode,
   type PartnerInsight,
 } from "@/types/partner-insight";
 
 interface PartnerHomeProps {
-  events: Event[];
+  date: Date;
+  dayInCycle: number | null;
 }
 
 export const PartnerHome: FC<PartnerHomeProps> = (props) => {
-  const { events } = props;
+  const { date, dayInCycle } = props;
   const theme = useTheme();
   const { data: insights } = usePartnerInsightsQuery();
-  const visibleEvents = getVisibleCycleEvents(events);
-  const today = new Date();
-  const dayInCycle = getDayInCycle(today, visibleEvents);
-  const todayInsight = insights.findLast(
+  const selectedInsight = insights.findLast(
     (insight) => dayInCycle !== null && insight.dayInCycle <= dayInCycle,
   );
   const showAllNotes = dayInCycle === null && insights.length > 0;
-  const addLabel = t(
-    dayInCycle === null ? "partner.addInsight" : "partner.addTodayNote",
-  );
   const emptyDescription =
     dayInCycle === null
       ? t("partner.noCycleDescription")
@@ -47,15 +39,15 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
     insight?: PartnerInsight;
   } | null>(null);
   const read = () =>
-    setTarget({ mode: PartnerInsightMode.VIEW, insight: todayInsight });
+    setTarget({ mode: PartnerInsightMode.VIEW, insight: selectedInsight });
   const edit = () =>
-    setTarget({ mode: PartnerInsightMode.EDIT, insight: todayInsight });
+    setTarget({ mode: PartnerInsightMode.EDIT, insight: selectedInsight });
 
   return (
     <View
       style={{
-        flex: 1,
-        gap: theme.spacing.md,
+        flexShrink: 1,
+        gap: theme.spacing.sm,
         paddingBottom: theme.spacing.sm,
       }}
     >
@@ -74,69 +66,70 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
           color={theme.colors.textSecondary}
           style={{ flex: 1 }}
         >
-          {dayInCycle === null
-            ? t("partner.today")
-            : t("partner.todayContext", { day: dayInCycle })}
+          {dateFormatter.format(date)}
+          {dayInCycle !== null &&
+            ` · ${t("calendar.cycleDay", { day: dayInCycle })}`}
         </Typography>
-        <Pressable
-          accessibilityRole="button"
-          hitSlop={8}
-          onPress={() => router.push("/partner")}
-          style={(state) => ({
-            minHeight: 44,
-            justifyContent: "center",
-            opacity: state.pressed ? 0.6 : 1,
-          })}
-        >
-          <Typography
-            variant="bodySmallSemibold"
-            numberOfLines={1}
-            maxFontSizeMultiplier={1.5}
-            color={theme.colors.accent}
+        {dayInCycle !== null && (
+          <Pressable
+            accessibilityRole="button"
+            hitSlop={8}
+            onPress={() => router.push("/partner")}
+            style={(state) => ({
+              minHeight: 44,
+              justifyContent: "center",
+              opacity: state.pressed ? 0.6 : 1,
+            })}
           >
-            {t("partner.allNotes")}
-          </Typography>
-        </Pressable>
+            <Typography
+              variant="bodySmallSemibold"
+              numberOfLines={1}
+              maxFontSizeMultiplier={1.5}
+              color={theme.colors.accent}
+            >
+              {t("partner.allNotes")}
+            </Typography>
+          </Pressable>
+        )}
       </View>
-
-      <PartnerCycleGlance events={visibleEvents} today={today} />
 
       <View
         style={{
           flexShrink: 1,
-          gap: theme.spacing.lg,
-          paddingTop: theme.spacing.lg,
+          gap: theme.spacing.sm,
         }}
       >
-        {todayInsight && (
+        {selectedInsight && (
           <Pressable
             accessibilityRole="button"
             accessibilityHint={t("partner.readNote")}
             onPress={read}
-            style={{ flexShrink: 1, gap: theme.spacing.md }}
+            style={{ flexShrink: 1, gap: theme.spacing.xs }}
           >
             <Typography
               variant="title"
-              numberOfLines={3}
+              numberOfLines={1}
+              adjustsFontSizeToFit
               maxFontSizeMultiplier={1.5}
             >
-              {todayInsight.name}
+              {selectedInsight.name}
             </Typography>
             <Typography
               variant="titleSmallRegular"
-              numberOfLines={8}
+              numberOfLines={4}
               maxFontSizeMultiplier={1.5}
               style={{ flexShrink: 1 }}
             >
-              {todayInsight.description}
+              {selectedInsight.description}
             </Typography>
           </Pressable>
         )}
-        {!todayInsight && (
-          <View style={{ flexShrink: 1, gap: theme.spacing.md }}>
+        {!selectedInsight && (
+          <View style={{ flexShrink: 1, gap: theme.spacing.xs }}>
             <Typography
-              variant="title"
-              numberOfLines={2}
+              variant="titleSmall"
+              numberOfLines={1}
+              adjustsFontSizeToFit
               maxFontSizeMultiplier={1.5}
             >
               {t(
@@ -146,7 +139,8 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
               )}
             </Typography>
             <Typography
-              variant="titleSmallRegular"
+              variant="bodySmall"
+              numberOfLines={2}
               maxFontSizeMultiplier={1.5}
               color={theme.colors.textSecondary}
               style={{ flexShrink: 1 }}
@@ -155,7 +149,7 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
             </Typography>
           </View>
         )}
-        {todayInsight && (
+        {selectedInsight && (
           <View
             style={{
               flexDirection: "row",
@@ -196,9 +190,9 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
             ))}
           </View>
         )}
-        {!todayInsight && (
+        {!selectedInsight && (
           <Button onPress={showAllNotes ? () => router.push("/partner") : edit}>
-            {showAllNotes ? t("partner.allNotes") : addLabel}
+            {t(showAllNotes ? "partner.allNotes" : "partner.addInsight")}
           </Button>
         )}
       </View>

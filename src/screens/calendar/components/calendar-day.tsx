@@ -78,7 +78,10 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
           variant="bodySmall"
           allowFontScaling={false}
           style={{
-            fontWeight: selected ? "700" : "500",
+            fontWeight: selected ? "900" : "400",
+            fontSize: selected ? theme.typography.body.fontSize : undefined,
+            lineHeight: selected ? 18 : undefined,
+            transform: [{ scale: selected ? 1.08 : 1 }],
           }}
         >
           {date.getDate()}

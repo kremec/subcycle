@@ -20,6 +20,7 @@ import { CalendarHeader } from "@/screens/calendar/components/calendar-header";
 import { CycleStatus } from "@/screens/calendar/components/cycle-status";
 import { DayLogCard } from "@/screens/calendar/components/day-log-card";
 import { SymptomsEditSheet } from "@/screens/calendar/components/symptoms-edit-sheet";
+import { PartnerCycleGlance } from "@/screens/partner/components/partner-cycle-glance";
 import { PartnerHome } from "@/screens/partner/components/partner-home";
 import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
@@ -65,9 +66,11 @@ const CalendarScreen: FC = () => {
     >
       <CalendarHeader />
       {!partnerMode && <CycleStatus events={visibleEvents} />}
-      {partnerMode && <PartnerHome events={allEvents} />}
-      {!partnerMode && (
-        <View style={{ flex: 1, gap: theme.spacing.sm }}>
+      {partnerMode && <PartnerCycleGlance events={visibleEvents} />}
+      <View style={{ flex: 1, gap: theme.spacing.sm }}>
+        <View
+          style={{ flex: 1, maxHeight: partnerMode ? 6 * 56 + 80 : undefined }}
+        >
           <Calendar
             events={allEvents}
             selectedDate={selectedDate}
@@ -75,6 +78,11 @@ const CalendarScreen: FC = () => {
             onChangeMonth={setVisibleMonth}
             onPressDate={setSelectedDate}
           />
+        </View>
+        {partnerMode && (
+          <PartnerHome date={selectedDate} dayInCycle={selectedDayInCycle} />
+        )}
+        {!partnerMode && (
           <DayLogCard
             event={selectedEvent}
             symptoms={selectedSymptoms}
@@ -91,8 +99,8 @@ const CalendarScreen: FC = () => {
               );
             }}
           />
-        </View>
-      )}
+        )}
+      </View>
       {!partnerMode && (
         <SymptomsEditSheet
           visible={symptomsEditorVisible}
