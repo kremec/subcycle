@@ -58,7 +58,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
                 : undefined,
           borderWidth: selected || (color && prediction) ? 1.5 : 0,
           borderColor: selected ? theme.colors.text : outline,
-          borderStyle: prediction && !selected ? "dashed" : "solid",
+          borderStyle: prediction && color ? "dashed" : "solid",
         }}
       >
         <Typography

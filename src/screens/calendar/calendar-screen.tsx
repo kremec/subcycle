@@ -41,6 +41,12 @@ const CalendarScreen: FC = () => {
   const partnerMode = useSettingsStore((state) => state.settings.partnerMode);
   const allEvents = getAllPredictions(events, predictionsEnabled, visibleMonth);
   const visibleEvents = getVisibleCycleEvents(allEvents);
+  const selectedDayInCycle = getDayInCycle(
+    selectedDate,
+    getVisibleCycleEvents(
+      getAllPredictions(events, predictionsEnabled, selectedDate),
+    ),
+  );
   const selectedEvent =
     events.find((entry) => isSameDay(entry.date, selectedDate)) ??
     eventSchema.parse({ date: selectedDate });
@@ -72,7 +78,7 @@ const CalendarScreen: FC = () => {
           <DayLogCard
             event={selectedEvent}
             symptoms={selectedSymptoms}
-            dayInCycle={getDayInCycle(selectedDate, visibleEvents)}
+            dayInCycle={selectedDayInCycle}
             onPressSymptoms={() => setSymptomsEditorVisible(true)}
             onToggle={(key) => {
               void toggleEventForDate(selectedDate, key).catch(() =>
