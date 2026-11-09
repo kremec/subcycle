@@ -32,17 +32,19 @@ export const PartnerDateNavigation: FC<PartnerDateNavigationProps> = (
         gap: theme.spacing.xs,
       }}
     >
-      <IconButton
-        plain
-        accessibilityLabel={t("partner.previousDay")}
-        onPress={() => onChangeDate(addDays(date, -1))}
-      >
-        <Icon
-          name={IconName.CHEVRON_LEFT}
-          color={theme.colors.textSecondary}
-          size={20}
-        />
-      </IconButton>
+      {!calendarVisible && (
+        <IconButton
+          plain
+          accessibilityLabel={t("partner.previousDay")}
+          onPress={() => onChangeDate(addDays(date, -1))}
+        >
+          <Icon
+            name={IconName.CHEVRON_LEFT}
+            color={theme.colors.textSecondary}
+            size={20}
+          />
+        </IconButton>
+      )}
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={t(
@@ -90,17 +92,19 @@ export const PartnerDateNavigation: FC<PartnerDateNavigationProps> = (
           </Typography>
         )}
       </Pressable>
-      <IconButton
-        plain
-        accessibilityLabel={t("partner.nextDay")}
-        onPress={() => onChangeDate(addDays(date, 1))}
-      >
-        <Icon
-          name={IconName.CHEVRON_RIGHT}
-          color={theme.colors.textSecondary}
-          size={20}
-        />
-      </IconButton>
+      {!calendarVisible && (
+        <IconButton
+          plain
+          accessibilityLabel={t("partner.nextDay")}
+          onPress={() => onChangeDate(addDays(date, 1))}
+        >
+          <Icon
+            name={IconName.CHEVRON_RIGHT}
+            color={theme.colors.textSecondary}
+            size={20}
+          />
+        </IconButton>
+      )}
     </View>
   );
 };

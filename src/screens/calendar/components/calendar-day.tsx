@@ -91,13 +91,14 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
           <View
             style={{
               position: "absolute",
-              bottom: size * 0.13,
-              right: size * 0.18,
+              bottom: 1,
+              left: "50%",
+              marginLeft: -size / 10,
             }}
           >
             <Icon
               name={IconName.PILL}
-              size={size / 4}
+              size={size / 5}
               filled
               color={theme.colors.text}
             />
