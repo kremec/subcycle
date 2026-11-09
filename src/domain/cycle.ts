@@ -92,10 +92,3 @@ export function getDayInCycle(date: Date, events: Event[]): number | null {
 export function getAverageCycleLength(events: Event[]): number | null {
   return getPeriodHistory(events).averageCycleLength;
 }
-
-export function getAveragePeriodLength(
-  events: Event[],
-  eventFilter?: (event: Event) => boolean,
-): number | null {
-  return getPeriodHistory(events, eventFilter).averagePeriodLength;
-}

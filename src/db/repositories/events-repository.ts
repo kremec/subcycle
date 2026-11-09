@@ -5,7 +5,12 @@ import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
 import { db } from "@/db/client";
 import { eventsTable } from "@/db/schema";
 import { logInfo } from "@/logging/logger";
-import { type Event, type EventFlag, eventSchema } from "@/types/event";
+import {
+  type Event,
+  type EventFlag,
+  MenstruationFlow,
+  eventSchema,
+} from "@/types/event";
 
 function eventsQuery() {
   return db
@@ -26,10 +31,10 @@ export function useEventsQuery() {
   return { ...query, data: eventSchema.array().parse(query.data) };
 }
 
-export async function toggleEventForDate(
+function updateEventForDate(
   date: Date,
-  key: EventFlag,
-): Promise<void> {
+  update: (existing: Event) => Partial<Pick<Event, EventFlag>>,
+): void {
   db.transaction((transaction) => {
     const existing = eventSchema.parse(
       transaction
@@ -40,14 +45,7 @@ export async function toggleEventForDate(
     );
     const event = eventSchema.parse({
       ...existing,
-      ...(key !== "pill" && {
-        menstruationLight: false,
-        menstruationModerate: false,
-        menstruationHeavy: false,
-        menstruationSpotting: false,
-        ovulation: false,
-      }),
-      [key]: !existing[key],
+      ...update(existing),
     });
     if (!event.hasFlags) {
       transaction.delete(eventsTable).where(eq(eventsTable.date, date)).run();
@@ -69,7 +67,37 @@ export async function toggleEventForDate(
       .run();
   });
   backupDatabaseAfterWrite();
+}
+
+export async function toggleEventForDate(
+  date: Date,
+  key: EventFlag,
+): Promise<void> {
+  updateEventForDate(date, (existing) => ({
+    ...(key !== "pill" && {
+      menstruationLight: false,
+      menstruationModerate: false,
+      menstruationHeavy: false,
+      menstruationSpotting: false,
+      ovulation: false,
+    }),
+    [key]: !existing[key],
+  }));
   logInfo("db.event", "toggle", { key });
+}
+
+export async function setMenstruationFlowForDate(
+  date: Date,
+  flow: MenstruationFlow | null,
+): Promise<void> {
+  updateEventForDate(date, () => ({
+    menstruationLight: flow === MenstruationFlow.LIGHT,
+    menstruationModerate: flow === MenstruationFlow.MODERATE,
+    menstruationHeavy: flow === MenstruationFlow.HEAVY,
+    menstruationSpotting: flow === MenstruationFlow.SPOTTING,
+    ...(flow !== null && { ovulation: false }),
+  }));
+  logInfo("db.event", "set-flow", { flow });
 }
 
 export async function markPillForDate(date: Date): Promise<void> {

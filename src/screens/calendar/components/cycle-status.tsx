@@ -26,11 +26,12 @@ export const CycleStatus: FC<CycleStatusProps> = (props) => {
 
   return (
     <Typography
-      variant="bodySemibold"
+      variant="title"
       color={days === null ? theme.colors.textSecondary : theme.colors.text}
-      numberOfLines={1}
+      numberOfLines={2}
       adjustsFontSizeToFit
-      style={{ textAlign: "center" }}
+      maxFontSizeMultiplier={1.5}
+      style={{ textAlign: "center", paddingVertical: theme.spacing.md }}
     >
       {days === null
         ? t("calendar.cycleStatus.noMenstruationEvents")

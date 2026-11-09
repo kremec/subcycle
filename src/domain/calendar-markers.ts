@@ -1,4 +1,4 @@
-import { format, isSameDay } from "date-fns";
+import { addDays, format, isLastDayOfMonth, isSameDay } from "date-fns";
 
 import { getVisibleCycleEvents } from "@/domain/cycle";
 import type { themePalettes } from "@/theme/palette";
@@ -41,10 +41,23 @@ export function createCalendarMarkers(
     const prediction = (actual?.kind ?? EventKind.NONE) === EventKind.NONE;
     const visibleEvents = prediction ? predictedEvents : actualEvents;
     const event = visibleEvents.get(key);
+    const period = event?.kind === EventKind.MENSTRUATION;
 
     return {
       date,
       color: getColor(event, colors),
+      joinsPrevious:
+        period &&
+        date.getDay() !== 1 &&
+        date.getDate() !== 1 &&
+        visibleEvents.get(dateKey(addDays(date, -1)))?.kind ===
+          EventKind.MENSTRUATION,
+      joinsNext:
+        period &&
+        date.getDay() !== 0 &&
+        !isLastDayOfMonth(date) &&
+        visibleEvents.get(dateKey(addDays(date, 1)))?.kind ===
+          EventKind.MENSTRUATION,
       prediction,
       pill: actual?.pill ?? false,
       event,

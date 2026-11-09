@@ -49,6 +49,7 @@ export const EventToggleButton: FC<EventToggleButtonProps> = (props) => {
           color={color}
           numberOfLines={1}
           adjustsFontSizeToFit
+          maxFontSizeMultiplier={1.5}
           style={{ flexShrink: 1 }}
         >
           {label}

@@ -41,7 +41,13 @@ export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
 
   return (
     <BottomSheet visible={visible} onClose={onClose}>
-      <View style={{ gap: theme.spacing.lg, paddingBottom: theme.spacing.lg }}>
+      <View
+        style={{
+          gap: theme.spacing.lg,
+          padding: theme.spacing.lg,
+          paddingBottom: theme.spacing.xl,
+        }}
+      >
         <Typography variant="title">
           {t("calendar.symptoms.title", {
             date: dateFormatter.format(symptoms.date),

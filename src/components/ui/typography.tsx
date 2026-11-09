@@ -20,6 +20,9 @@ export const Typography: FC<TypographyProps> = (props) => {
           color: color ?? theme.colors.text,
         },
         theme.typography[variant],
+        textProps.maxFontSizeMultiplier !== undefined && {
+          lineHeight: undefined,
+        },
         style,
       ]}
       {...textProps}

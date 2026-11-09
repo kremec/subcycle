@@ -126,7 +126,6 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
         }}
         style={(state) => ({
           flexShrink: 1,
-          minHeight: 160,
           gap: theme.spacing.md,
           padding: theme.spacing.lg,
           borderRadius: theme.radius.lg,
@@ -152,7 +151,6 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
         </Typography>
         <View
           style={{
-            minHeight: 44,
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",

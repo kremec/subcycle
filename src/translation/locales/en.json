@@ -2,12 +2,7 @@
   "common": {
     "cancel": "Cancel",
     "close": "Close",
-    "days": {
-      "one": "{{count}} day",
-      "other": "{{count}} days"
-    },
     "loading": "Loading ...",
-    "notAvailable": "N/A",
     "save": "Save",
     "saveFailed": "Could not save this change. Please try again."
   },
@@ -36,7 +31,9 @@
       "heavy": "Heavy",
       "spotting": "Spotting",
       "ovulation": "Ovulation",
-      "pill": "Pill"
+      "pill": "Pill",
+      "flow": "Menstrual flow",
+      "none": "None"
     },
     "symptoms": {
       "title": "Symptoms for {{date}}",
@@ -81,16 +78,12 @@
     },
     "predicted": "Predicted",
     "pillTaken": "Pill taken",
-    "cycleDay": "Day {{day}}",
-    "averageCycle": "{{count}}d cycle",
-    "averagePeriod": "{{count}}d period",
-    "averages": "Averages · {{values}}"
+    "cycleDay": "Day {{day}}"
   },
   "navigation": {
     "calendar": "Calendar",
     "partner": "Partner",
     "settings": "Settings",
-    "stats": "Stats",
     "menu": "Open menu"
   },
   "ordinal": {
@@ -150,11 +143,6 @@
     "importFailed": "Could not import the database.",
     "exportFailed": "Could not export the database.",
     "predictionsDescription": "Estimate upcoming periods and ovulation from your logs."
-  },
-  "stats": {
-    "averageCycleLength": "Average cycle length",
-    "averageHeavyPeriodLength": "Average heavy period length",
-    "averagePeriodLength": "Average period length"
   },
   "reminders": {
     "pillBody": "Don't forget to take your pill.",

@@ -6,6 +6,7 @@ import { Typography } from "@/components/ui/typography";
 import { useTheme } from "@/theme/use-theme";
 import { dateFormatter, t } from "@/translation/use-translation";
 import { type CalendarMarker } from "@/types/calendar-marker";
+import { EventKind } from "@/types/event";
 
 interface CalendarDayProps {
   marker: CalendarMarker;
@@ -26,6 +27,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
   if (color && prediction) labels.push(t("calendar.predicted"));
   if (pill) labels.push(t("calendar.pillTaken"));
   const size = Math.min(40, height - 2);
+  const period = event?.kind === EventKind.MENSTRUATION;
   const outline = event?.ovulation
     ? theme.colors.calendarOvulationOutline
     : theme.colors.accent;
@@ -43,6 +45,28 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
         justifyContent: "center",
       }}
     >
+      {color !== null && (
+        <View
+          style={{
+            position: "absolute",
+            height: size,
+            left: period ? (marker.joinsPrevious ? 0 : 1) : "50%",
+            right: period ? (marker.joinsNext ? 0 : 1) : undefined,
+            width: period ? undefined : size,
+            marginLeft: period ? 0 : -size / 2,
+            backgroundColor: prediction ? undefined : color,
+            borderColor: outline,
+            borderStyle: "dashed",
+            borderWidth: prediction ? 1.5 : 0,
+            borderLeftWidth: marker.joinsPrevious ? 0 : undefined,
+            borderRightWidth: marker.joinsNext ? 0 : undefined,
+            borderTopLeftRadius: marker.joinsPrevious ? 0 : size / 2,
+            borderBottomLeftRadius: marker.joinsPrevious ? 0 : size / 2,
+            borderTopRightRadius: marker.joinsNext ? 0 : size / 2,
+            borderBottomRightRadius: marker.joinsNext ? 0 : size / 2,
+          }}
+        />
+      )}
       <View
         style={{
           width: size,
@@ -51,13 +75,9 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
           alignItems: "center",
           justifyContent: "center",
           backgroundColor:
-            color && !prediction
-              ? color
-              : selected
-                ? theme.colors.backgroundSelected
-                : undefined,
-          borderWidth: selected || (color && prediction) ? 1.5 : 0,
-          borderColor: selected ? theme.colors.text : outline,
+            selected && !color ? theme.colors.backgroundSelected : undefined,
+          borderWidth: selected ? 1.5 : 0,
+          borderColor: theme.colors.text,
           borderStyle: prediction && color ? "dashed" : "solid",
         }}
       >
@@ -66,7 +86,6 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
           allowFontScaling={false}
           style={{
             fontWeight: selected ? "700" : "500",
-            paddingBottom: pill ? 4 : 0,
           }}
         >
           {date.getDate()}
@@ -75,7 +94,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
           <View style={{ position: "absolute", bottom: 2, right: 3 }}>
             <Icon
               name={IconName.PILL}
-              size={10}
+              size={size < 36 ? 8 : 10}
               filled
               color={theme.colors.text}
             />

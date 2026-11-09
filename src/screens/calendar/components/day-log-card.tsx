@@ -5,6 +5,7 @@ import { Icon, IconName } from "@/components/ui/icon";
 import { Typography } from "@/components/ui/typography";
 import { symptomGroups } from "@/domain/symptom-groups";
 import { EventToggleButton } from "@/screens/calendar/components/event-toggle-button";
+import { FlowSelector } from "@/screens/calendar/components/flow-selector";
 import { useTheme } from "@/theme/use-theme";
 import { dateFormatter, t } from "@/translation/use-translation";
 import { MenstruationFlow, type Event, type EventFlag } from "@/types/event";
@@ -15,18 +16,20 @@ interface DayLogCardProps {
   dayInCycle: number | null;
   symptoms: Symptoms;
   onToggle: (key: EventFlag) => void;
+  onChangeFlow: (flow: MenstruationFlow | null) => void;
   onPressSymptoms: () => void;
 }
 
 export const DayLogCard: FC<DayLogCardProps> = (props) => {
-  const { event, dayInCycle, symptoms, onToggle, onPressSymptoms } = props;
+  const {
+    event,
+    dayInCycle,
+    symptoms,
+    onToggle,
+    onChangeFlow,
+    onPressSymptoms,
+  } = props;
   const theme = useTheme();
-  const flows = [
-    { key: MenstruationFlow.LIGHT, label: t("calendar.edit.light") },
-    { key: MenstruationFlow.MODERATE, label: t("calendar.edit.moderate") },
-    { key: MenstruationFlow.HEAVY, label: t("calendar.edit.heavy") },
-    { key: MenstruationFlow.SPOTTING, label: t("calendar.edit.spotting") },
-  ];
   const symptomCount = symptomGroups.reduce(
     (count, group) =>
       count + group.types.filter((symptom) => symptoms[symptom.key]).length,
@@ -55,6 +58,7 @@ export const DayLogCard: FC<DayLogCardProps> = (props) => {
           variant="bodySemibold"
           numberOfLines={1}
           adjustsFontSizeToFit
+          maxFontSizeMultiplier={1.5}
           style={{ flexShrink: 1 }}
         >
           {dateFormatter.format(event.date)}
@@ -65,32 +69,17 @@ export const DayLogCard: FC<DayLogCardProps> = (props) => {
             color={theme.colors.textSecondary}
             numberOfLines={1}
             adjustsFontSizeToFit
+            maxFontSizeMultiplier={1.5}
           >
             {t("calendar.cycleDay", { day: dayInCycle })}
           </Typography>
         )}
       </View>
-      <View
-        style={{
-          flexDirection: "row",
-          padding: 3,
-          borderRadius: 13,
-          backgroundColor: theme.colors.backgroundElement,
-        }}
-      >
-        {flows.map((flow) => (
-          <EventToggleButton
-            key={flow.key}
-            label={flow.label}
-            active={event[flow.key]}
-            onPress={() => onToggle(flow.key)}
-          />
-        ))}
-      </View>
+      <FlowSelector event={event} onChange={onChangeFlow} />
       <View style={{ flexDirection: "row", gap: theme.spacing.xs }}>
         <EventToggleButton
           label={t("calendar.edit.ovulation")}
-          icon={IconName.EGG}
+          icon={IconName.CIRCLE_DOT}
           active={event.ovulation}
           onPress={() => onToggle("ovulation")}
         />
@@ -123,6 +112,7 @@ export const DayLogCard: FC<DayLogCardProps> = (props) => {
             color={theme.colors.textSecondary}
             numberOfLines={1}
             adjustsFontSizeToFit
+            maxFontSizeMultiplier={1.5}
             style={{ flexShrink: 1 }}
           >
             {t("calendar.symptoms.groups.symptoms")}

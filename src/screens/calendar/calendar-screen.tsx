@@ -5,6 +5,7 @@ import { isSameDay, startOfMonth } from "date-fns";
 
 import { Screen } from "@/components/ui/screen";
 import {
+  setMenstruationFlowForDate,
   toggleEventForDate,
   useEventsQuery,
 } from "@/db/repositories/events-repository";
@@ -16,7 +17,6 @@ import { getDayInCycle, getVisibleCycleEvents } from "@/domain/cycle";
 import { getAllPredictions } from "@/domain/cycle-predictions";
 import { Calendar } from "@/screens/calendar/components/calendar";
 import { CalendarHeader } from "@/screens/calendar/components/calendar-header";
-import { CycleAverages } from "@/screens/calendar/components/cycle-averages";
 import { CycleStatus } from "@/screens/calendar/components/cycle-status";
 import { DayLogCard } from "@/screens/calendar/components/day-log-card";
 import { SymptomsEditSheet } from "@/screens/calendar/components/symptoms-edit-sheet";
@@ -80,13 +80,17 @@ const CalendarScreen: FC = () => {
             symptoms={selectedSymptoms}
             dayInCycle={selectedDayInCycle}
             onPressSymptoms={() => setSymptomsEditorVisible(true)}
+            onChangeFlow={(flow) => {
+              void setMenstruationFlowForDate(selectedDate, flow).catch(() =>
+                Alert.alert(t("common.saveFailed")),
+              );
+            }}
             onToggle={(key) => {
               void toggleEventForDate(selectedDate, key).catch(() =>
                 Alert.alert(t("common.saveFailed")),
               );
             }}
           />
-          <CycleAverages events={events} />
         </View>
       )}
       {!partnerMode && (
