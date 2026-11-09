@@ -75,9 +75,9 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
           <View style={{ position: "absolute", bottom: 2, right: 3 }}>
             <Icon
               name={IconName.PILL}
-              size={9}
+              size={10}
               filled
-              color={theme.colors.calendarPill}
+              color={theme.colors.text}
             />
           </View>
         )}
