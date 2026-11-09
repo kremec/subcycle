@@ -33,7 +33,7 @@ export const CycleAverages: FC<CycleAveragesProps> = (props) => {
           <Typography variant="titleSmall">
             {average.days === null
               ? t("common.notAvailable")
-              : t("common.days", { count: Math.trunc(average.days) })}
+              : t("common.days", { count: Math.round(average.days) })}
           </Typography>
         </View>
       ))}

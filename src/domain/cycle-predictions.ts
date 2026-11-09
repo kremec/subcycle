@@ -86,14 +86,20 @@ function predictOvulation(
       ovulationOffsets.length,
   );
   const lastStart = periods[periods.length - 1].start;
+  const firstCycle = ovulationDates.some((date) => date >= lastStart) ? 1 : 0;
 
   // Ovulation in the current cycle may still be ahead of the last logged period.
-  return Array.from({ length: predictionTimespan + 1 }, (_, index) =>
-    eventSchema.parse({
-      date: addDays(lastStart, index * cycleLength + ovulationDay),
-      ovulation: true,
-      prediction: true,
-    }),
+  return Array.from(
+    { length: predictionTimespan + 1 - firstCycle },
+    (_, index) =>
+      eventSchema.parse({
+        date: addDays(
+          lastStart,
+          (index + firstCycle) * cycleLength + ovulationDay,
+        ),
+        ovulation: true,
+        prediction: true,
+      }),
   );
 }
 
