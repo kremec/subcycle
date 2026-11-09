@@ -9,19 +9,19 @@ import { usePartnerInsightsQuery } from "@/db/repositories/partner-insights-repo
 import { PartnerInsightDialog } from "@/screens/partner/components/partner-insight-dialog";
 import { PartnerInsightReader } from "@/screens/partner/components/partner-insight-reader";
 import { useTheme } from "@/theme/use-theme";
-import { dateFormatter, t } from "@/translation/use-translation";
+import { t } from "@/translation/use-translation";
 import {
   PartnerInsightMode,
   type PartnerInsight,
 } from "@/types/partner-insight";
 
 interface PartnerHomeProps {
-  date: Date;
+  compact: boolean;
   dayInCycle: number | null;
 }
 
 export const PartnerHome: FC<PartnerHomeProps> = (props) => {
-  const { date, dayInCycle } = props;
+  const { compact, dayInCycle } = props;
   const theme = useTheme();
   const { data: insights } = usePartnerInsightsQuery();
   const selectedInsight = insights.findLast(
@@ -51,26 +51,24 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
         paddingBottom: theme.spacing.sm,
       }}
     >
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          gap: theme.spacing.sm,
-        }}
-      >
-        <Typography
-          variant="bodySmallSemibold"
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          maxFontSizeMultiplier={1.5}
-          color={theme.colors.textSecondary}
-          style={{ flex: 1 }}
+      {dayInCycle !== null && (
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: theme.spacing.sm,
+          }}
         >
-          {dateFormatter.format(date)}
-          {dayInCycle !== null &&
-            ` · ${t("calendar.cycleDay", { day: dayInCycle })}`}
-        </Typography>
-        {dayInCycle !== null && (
+          <Typography
+            variant="bodySmallSemibold"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            maxFontSizeMultiplier={1.5}
+            color={theme.colors.textSecondary}
+            style={{ flex: 1 }}
+          >
+            {t("partner.editInsights")}
+          </Typography>
           <Pressable
             accessibilityRole="button"
             hitSlop={8}
@@ -90,8 +88,8 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
               {t("partner.allNotes")}
             </Typography>
           </Pressable>
-        )}
-      </View>
+        </View>
+      )}
 
       <View
         style={{
@@ -116,7 +114,7 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
             </Typography>
             <Typography
               variant="titleSmallRegular"
-              numberOfLines={4}
+              numberOfLines={compact ? 4 : 8}
               maxFontSizeMultiplier={1.5}
               style={{ flexShrink: 1 }}
             >

@@ -6,7 +6,6 @@ import { Typography } from "@/components/ui/typography";
 import { useTheme } from "@/theme/use-theme";
 import { dateFormatter, t } from "@/translation/use-translation";
 import { type CalendarMarker } from "@/types/calendar-marker";
-import { EventKind } from "@/types/event";
 
 interface CalendarDayProps {
   marker: CalendarMarker;
@@ -27,7 +26,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
   if (color && prediction) labels.push(t("calendar.predicted"));
   if (pill) labels.push(t("calendar.pillTaken"));
   const size = Math.min(40, height - 2);
-  const period = event?.kind === EventKind.MENSTRUATION;
+  const joined = marker.joinsPrevious || marker.joinsNext;
   const outline = event?.ovulation
     ? theme.colors.calendarOvulationOutline
     : theme.colors.accent;
@@ -50,10 +49,12 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
           style={{
             position: "absolute",
             height: size,
-            left: period ? (marker.joinsPrevious ? 0 : 1) : "50%",
-            right: period ? (marker.joinsNext ? 0 : 1) : undefined,
-            width: period ? undefined : size,
-            marginLeft: period ? 0 : -size / 2,
+            left: marker.joinsPrevious ? 0 : "50%",
+            right: marker.joinsNext ? 0 : undefined,
+            width: joined ? undefined : size,
+            marginLeft: marker.joinsPrevious ? 0 : -size / 2,
+            ...(marker.joinsPrevious &&
+              !marker.joinsNext && { right: "50%", marginRight: -size / 2 }),
             backgroundColor: prediction ? undefined : color,
             borderColor: outline,
             borderWidth: prediction ? 1.5 : 0,
@@ -87,10 +88,16 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
           {date.getDate()}
         </Typography>
         {pill && (
-          <View style={{ position: "absolute", bottom: 2, right: 3 }}>
+          <View
+            style={{
+              position: "absolute",
+              bottom: size * 0.13,
+              right: size * 0.18,
+            }}
+          >
             <Icon
               name={IconName.PILL}
-              size={size < 36 ? 8 : 10}
+              size={size / 4}
               filled
               color={theme.colors.text}
             />

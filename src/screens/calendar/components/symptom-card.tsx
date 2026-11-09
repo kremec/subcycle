@@ -30,7 +30,6 @@ export const SymptomCard: FC<SymptomCardProps> = (props) => {
       style={(state) => ({
         minWidth: 84,
         minHeight: 104,
-        marginRight: theme.spacing.xs,
         borderRadius: theme.radius.lg,
         backgroundColor: theme.colors.surface,
         opacity: state.pressed ? 0.7 : 1,

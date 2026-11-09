@@ -26,7 +26,7 @@ export const CycleStatus: FC<CycleStatusProps> = (props) => {
   const days = target ? differenceInCalendarDays(target, today) : null;
 
   return (
-    <View style={{ paddingVertical: theme.spacing.sm, gap: theme.spacing.xxs }}>
+    <View style={{ paddingVertical: theme.spacing.md, gap: 2 }}>
       {days !== null && (
         <Fragment>
           <Typography
@@ -34,15 +34,21 @@ export const CycleStatus: FC<CycleStatusProps> = (props) => {
             numberOfLines={1}
             adjustsFontSizeToFit
             maxFontSizeMultiplier={1.5}
-            style={{ textAlign: "center" }}
+            style={{
+              textAlign: "center",
+              fontSize: 40,
+              fontWeight: "600",
+              letterSpacing: -1.2,
+            }}
           >
             {t("common.days", { count: days })}
           </Typography>
           <Typography
-            variant="titleSmall"
+            variant="body"
             numberOfLines={1}
             adjustsFontSizeToFit
             maxFontSizeMultiplier={1.5}
+            color={theme.colors.textSecondary}
             style={{ textAlign: "center" }}
           >
             {t(

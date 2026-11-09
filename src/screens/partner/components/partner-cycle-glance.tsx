@@ -74,8 +74,6 @@ export const PartnerCycleGlance: FC<PartnerCycleGlanceProps> = (props) => {
         flexDirection: "row",
         gap: theme.spacing.lg,
         paddingTop: theme.spacing.md,
-        borderTopWidth: 1,
-        borderTopColor: theme.colors.border,
       }}
     >
       {cells.map((cell) => (

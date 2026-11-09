@@ -81,13 +81,17 @@ export const DayLogCard: FC<DayLogCardProps> = (props) => {
       <View style={{ flexDirection: "row", gap: theme.spacing.xs }}>
         <EventToggleButton
           label={t("calendar.edit.ovulation")}
-          icon={event.ovulation ? IconName.SQUARE_CHECK : IconName.SQUARE}
+          icon={IconName.FLOWER}
+          color={theme.colors.calendarOvulationOutline}
+          backgroundColor={theme.colors.calendarOvulation}
           active={event.ovulation}
           onPress={() => onToggle("ovulation")}
         />
         <EventToggleButton
           label={t("calendar.edit.pill")}
           icon={IconName.PILL}
+          color={theme.colors.calendarPill}
+          backgroundColor={theme.colors.pillSoft}
           active={event.pill}
           onPress={() => onToggle("pill")}
         />

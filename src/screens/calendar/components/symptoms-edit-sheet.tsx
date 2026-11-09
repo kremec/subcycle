@@ -44,27 +44,35 @@ export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
       <View
         style={{
           gap: theme.spacing.lg,
-          padding: theme.spacing.lg,
+          paddingTop: theme.spacing.lg,
           paddingBottom: theme.spacing.xl,
         }}
       >
-        <Typography variant="title">
+        <Typography
+          variant="title"
+          style={{ paddingHorizontal: theme.spacing.lg }}
+        >
           {t("calendar.symptoms.title", {
             date: dateFormatter.format(symptoms.date),
           })}
         </Typography>
         {symptomGroups.map((group) => (
           <View key={group.name} style={{ gap: theme.spacing.sm }}>
-            <Typography variant="titleSmall">{group.name}</Typography>
+            <Typography
+              variant="titleSmall"
+              style={{ paddingHorizontal: theme.spacing.lg }}
+            >
+              {group.name}
+            </Typography>
             <ScrollView
               horizontal
               nestedScrollEnabled
               directionalLockEnabled
               bounces={false}
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingRight: theme.spacing.xs }}
+              contentContainerStyle={{ paddingHorizontal: theme.spacing.lg }}
             >
-              <View style={{ flexDirection: "row" }}>
+              <View style={{ flexDirection: "row", gap: theme.spacing.xs }}>
                 {group.types.map((symptom) => (
                   <SymptomCard
                     key={symptom.key}

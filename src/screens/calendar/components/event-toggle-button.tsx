@@ -8,14 +8,23 @@ import { useTheme } from "@/theme/use-theme";
 interface EventToggleButtonProps {
   label: string;
   active: boolean;
-  icon?: IconName;
+  icon: IconName;
+  color: string;
+  backgroundColor: string;
   onPress: () => void;
 }
 
 export const EventToggleButton: FC<EventToggleButtonProps> = (props) => {
-  const { label, active, icon, onPress } = props;
+  const {
+    label,
+    active,
+    icon,
+    color: activeColor,
+    backgroundColor,
+    onPress,
+  } = props;
   const theme = useTheme();
-  const color = active ? theme.colors.accent : theme.colors.textSecondary;
+  const color = active ? activeColor : theme.colors.textSecondary;
 
   return (
     <Pressable
@@ -29,7 +38,7 @@ export const EventToggleButton: FC<EventToggleButtonProps> = (props) => {
         justifyContent: "center",
         borderRadius: 12,
         paddingHorizontal: 4,
-        backgroundColor: active ? theme.colors.accentSoft : "transparent",
+        backgroundColor: active ? backgroundColor : "transparent",
         opacity: state.pressed ? 0.6 : 1,
       })}
     >

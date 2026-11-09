@@ -21,6 +21,7 @@ import { CycleStatus } from "@/screens/calendar/components/cycle-status";
 import { DayLogCard } from "@/screens/calendar/components/day-log-card";
 import { SymptomsEditSheet } from "@/screens/calendar/components/symptoms-edit-sheet";
 import { PartnerCycleGlance } from "@/screens/partner/components/partner-cycle-glance";
+import { PartnerDateNavigation } from "@/screens/partner/components/partner-date-navigation";
 import { PartnerHome } from "@/screens/partner/components/partner-home";
 import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
@@ -39,6 +40,7 @@ const CalendarScreen: FC = () => {
   const [visibleMonth, setVisibleMonth] = useState(() =>
     startOfMonth(new Date()),
   );
+  const [partnerCalendarVisible, setPartnerCalendarVisible] = useState(false);
   const partnerMode = useSettingsStore((state) => state.settings.partnerMode);
   const allEvents = getAllPredictions(events, predictionsEnabled, visibleMonth);
   const visibleEvents = getVisibleCycleEvents(allEvents);
@@ -67,20 +69,43 @@ const CalendarScreen: FC = () => {
       <CalendarHeader />
       {!partnerMode && <CycleStatus events={visibleEvents} />}
       {partnerMode && <PartnerCycleGlance events={visibleEvents} />}
-      <View style={{ flex: 1, gap: theme.spacing.sm }}>
-        <View
-          style={{ flex: 1, maxHeight: partnerMode ? 6 * 56 + 80 : undefined }}
-        >
-          <Calendar
-            events={allEvents}
-            selectedDate={selectedDate}
-            visibleMonth={visibleMonth}
-            onChangeMonth={setVisibleMonth}
-            onPressDate={setSelectedDate}
-          />
-        </View>
+      <View style={{ flex: 1, gap: theme.spacing.md }}>
         {partnerMode && (
-          <PartnerHome date={selectedDate} dayInCycle={selectedDayInCycle} />
+          <PartnerDateNavigation
+            date={selectedDate}
+            dayInCycle={selectedDayInCycle}
+            calendarVisible={partnerCalendarVisible}
+            onToggleCalendar={() =>
+              setPartnerCalendarVisible(!partnerCalendarVisible)
+            }
+            onChangeDate={(date) => {
+              setSelectedDate(date);
+              setVisibleMonth(startOfMonth(date));
+              setPartnerCalendarVisible(false);
+            }}
+          />
+        )}
+        {(!partnerMode || partnerCalendarVisible) && (
+          <View
+            style={{
+              flex: 1,
+              maxHeight: partnerMode ? 6 * 56 + 80 : undefined,
+            }}
+          >
+            <Calendar
+              events={allEvents}
+              selectedDate={selectedDate}
+              visibleMonth={visibleMonth}
+              onChangeMonth={setVisibleMonth}
+              onPressDate={setSelectedDate}
+            />
+          </View>
+        )}
+        {partnerMode && (
+          <PartnerHome
+            compact={partnerCalendarVisible}
+            dayInCycle={selectedDayInCycle}
+          />
         )}
         {!partnerMode && (
           <DayLogCard
