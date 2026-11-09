@@ -1,9 +1,11 @@
 import { type FC, useState } from "react";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
+import { Icon, IconName } from "@/components/ui/icon";
+import { IconButton } from "@/components/ui/icon-button";
 import { Typography } from "@/components/ui/typography";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
@@ -31,9 +33,24 @@ export const PartnerInsightDialog: FC<PartnerInsightDialogProps> = (props) => {
   return (
     <Dialog visible onClose={onClose}>
       <View style={{ gap: theme.spacing.md }}>
-        <Typography variant="title">
-          {t(insight ? "partner.editInsight" : "partner.addInsight")}
-        </Typography>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: theme.spacing.sm,
+          }}
+        >
+          <Typography variant="title" style={{ flex: 1 }}>
+            {t(insight ? "partner.editInsight" : "partner.addInsight")}
+          </Typography>
+          <IconButton
+            plain
+            accessibilityLabel={t("common.cancel")}
+            onPress={onClose}
+          >
+            <Icon name={IconName.X} size={22} color={theme.colors.text} />
+          </IconButton>
+        </View>
         <Field
           label={t("partner.name")}
           value={draft.name}
@@ -70,12 +87,22 @@ export const PartnerInsightDialog: FC<PartnerInsightDialogProps> = (props) => {
         <View style={{ flexDirection: "row", gap: theme.spacing.sm }}>
           {insight && (
             <View style={{ flex: 1 }}>
-              <Button
-                variant="outline"
+              <Pressable
+                accessibilityRole="button"
+                style={{
+                  minHeight: 44,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
                 onPress={() => onDelete(insight.dayInCycle)}
               >
-                {t("partner.delete")}
-              </Button>
+                <Typography
+                  variant="bodySmallSemibold"
+                  color={theme.colors.danger}
+                >
+                  {t("partner.delete")}
+                </Typography>
+              </Pressable>
             </View>
           )}
           <View style={{ flex: 1 }}>

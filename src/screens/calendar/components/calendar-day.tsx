@@ -56,7 +56,6 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
             marginLeft: period ? 0 : -size / 2,
             backgroundColor: prediction ? undefined : color,
             borderColor: outline,
-            borderStyle: "dashed",
             borderWidth: prediction ? 1.5 : 0,
             borderLeftWidth: marker.joinsPrevious ? 0 : undefined,
             borderRightWidth: marker.joinsNext ? 0 : undefined,

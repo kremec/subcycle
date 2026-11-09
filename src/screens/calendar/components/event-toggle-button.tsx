@@ -15,7 +15,7 @@ interface EventToggleButtonProps {
 export const EventToggleButton: FC<EventToggleButtonProps> = (props) => {
   const { label, active, icon, onPress } = props;
   const theme = useTheme();
-  const color = active ? theme.colors.background : theme.colors.textSecondary;
+  const color = active ? theme.colors.accent : theme.colors.textSecondary;
 
   return (
     <Pressable
@@ -27,9 +27,9 @@ export const EventToggleButton: FC<EventToggleButtonProps> = (props) => {
         flex: 1,
         minHeight: 44,
         justifyContent: "center",
-        borderRadius: 10,
+        borderRadius: 12,
         paddingHorizontal: 4,
-        backgroundColor: active ? theme.colors.text : "transparent",
+        backgroundColor: active ? theme.colors.accentSoft : "transparent",
         opacity: state.pressed ? 0.6 : 1,
       })}
     >

@@ -20,6 +20,7 @@ export const Typography: FC<TypographyProps> = (props) => {
           color: color ?? theme.colors.text,
         },
         theme.typography[variant],
+        // Native lineHeight keeps scaling after maxFontSizeMultiplier caps the font.
         textProps.maxFontSizeMultiplier !== undefined && {
           lineHeight: undefined,
         },

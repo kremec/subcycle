@@ -93,6 +93,7 @@
     "other": "{{count}}th"
   },
   "partner": {
+    "fromDay": "Day {{day}}+",
     "addInsight": "Add insight",
     "dayInCycle": "{{day}} day in cycle",
     "description": "Description",

@@ -38,15 +38,10 @@ const PartnerScreen: FC = () => {
               title={insight.name}
               description={insight.description}
               left={
-                <View style={{ alignItems: "center", width: 36 }}>
-                  <Typography variant="bodyStrong">
-                    {insight.dayInCycle}
+                <View style={{ alignItems: "center", width: 56 }}>
+                  <Typography variant="captionSemibold">
+                    {t("partner.fromDay", { day: insight.dayInCycle })}
                   </Typography>
-                  <Icon
-                    name={IconName.ARROW_DOWN}
-                    color={theme.colors.textSecondary}
-                    size={18}
-                  />
                 </View>
               }
               onPress={() => setInsightTarget({ insight })}

@@ -35,6 +35,8 @@ export const DayLogCard: FC<DayLogCardProps> = (props) => {
       count + group.types.filter((symptom) => symptoms[symptom.key]).length,
     0,
   );
+  const symptomsColor =
+    symptomCount > 0 ? theme.colors.accent : theme.colors.textSecondary;
 
   return (
     <View
@@ -100,24 +102,33 @@ export const DayLogCard: FC<DayLogCardProps> = (props) => {
             alignItems: "center",
             justifyContent: "center",
             gap: 4,
+            paddingHorizontal: 4,
+            borderRadius: 12,
+            backgroundColor:
+              symptomCount > 0 ? theme.colors.accentSoft : undefined,
           }}
         >
-          <Icon
-            name={IconName.PLUS}
-            size={16}
-            color={theme.colors.textSecondary}
-          />
+          <Icon name={IconName.PLUS} size={16} color={symptomsColor} />
           <Typography
             variant="captionSemibold"
-            color={theme.colors.textSecondary}
+            color={symptomsColor}
             numberOfLines={1}
             adjustsFontSizeToFit
             maxFontSizeMultiplier={1.5}
             style={{ flexShrink: 1 }}
           >
             {t("calendar.symptoms.groups.symptoms")}
-            {symptomCount > 0 ? ` ${symptomCount}` : ""}
           </Typography>
+          {symptomCount > 0 && (
+            <Typography
+              variant="captionSemibold"
+              color={symptomsColor}
+              maxFontSizeMultiplier={1.5}
+              style={{ flexShrink: 0 }}
+            >
+              {symptomCount}
+            </Typography>
+          )}
         </Pressable>
       </View>
     </View>

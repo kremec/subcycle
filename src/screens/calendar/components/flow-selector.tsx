@@ -2,7 +2,6 @@ import { type FC } from "react";
 import { Pressable, View } from "react-native";
 
 import { Icon, IconName } from "@/components/ui/icon";
-import { Slider } from "@/components/ui/slider";
 import { Typography } from "@/components/ui/typography";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
@@ -54,92 +53,75 @@ export const FlowSelector: FC<FlowSelectorProps> = (props) => {
   );
 
   return (
-    <View>
-      <View
-        style={{ marginHorizontal: "10%" }}
-        accessibilityElementsHidden
-        importantForAccessibility="no-hide-descendants"
-      >
-        <Slider
-          min={0}
-          max={4}
-          step={1}
-          value={value}
-          commitOnEnd
-          onValueChange={(nextValue) => onChange(options[nextValue].flow)}
-        />
-      </View>
-      <View
-        accessibilityRole="radiogroup"
-        accessibilityLabel={t("calendar.edit.flow")}
-        style={{ flexDirection: "row" }}
-      >
-        {options.map((option, index) => {
-          const selected = index === value;
-          const color = selected
-            ? theme.colors.accent
-            : theme.colors.textSecondary;
+    <View
+      accessibilityRole="radiogroup"
+      accessibilityLabel={t("calendar.edit.flow")}
+      style={{ flexDirection: "row" }}
+    >
+      {options.map((option, index) => {
+        const selected = index === value;
+        const color = selected
+          ? theme.colors.accent
+          : theme.colors.textSecondary;
 
-          return (
-            <Pressable
-              key={option.flow ?? "none"}
-              accessibilityRole="radio"
-              accessibilityLabel={option.label}
-              accessibilityState={{ selected }}
-              onPress={() => onChange(option.flow)}
+        return (
+          <Pressable
+            key={option.flow ?? "none"}
+            accessibilityRole="radio"
+            accessibilityLabel={option.label}
+            accessibilityState={{ selected }}
+            onPress={() => onChange(option.flow)}
+            style={{
+              flex: 1,
+              minHeight: 64,
+              paddingVertical: theme.spacing.sm,
+              borderRadius: 12,
+              backgroundColor: selected ? theme.colors.accentSoft : undefined,
+              alignItems: "center",
+              justifyContent: "center",
+              gap: theme.spacing.xxs,
+            }}
+          >
+            <View
               style={{
-                flex: 1,
-                minHeight: 44,
+                width: 24,
+                height: 24,
                 alignItems: "center",
                 justifyContent: "center",
-                gap: theme.spacing.xxs,
               }}
             >
-              <View
-                style={{
-                  width: 24,
-                  height: 24,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  borderRadius: theme.radius.full,
-                  backgroundColor: selected
-                    ? theme.colors.accentSoft
-                    : "transparent",
-                }}
-              >
-                {option.icon !== null && (
-                  <Icon
-                    name={option.icon}
-                    size={20}
-                    color={color}
-                    filled={option.filled}
-                  />
-                )}
-                {option.icon === null && (
-                  <View
-                    style={{
-                      width: 5,
-                      height: 5,
-                      borderRadius: theme.radius.full,
-                      backgroundColor: color,
-                    }}
-                  />
-                )}
-              </View>
-              <Typography
-                variant="captionSemibold"
-                color={color}
-                numberOfLines={1}
-                adjustsFontSizeToFit
-                maxFontSizeMultiplier={1.5}
-                style={{ width: "100%", textAlign: "center" }}
-              >
-                {option.label}
-              </Typography>
-            </Pressable>
-          );
-        })}
-      </View>
+              {option.icon !== null && (
+                <Icon
+                  name={option.icon}
+                  size={20}
+                  color={color}
+                  filled={option.filled}
+                />
+              )}
+              {option.icon === null && (
+                <View
+                  style={{
+                    width: 5,
+                    height: 5,
+                    borderRadius: theme.radius.full,
+                    backgroundColor: color,
+                  }}
+                />
+              )}
+            </View>
+            <Typography
+              variant="captionSemibold"
+              color={color}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              maxFontSizeMultiplier={1.5}
+              style={{ width: "100%", textAlign: "center" }}
+            >
+              {option.label}
+            </Typography>
+          </Pressable>
+        );
+      })}
     </View>
   );
 };

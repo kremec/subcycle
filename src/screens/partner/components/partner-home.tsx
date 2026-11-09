@@ -28,6 +28,7 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
   const theme = useTheme();
   const { data: insights } = usePartnerInsightsQuery();
   const [readingInsight, setReadingInsight] = useState(false);
+  const [insightTruncated, setInsightTruncated] = useState(false);
   const today = new Date();
   const visibleEvents = getVisibleCycleEvents(events);
   const dayInCycle = getDayInCycle(today, visibleEvents);
@@ -77,6 +78,18 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
       }}
     >
       <View>
+        <Typography
+          variant="bodySmall"
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          maxFontSizeMultiplier={1.5}
+          color={theme.colors.textSecondary}
+          style={{ textAlign: "center", marginBottom: theme.spacing.lg }}
+        >
+          {dateFormatter.format(today)}
+          {dayInCycle !== null &&
+            ` · ${t("partner.dayInCycle", { day: formatOrdinal(dayInCycle) })}`}
+        </Typography>
         <View
           style={{
             flexDirection: "row",
@@ -102,17 +115,6 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
             <Icon name={IconName.EDIT} size={22} color={theme.colors.text} />
           </IconButton>
         </View>
-        <Typography
-          variant="bodySmall"
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          maxFontSizeMultiplier={1.5}
-          color={theme.colors.textSecondary}
-        >
-          {dateFormatter.format(today)}
-          {dayInCycle !== null &&
-            ` · ${t("partner.dayInCycle", { day: formatOrdinal(dayInCycle) })}`}
-        </Typography>
       </View>
 
       <Pressable
@@ -134,7 +136,7 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
         })}
       >
         <Typography
-          variant="title"
+          variant="bodyStrong"
           numberOfLines={2}
           adjustsFontSizeToFit
           maxFontSizeMultiplier={1.5}
@@ -142,35 +144,41 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
           {todayInsight?.name ?? t("partner.noInsightsFound")}
         </Typography>
         <Typography
+          variant="bodySmall"
           numberOfLines={5}
           maxFontSizeMultiplier={1.5}
+          onTextLayout={(event) =>
+            setInsightTruncated(event.nativeEvent.lines.length > 5)
+          }
           style={{ flexShrink: 1 }}
           color={theme.colors.textSecondary}
         >
           {todayInsight?.description ?? t("partner.noInsightsDescription")}
         </Typography>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: theme.spacing.sm,
-          }}
-        >
-          <Typography
-            variant="bodySmallSemibold"
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            maxFontSizeMultiplier={1.5}
+        {(!todayInsight || insightTruncated) && (
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: theme.spacing.sm,
+            }}
           >
-            {t(todayInsight ? "partner.readInsight" : "partner.addInsight")}
-          </Typography>
-          <Icon
-            name={IconName.CHEVRON_RIGHT}
-            size={18}
-            color={theme.colors.text}
-          />
-        </View>
+            <Typography
+              variant="bodySmallSemibold"
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              maxFontSizeMultiplier={1.5}
+            >
+              {t(todayInsight ? "partner.readInsight" : "partner.addInsight")}
+            </Typography>
+            <Icon
+              name={IconName.CHEVRON_RIGHT}
+              size={18}
+              color={theme.colors.text}
+            />
+          </View>
+        )}
       </Pressable>
 
       <View>
