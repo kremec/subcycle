@@ -28,7 +28,6 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
   const theme = useTheme();
   const { data: insights } = usePartnerInsightsQuery();
   const [readingInsight, setReadingInsight] = useState(false);
-  const [insightTruncated, setInsightTruncated] = useState(false);
   const today = new Date();
   const visibleEvents = getVisibleCycleEvents(events);
   const dayInCycle = getDayInCycle(today, visibleEvents);
@@ -135,27 +134,40 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
           opacity: state.pressed ? 0.7 : 1,
         })}
       >
-        <Typography
-          variant="bodyStrong"
-          numberOfLines={2}
-          adjustsFontSizeToFit
-          maxFontSizeMultiplier={1.5}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: theme.spacing.sm,
+          }}
         >
-          {todayInsight?.name ?? t("partner.noInsightsFound")}
-        </Typography>
+          <Typography
+            variant="bodyStrong"
+            numberOfLines={2}
+            adjustsFontSizeToFit
+            maxFontSizeMultiplier={1.5}
+            style={{ flex: 1 }}
+          >
+            {todayInsight?.name ?? t("partner.noInsightsFound")}
+          </Typography>
+          {todayInsight && (
+            <Icon
+              name={IconName.CHEVRON_RIGHT}
+              size={18}
+              color={theme.colors.textSecondary}
+            />
+          )}
+        </View>
         <Typography
           variant="bodySmall"
           numberOfLines={5}
           maxFontSizeMultiplier={1.5}
-          onTextLayout={(event) =>
-            setInsightTruncated(event.nativeEvent.lines.length > 5)
-          }
           style={{ flexShrink: 1 }}
           color={theme.colors.textSecondary}
         >
           {todayInsight?.description ?? t("partner.noInsightsDescription")}
         </Typography>
-        {(!todayInsight || insightTruncated) && (
+        {!todayInsight && (
           <View
             style={{
               flexDirection: "row",
@@ -170,7 +182,7 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
               adjustsFontSizeToFit
               maxFontSizeMultiplier={1.5}
             >
-              {t(todayInsight ? "partner.readInsight" : "partner.addInsight")}
+              {t("partner.addInsight")}
             </Typography>
             <Icon
               name={IconName.CHEVRON_RIGHT}
