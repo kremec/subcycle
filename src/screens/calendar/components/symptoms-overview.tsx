@@ -1,39 +1,28 @@
 import { type FC } from "react";
 import { ScrollView, View } from "react-native";
 
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Icon, IconName } from "@/components/ui/icon";
 import { IconButton } from "@/components/ui/icon-button";
 import { Typography } from "@/components/ui/typography";
 import { symptomGroups } from "@/domain/symptom-groups";
 import { useTheme } from "@/theme/use-theme";
-import { dateFormatter, t } from "@/translation/use-translation";
+import { t } from "@/translation/use-translation";
 import type { Symptoms } from "@/types/symptom";
 
 interface SymptomsOverviewProps {
   symptoms: Symptoms;
   onPressEdit: () => void;
-  onPressLog: () => void;
 }
 
 export const SymptomsOverview: FC<SymptomsOverviewProps> = (props) => {
-  const { symptoms, onPressEdit, onPressLog } = props;
+  const { symptoms, onPressEdit } = props;
   const theme = useTheme();
   const hasSymptoms = symptomGroups.some((group) =>
     group.types.some((symptom) => symptoms[symptom.key]),
   );
 
   return (
-    <Card style={{ marginBottom: 2, gap: theme.spacing.md }}>
-      <Typography variant="titleSmall">
-        {t("calendar.dayTitle", {
-          date: dateFormatter.format(symptoms.date),
-        })}
-      </Typography>
-      <Button variant="outline" onPress={onPressLog}>
-        {t("calendar.logEvents")}
-      </Button>
+    <View style={{ gap: theme.spacing.md }}>
       <View
         style={{
           flexDirection: "row",
@@ -85,6 +74,6 @@ export const SymptomsOverview: FC<SymptomsOverviewProps> = (props) => {
           </View>
         </ScrollView>
       )}
-    </Card>
+    </View>
   );
 };

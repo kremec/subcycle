@@ -1,5 +1,5 @@
-import { type FC, useRef, useState } from "react";
-import { Pressable, View } from "react-native";
+import { type FC, useState } from "react";
+import { View } from "react-native";
 
 import { format, startOfMonth } from "date-fns";
 import { CalendarList } from "react-native-calendars";
@@ -8,18 +8,17 @@ import { Typography } from "@/components/ui/typography";
 import { createCalendarMarkers } from "@/domain/calendar-markers";
 import { CalendarDay } from "@/screens/calendar/components/calendar-day";
 import { useTheme } from "@/theme/use-theme";
-import { monthFormatter, t } from "@/translation/use-translation";
+import { monthFormatter } from "@/translation/use-translation";
 import { type Event } from "@/types/event";
 
 interface CalendarProps {
   events: Event[];
   selectedDate: Date;
   onPressDate: (date: Date) => void;
-  onPressToday: (date: Date) => void;
 }
 
 export const Calendar: FC<CalendarProps> = (props) => {
-  const { events, selectedDate, onPressDate, onPressToday } = props;
+  const { events, selectedDate, onPressDate } = props;
   const theme = useTheme();
   const [view, setView] = useState(() => {
     const month = format(startOfMonth(selectedDate), "yyyy-MM-dd");
@@ -29,9 +28,6 @@ export const Calendar: FC<CalendarProps> = (props) => {
       visibleMonth: month,
     };
   });
-  const calendarRef = useRef<{ scrollToMonth?: (date: string) => void } | null>(
-    null,
-  );
 
   const getMarker = createCalendarMarkers(events, selectedDate, theme.colors);
 
@@ -47,7 +43,6 @@ export const Calendar: FC<CalendarProps> = (props) => {
   return (
     <CalendarList
       key={theme.themeName}
-      ref={calendarRef}
       current={view.initialMonth}
       onMonthChange={(month) =>
         setView((previous) => ({ ...previous, visibleMonth: month.dateString }))
@@ -64,41 +59,25 @@ export const Calendar: FC<CalendarProps> = (props) => {
       calendarStyle={{ backgroundColor: theme.colors.background }}
       headerStyle={{ backgroundColor: theme.colors.background }}
       renderHeader={(date) => (
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => {
-            const today = new Date();
-            onPressToday(today);
-            calendarRef.current?.scrollToMonth?.(format(today, "yyyy-MM-dd"));
+        <View
+          style={{
+            minHeight: 44,
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
-          <View
-            style={{
-              minHeight: 44,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
+          <Typography
+            variant="titleSmall"
+            allowFontScaling={false}
+            style={{ textAlign: "center" }}
           >
-            <Typography
-              variant="titleSmall"
-              allowFontScaling={false}
-              style={{ textAlign: "center" }}
-            >
-              {monthFormatter.format(
-                date
-                  ? new Date(date.getFullYear(), date.getMonth(), 1)
-                  : selectedDate,
-              )}
-            </Typography>
-            <Typography
-              variant="caption"
-              allowFontScaling={false}
-              color={theme.colors.accent}
-            >
-              {t("calendar.today")}
-            </Typography>
-          </View>
-        </Pressable>
+            {monthFormatter.format(
+              date
+                ? new Date(date.getFullYear(), date.getMonth(), 1)
+                : selectedDate,
+            )}
+          </Typography>
+        </View>
       )}
       dayComponent={(dayProps) => {
         const { date } = dayProps;

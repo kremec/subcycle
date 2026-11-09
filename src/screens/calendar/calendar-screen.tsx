@@ -1,26 +1,30 @@
 import { type FC, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { Alert, ScrollView, View } from "react-native";
 
 import { isSameDay } from "date-fns";
 
 import { Screen } from "@/components/ui/screen";
-import { saveEvent, useEventsQuery } from "@/db/repositories/events-repository";
+import {
+  toggleEventForDate,
+  useEventsQuery,
+} from "@/db/repositories/events-repository";
 import {
   saveSymptoms,
   useSymptomsQuery,
 } from "@/db/repositories/symptoms-repository";
-import { getDayInCycle } from "@/domain/cycle";
+import { getDayInCycle, getVisibleCycleEvents } from "@/domain/cycle";
 import { getAllPredictions } from "@/domain/cycle-predictions";
 import { Calendar } from "@/screens/calendar/components/calendar";
-import { CalendarEditDialog } from "@/screens/calendar/components/calendar-edit-dialog";
 import { CalendarHeader } from "@/screens/calendar/components/calendar-header";
-import { CalendarLegend } from "@/screens/calendar/components/calendar-legend";
+import { CycleAverages } from "@/screens/calendar/components/cycle-averages";
 import { CycleStatus } from "@/screens/calendar/components/cycle-status";
+import { DayLogCard } from "@/screens/calendar/components/day-log-card";
 import { SymptomsEditSheet } from "@/screens/calendar/components/symptoms-edit-sheet";
-import { SymptomsOverview } from "@/screens/calendar/components/symptoms-overview";
+import { PartnerHome } from "@/screens/partner/components/partner-home";
 import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
-import { eventSchema, type Event } from "@/types/event";
+import { t } from "@/translation/use-translation";
+import { eventSchema } from "@/types/event";
 import { symptomsSchema } from "@/types/symptom";
 
 const CalendarScreen: FC = () => {
@@ -31,28 +35,22 @@ const CalendarScreen: FC = () => {
   const predictionTimespan = useSettingsStore(
     (state) => state.settings.predictionTimespan,
   );
-
+  const partnerMode = useSettingsStore((state) => state.settings.partnerMode);
   const allEvents = getAllPredictions(events, predictionTimespan);
-
-  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
-
+  const visibleEvents = getVisibleCycleEvents(allEvents);
+  const selectedEvent =
+    events.find((entry) => isSameDay(entry.date, selectedDate)) ??
+    eventSchema.parse({ date: selectedDate });
   const selectedSymptoms =
     symptoms.find((entry) => isSameDay(entry.date, selectedDate)) ??
     symptomsSchema.parse({ date: selectedDate });
-
   const [symptomsEditorVisible, setSymptomsEditorVisible] = useState(false);
-
-  const editDate = (date: Date) => {
-    setEditingEvent(
-      allEvents.find((entry) => isSameDay(entry.date, date)) ??
-        eventSchema.parse({ date }),
-    );
-  };
 
   return (
     <Screen style={{ paddingTop: 0 }}>
       <CalendarHeader />
       <ScrollView
+        key={partnerMode ? "partner" : "calendar"}
         showsVerticalScrollIndicator={false}
         style={{ marginHorizontal: -theme.spacing.lg }}
         contentContainerStyle={{
@@ -61,49 +59,38 @@ const CalendarScreen: FC = () => {
           gap: theme.spacing.lg,
         }}
       >
-        <CycleStatus events={allEvents} />
-
-        <View>
+        {partnerMode && <PartnerHome events={allEvents} />}
+        <CycleAverages events={events} />
+        <CycleStatus events={visibleEvents} />
+        {!partnerMode && (
           <View style={{ marginHorizontal: -theme.spacing.lg }}>
             <Calendar
               events={allEvents}
               selectedDate={selectedDate}
-              onPressToday={setSelectedDate}
-              onPressDate={(date) => {
-                if (!isSameDay(date, selectedDate)) {
-                  setSelectedDate(date);
-                  return;
-                }
-
-                editDate(date);
-              }}
+              onPressDate={setSelectedDate}
             />
           </View>
-          <CalendarLegend />
-          <SymptomsOverview
+        )}
+        {!partnerMode && (
+          <DayLogCard
+            event={selectedEvent}
             symptoms={selectedSymptoms}
-            onPressEdit={() => setSymptomsEditorVisible(true)}
-            onPressLog={() => editDate(selectedDate)}
+            dayInCycle={getDayInCycle(selectedDate, visibleEvents)}
+            onPressSymptoms={() => setSymptomsEditorVisible(true)}
+            onToggle={(key) => {
+              void toggleEventForDate(selectedDate, key).catch(() =>
+                Alert.alert(t("common.saveFailed")),
+              );
+            }}
           />
-        </View>
+        )}
       </ScrollView>
-
-      <SymptomsEditSheet
-        visible={symptomsEditorVisible}
-        symptoms={selectedSymptoms}
-        onClose={() => setSymptomsEditorVisible(false)}
-        onChange={saveSymptoms}
-      />
-
-      {editingEvent && (
-        <CalendarEditDialog
-          event={editingEvent}
-          dayInCycle={getDayInCycle(editingEvent.date, allEvents)}
-          onClose={() => setEditingEvent(null)}
-          onSave={(event) => {
-            saveEvent(event);
-            setEditingEvent(null);
-          }}
+      {!partnerMode && (
+        <SymptomsEditSheet
+          visible={symptomsEditorVisible}
+          symptoms={selectedSymptoms}
+          onClose={() => setSymptomsEditorVisible(false)}
+          onChange={saveSymptoms}
         />
       )}
     </Screen>

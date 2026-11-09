@@ -1,5 +1,6 @@
 import { addDays, format, isSameDay } from "date-fns";
 
+import { getVisibleCycleEvents } from "@/domain/cycle";
 import type { themePalettes } from "@/theme/palette";
 import { EventGroupShape, type CalendarMarker } from "@/types/calendar-marker";
 import { EventKind, type Event } from "@/types/event";
@@ -43,8 +44,10 @@ export function createCalendarMarkers(
   const predictedEvents = new Map<string, Event>();
 
   for (const event of events) {
-    const target = event.prediction ? predictedEvents : actualEvents;
-    target.set(dateKey(event.date), event);
+    if (!event.prediction) actualEvents.set(dateKey(event.date), event);
+  }
+  for (const event of getVisibleCycleEvents(events)) {
+    if (event.prediction) predictedEvents.set(dateKey(event.date), event);
   }
 
   return (date: Date): CalendarMarker => {

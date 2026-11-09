@@ -26,16 +26,10 @@ export const AppRoot: FC = () => {
       }}
     >
       <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="stats" options={{ title: t("navigation.stats") }} />
       <Stack.Screen
         name="partner"
-        options={{ title: t("navigation.partner") }}
+        options={{ title: t("partner.editInsights") }}
       />
-      <Stack.Screen
-        name="settings"
-        options={{ title: t("navigation.settings") }}
-      />
-      <Stack.Screen name="welcome" options={{ headerShown: false }} />
     </Stack>
   );
 };

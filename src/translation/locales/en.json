@@ -8,10 +8,10 @@
     },
     "loading": "Loading ...",
     "notAvailable": "N/A",
-    "save": "Save"
+    "save": "Save",
+    "saveFailed": "Could not save this change. Please try again."
   },
   "calendar": {
-    "today": "Today",
     "cycleStatus": {
       "menstruationLeft": "of menstruation left",
       "untilNextMenstruation": "until next menstruation",
@@ -69,21 +69,15 @@
       },
       "empty": "Add how you feel"
     },
-    "dayTitle": "{{date}}",
-    "logEvents": "Log period / pill",
-    "legend": {
-      "period": "Period",
-      "pill": "Pill taken",
-      "predicted": "Predicted"
-    }
+    "predicted": "Predicted",
+    "pillTaken": "Pill taken"
   },
   "navigation": {
     "calendar": "Calendar",
     "partner": "Partner",
     "settings": "Settings",
     "stats": "Stats",
-    "menu": "Open menu",
-    "guide": "Getting started"
+    "menu": "Open menu"
   },
   "ordinal": {
     "one": "{{count}}st",
@@ -97,12 +91,19 @@
     "description": "Description",
     "delete": "Delete",
     "editInsight": "Edit insight",
-    "editInsights": "Edit insights",
+    "editInsights": "Edit partner insights",
     "name": "Name",
-    "noInsightsFound": "No insights found",
+    "noInsightsFound": "No insights yet",
     "startDayInCycle": "Start day in cycle",
     "startDayAlreadyUsed": "An insight already starts on this day.",
-    "todayInsights": "Today's insights"
+    "todayInsights": "Today's insights",
+    "noInsightsDescription": "Add notes for different days of the cycle in Settings.",
+    "currentPeriod": "Current period",
+    "nextPeriod": "Next period",
+    "todayOvulation": "Ovulation today",
+    "nextOvulation": "Next ovulation",
+    "noUpcomingPeriod": "No upcoming period logged or predicted",
+    "noUpcomingOvulation": "No upcoming ovulation logged or predicted"
   },
   "settings": {
     "addReminder": "Add reminder",
@@ -156,13 +157,8 @@
   },
   "appName": "subcycle",
   "onboarding": {
-    "title": "Your cycle, at your pace.",
-    "description": "Keep track of your period, pills and how you feel.",
-    "logTitle": "A little check-in",
-    "logDescription": "Choose a date, then log your flow, ovulation or pill. Add symptoms whenever you like.",
-    "remindersTitle": "Make it yours",
-    "remindersDescription": "Predictions, reminders and partner insights are optional. Find them in Settings.",
-    "start": "Open calendar",
-    "menuHint": "Stats, settings and this guide are in the \u2022\u2022\u2022 menu."
+    "title": "Track your cycle",
+    "description": "Log your period, pills and symptoms. Predictions and reminders are optional.",
+    "start": "Open calendar"
   }
 }

@@ -24,8 +24,8 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
   if (event?.menstruationHeavy) labels.push(t("calendar.edit.heavy"));
   if (event?.menstruationSpotting) labels.push(t("calendar.edit.spotting"));
   if (event?.ovulation) labels.push(t("calendar.edit.ovulation"));
-  if (color && prediction) labels.push(t("calendar.legend.predicted"));
-  if (marker.pill) labels.push(t("calendar.legend.pill"));
+  if (color && prediction) labels.push(t("calendar.predicted"));
+  if (marker.pill) labels.push(t("calendar.pillTaken"));
   const single = group === EventGroupShape.SINGLE;
   const roundedLeft =
     single ||
@@ -94,8 +94,6 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
             alignItems: "center",
             justifyContent: "center",
             borderRadius: theme.radius.full,
-            borderWidth: marker.selected ? 2 : 0,
-            borderColor: marker.textColor,
           }}
         >
           <Typography
@@ -106,6 +104,18 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
           >
             {date.getDate()}
           </Typography>
+          {marker.selected && (
+            <View
+              style={{
+                position: "absolute",
+                bottom: 1,
+                width: 16,
+                height: 2,
+                borderRadius: 1,
+                backgroundColor: marker.textColor,
+              }}
+            />
+          )}
         </View>
         {marker.pill && (
           <View
