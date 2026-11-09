@@ -90,7 +90,6 @@
   "partner": {
     "editInsights": "Cycle notes",
     "allNotes": "All notes",
-    "today": "Today",
     "editNote": "Edit note",
     "newNote": "New note",
     "addInsight": "Add note",
@@ -110,16 +109,9 @@
     "startDayAlreadyUsed": "A note already starts on this day.",
     "delete": "Delete",
     "period": "Period",
-    "nextPeriod": "Next period",
     "ovulation": "Ovulation",
-    "nextOvulation": "Next ovulation",
-    "now": "Now",
     "expectedUntil": "Expected until {{date}}",
     "until": "Until {{date}}",
-    "inDays": {
-      "one": "Tomorrow",
-      "other": "In {{count}} days"
-    },
     "notKnownYet": "Not known yet"
   },
   "settings": {

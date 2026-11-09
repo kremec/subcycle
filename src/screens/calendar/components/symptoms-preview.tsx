@@ -19,11 +19,18 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
   const selected = symptomGroups.flatMap((group) =>
     group.types.filter((symptom) => symptoms[symptom.key]),
   );
+  const summary =
+    selected.length > 0
+      ? selected
+          .map((symptom) => symptom.label.replaceAll("\n", " "))
+          .join(" · ")
+      : t("calendar.symptoms.empty");
 
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={t("calendar.symptoms.edit")}
+      accessibilityLabel={`${t("calendar.symptoms.groups.symptoms")}, ${summary}`}
+      accessibilityHint={t("calendar.symptoms.edit")}
       onPress={onPress}
       style={(state) => ({
         flexDirection: "row",
@@ -47,11 +54,7 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
           numberOfLines={1}
           maxFontSizeMultiplier={1.5}
         >
-          {selected.length > 0
-            ? selected
-                .map((symptom) => symptom.label.replaceAll("\n", " "))
-                .join(" · ")
-            : t("calendar.symptoms.empty")}
+          {summary}
         </Typography>
       </View>
       <View style={{ flexDirection: "row", gap: theme.spacing.xs }}>
