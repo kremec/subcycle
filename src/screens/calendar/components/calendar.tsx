@@ -1,14 +1,14 @@
 import { type FC, useState } from "react";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 
-import { format } from "date-fns";
+import { format, startOfMonth } from "date-fns";
 import { Calendar as NativeCalendar } from "react-native-calendars";
 
 import { Typography } from "@/components/ui/typography";
 import { createCalendarMarkers } from "@/domain/calendar-markers";
 import { CalendarDay } from "@/screens/calendar/components/calendar-day";
 import { useTheme } from "@/theme/use-theme";
-import { monthFormatter } from "@/translation/use-translation";
+import { monthFormatter, t } from "@/translation/use-translation";
 import { type Event } from "@/types/event";
 
 interface CalendarProps {
@@ -38,7 +38,7 @@ export const Calendar: FC<CalendarProps> = (props) => {
     >
       <NativeCalendar
         key={theme.themeName}
-        current={format(visibleMonth, "yyyy-MM-dd")}
+        initialDate={format(visibleMonth, "yyyy-MM-dd")}
         onMonthChange={(month) =>
           onChangeMonth(new Date(month.year, month.month - 1, 1, 12))
         }
@@ -48,13 +48,28 @@ export const Calendar: FC<CalendarProps> = (props) => {
         testID="cycle-calendar"
         style={{ backgroundColor: theme.colors.background }}
         renderHeader={(date) => (
-          <Typography variant="titleSmall" allowFontScaling={false}>
-            {monthFormatter.format(
-              date
-                ? new Date(date.getFullYear(), date.getMonth(), 1)
-                : visibleMonth,
-            )}
-          </Typography>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityHint={t("calendar.returnToday")}
+            onPress={() => {
+              const today = new Date();
+              onPressDate(today);
+              onChangeMonth(startOfMonth(today));
+            }}
+            style={(state) => ({
+              minHeight: 44,
+              justifyContent: "center",
+              opacity: state.pressed ? 0.6 : 1,
+            })}
+          >
+            <Typography variant="titleSmall" allowFontScaling={false}>
+              {monthFormatter.format(
+                date
+                  ? new Date(date.getFullYear(), date.getMonth(), 1)
+                  : visibleMonth,
+              )}
+            </Typography>
+          </Pressable>
         )}
         dayComponent={(dayProps) => {
           const { date } = dayProps;

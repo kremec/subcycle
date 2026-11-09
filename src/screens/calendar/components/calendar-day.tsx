@@ -27,9 +27,12 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
   if (pill) labels.push(t("calendar.pillTaken"));
   const size = Math.min(40, height - 2);
   const joined = marker.joinsPrevious || marker.joinsNext;
-  const outline = event?.ovulation
-    ? theme.colors.calendarOvulationOutline
-    : theme.colors.accent;
+  let outline: string = theme.colors.calendarSpottingOutline;
+  if (event?.menstruationLight) outline = theme.colors.calendarLightOutline;
+  if (event?.menstruationModerate)
+    outline = theme.colors.calendarModerateOutline;
+  if (event?.menstruationHeavy) outline = theme.colors.calendarHeavyOutline;
+  if (event?.ovulation) outline = theme.colors.calendarOvulationOutline;
 
   return (
     <Pressable
@@ -49,21 +52,19 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
           style={{
             position: "absolute",
             height: size,
-            left: marker.joinsPrevious ? 0 : "50%",
-            right: marker.joinsNext ? 0 : undefined,
+            left: joined ? 0 : "50%",
+            right: joined ? 0 : undefined,
             width: joined ? undefined : size,
-            marginLeft: marker.joinsPrevious ? 0 : -size / 2,
-            ...(marker.joinsPrevious &&
-              !marker.joinsNext && { right: "50%", marginRight: -size / 2 }),
+            marginLeft: joined ? 0 : -size / 2,
             backgroundColor: prediction ? undefined : color,
             borderColor: outline,
             borderWidth: prediction ? 1.5 : 0,
             borderLeftWidth: marker.joinsPrevious ? 0 : undefined,
             borderRightWidth: marker.joinsNext ? 0 : undefined,
-            borderTopLeftRadius: marker.joinsPrevious ? 0 : size / 2,
-            borderBottomLeftRadius: marker.joinsPrevious ? 0 : size / 2,
-            borderTopRightRadius: marker.joinsNext ? 0 : size / 2,
-            borderBottomRightRadius: marker.joinsNext ? 0 : size / 2,
+            borderTopLeftRadius: marker.joinsPrevious ? 0 : size * 0.28,
+            borderBottomLeftRadius: marker.joinsPrevious ? 0 : size * 0.28,
+            borderTopRightRadius: marker.joinsNext ? 0 : size * 0.28,
+            borderBottomRightRadius: marker.joinsNext ? 0 : size * 0.28,
           }}
         />
       )}
@@ -100,7 +101,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
               name={IconName.PILL}
               size={size / 5}
               filled
-              color={theme.colors.text}
+              color={theme.colors.calendarPill}
             />
           </View>
         )}

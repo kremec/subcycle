@@ -70,6 +70,7 @@
       },
       "empty": "Add how you feel"
     },
+    "returnToday": "Return to today",
     "predicted": "Predicted",
     "pillTaken": "Pill taken",
     "cycleDay": "Day {{day}}"
@@ -90,11 +91,6 @@
     "editInsights": "Cycle notes",
     "allNotes": "All notes",
     "today": "Today",
-    "previousDay": "Previous day",
-    "nextDay": "Next day",
-    "showCalendar": "Show month calendar",
-    "hideCalendar": "Hide month calendar",
-    "readNote": "Read full note",
     "editNote": "Edit note",
     "newNote": "New note",
     "addInsight": "Add note",
@@ -118,7 +114,7 @@
     "ovulation": "Ovulation",
     "nextOvulation": "Next ovulation",
     "now": "Now",
-    "expectedNow": "Expected now",
+    "expectedUntil": "Expected until {{date}}",
     "until": "Until {{date}}",
     "inDays": {
       "one": "Tomorrow",

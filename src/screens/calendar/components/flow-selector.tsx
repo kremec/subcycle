@@ -25,8 +25,8 @@ export const FlowSelector: FC<FlowSelectorProps> = (props) => {
     {
       flow: MenstruationFlow.SPOTTING,
       label: t("calendar.edit.spotting"),
-      icon: null,
-      filled: false,
+      icon: IconName.CHART_BUBBLE,
+      filled: true,
     },
     {
       flow: MenstruationFlow.LIGHT,
@@ -90,24 +90,12 @@ export const FlowSelector: FC<FlowSelectorProps> = (props) => {
                 justifyContent: "center",
               }}
             >
-              {option.icon !== null && (
-                <Icon
-                  name={option.icon}
-                  size={20}
-                  color={color}
-                  filled={option.filled}
-                />
-              )}
-              {option.icon === null && (
-                <View
-                  style={{
-                    width: 5,
-                    height: 5,
-                    borderRadius: theme.radius.full,
-                    backgroundColor: color,
-                  }}
-                />
-              )}
+              <Icon
+                name={option.icon}
+                size={20}
+                color={color}
+                filled={option.filled}
+              />
             </View>
             <Typography
               variant="captionSemibold"

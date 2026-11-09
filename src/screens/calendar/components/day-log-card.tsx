@@ -1,11 +1,11 @@
 import { type FC } from "react";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 
-import { Icon, IconName } from "@/components/ui/icon";
+import { IconName } from "@/components/ui/icon";
 import { Typography } from "@/components/ui/typography";
-import { symptomGroups } from "@/domain/symptom-groups";
 import { EventToggleButton } from "@/screens/calendar/components/event-toggle-button";
 import { FlowSelector } from "@/screens/calendar/components/flow-selector";
+import { SymptomsPreview } from "@/screens/calendar/components/symptoms-preview";
 import { useTheme } from "@/theme/use-theme";
 import { dateFormatter, t } from "@/translation/use-translation";
 import { MenstruationFlow, type Event, type EventFlag } from "@/types/event";
@@ -30,13 +30,6 @@ export const DayLogCard: FC<DayLogCardProps> = (props) => {
     onPressSymptoms,
   } = props;
   const theme = useTheme();
-  const symptomCount = symptomGroups.reduce(
-    (count, group) =>
-      count + group.types.filter((symptom) => symptoms[symptom.key]).length,
-    0,
-  );
-  const symptomsColor =
-    symptomCount > 0 ? theme.colors.accent : theme.colors.textSecondary;
 
   return (
     <View
@@ -95,46 +88,8 @@ export const DayLogCard: FC<DayLogCardProps> = (props) => {
           active={event.pill}
           onPress={() => onToggle("pill")}
         />
-        <Pressable
-          onPress={onPressSymptoms}
-          accessibilityRole="button"
-          accessibilityLabel={t("calendar.symptoms.edit")}
-          style={{
-            flex: 1,
-            minHeight: 44,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 4,
-            paddingHorizontal: 4,
-            borderRadius: 12,
-            backgroundColor:
-              symptomCount > 0 ? theme.colors.accentSoft : undefined,
-          }}
-        >
-          <Icon name={IconName.PLUS} size={16} color={symptomsColor} />
-          <Typography
-            variant="captionSemibold"
-            color={symptomsColor}
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            maxFontSizeMultiplier={1.5}
-            style={{ flexShrink: 1 }}
-          >
-            {t("calendar.symptoms.groups.symptoms")}
-          </Typography>
-          {symptomCount > 0 && (
-            <Typography
-              variant="captionSemibold"
-              color={symptomsColor}
-              maxFontSizeMultiplier={1.5}
-              style={{ flexShrink: 0 }}
-            >
-              {symptomCount}
-            </Typography>
-          )}
-        </Pressable>
       </View>
+      <SymptomsPreview symptoms={symptoms} onPress={onPressSymptoms} />
     </View>
   );
 };
