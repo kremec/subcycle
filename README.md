@@ -14,38 +14,37 @@ The app is available for free with all features with no ads or paywalls.
 
 ## Usage
 
-#### Home tab
+#### Calendar
 
-On the top you can see which part of your menstrual cycle you're in.
+At the top you can see how many days are left in your period or until your next predicted period.
 
-In the middle is the calendar, in which you see past events and future predictions.
-To edit events, tap on the date, and a popup with edit options will show.
-Scroll the calendar sideways to move between months.
-Tapping on the calendar header will reset the view to current date.
+The calendar shows past events and future predictions.
+Swipe sideways or use the arrows to move between months.
+Tap the month heading to return to today.
 
-On the bottom is the overview of symptoms for the date, selected in calendar.
-You can add or remove symptoms by tapping on the plus icon.
-In the opened menu, selected symptoms will be highlighted.
+Select a date to view its day log below the calendar.
+Set the menstrual flow, mark ovulation, or record taking a pill directly in the day log.
+Tap the symptoms row to add or remove symptoms for the selected date.
+Selected symptoms are highlighted in the editor.
 
-#### Settings tab
+#### Settings
+
+Open Settings from the three-dot menu in the top-right corner.
 
 Here you can set preferences for:
 
-- Menstrual cycle prediction timespan
-- Pill reminder notification time
+- Enabling cycle predictions
+- Daily pill reminder times
+- Period reminders, including their timing and custom messages
 - Enabling partner mode
 
 You can also export or import all your data here.
 
-#### Stats / Partner insights tab
+#### Partner mode
 
-On stats tab, you can see following statistics about your cycles:
-
-- Average cycle length
-- Average period length
-- Average heavy period length
-
-On partner insights tab, your partner can setup friendly insights into your cycle.
+Enable partner mode in Settings to show the calendar with notes for each day in the cycle.
+Select a date to read its note below the calendar.
+You can edit the displayed note or open the notes list to add and edit notes for different cycle days.
 
 ## License
 
