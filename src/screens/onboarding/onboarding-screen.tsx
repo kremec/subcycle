@@ -33,7 +33,6 @@ export const OnboardingScreen: FC<OnboardingScreenProps> = (props) => {
             flexGrow: 1,
             justifyContent: "center",
             paddingVertical: theme.spacing.xl,
-            gap: theme.spacing.xl,
           }}
         >
           <View style={{ gap: theme.spacing.sm }}>
@@ -49,45 +48,6 @@ export const OnboardingScreen: FC<OnboardingScreenProps> = (props) => {
             <Typography color={theme.colors.textSecondary}>
               {t("onboarding.description")}
             </Typography>
-          </View>
-          <View
-            style={{
-              backgroundColor: theme.colors.surface,
-              borderWidth: 1,
-              borderColor: theme.colors.border,
-              borderRadius: theme.radius.lg,
-              overflow: "hidden",
-            }}
-          >
-            <View style={{ padding: theme.spacing.lg, gap: theme.spacing.xs }}>
-              <Typography variant="bodyStrong">
-                {t("onboarding.privacyTitle")}
-              </Typography>
-              <Typography
-                variant="bodySmall"
-                color={theme.colors.textSecondary}
-              >
-                {t("onboarding.privacyDescription")}
-              </Typography>
-            </View>
-            <View
-              style={{
-                padding: theme.spacing.lg,
-                gap: theme.spacing.xs,
-                borderTopWidth: 1,
-                borderTopColor: theme.colors.border,
-              }}
-            >
-              <Typography variant="bodyStrong">
-                {t("onboarding.freeTitle")}
-              </Typography>
-              <Typography
-                variant="bodySmall"
-                color={theme.colors.textSecondary}
-              >
-                {t("onboarding.freeDescription")}
-              </Typography>
-            </View>
           </View>
         </ScrollView>
         <Button

@@ -146,11 +146,7 @@
   "appName": "subcycle",
   "onboarding": {
     "title": "Your cycle, clearer.",
-    "description": "Track your period, pills and symptoms. Plan ahead with optional predictions and cycle-day notes for your partner.",
-    "privacyTitle": "Private and offline",
-    "privacyDescription": "Your data stays on your device. Works offline, with import and export when you need it.",
-    "freeTitle": "No ads or paywalls",
-    "freeDescription": "All features, with no ads or in-app purchases.",
+    "description": "Track your period, pills and symptoms. Plan ahead with optional predictions and cycle-day notes for your partner. Private and offline, with no ads or in-app purchases.",
     "start": "Open calendar"
   }
 }
