@@ -58,26 +58,6 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
           backgroundColor: theme.colors.border,
         }}
       />
-      <Pressable
-        accessible={false}
-        onPress={onPress}
-        style={{
-          flexShrink: 0,
-          minHeight: 44,
-          justifyContent: "center",
-        }}
-      >
-        <Typography
-          variant="caption"
-          color={theme.colors.textSecondary}
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          maxFontSizeMultiplier={1.5}
-          accessible={false}
-        >
-          {t("calendar.symptoms.groups.symptoms")}
-        </Typography>
-      </Pressable>
       <ScrollView
         key={symptoms.date.toDateString()}
         horizontal
@@ -102,6 +82,18 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
             minHeight: 44,
           }}
         >
+          {selected.length === 0 && (
+            <Typography
+              variant="caption"
+              color={theme.colors.textSecondary}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              maxFontSizeMultiplier={1.5}
+              accessible={false}
+            >
+              {t("calendar.symptoms.empty")}
+            </Typography>
+          )}
           {selected.map((symptom) => (
             <Icon
               key={symptom.key}
