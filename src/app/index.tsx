@@ -4,7 +4,7 @@ import { HomeScreen } from "@/screens/home/home-screen";
 import { OnboardingScreen } from "@/screens/onboarding/onboarding-screen";
 import { useSettingsStore } from "@/stores/settings-store";
 
-const CalendarRoute: FC = () => {
+const HomeRoute: FC = () => {
   const onboarded = useSettingsStore((state) => state.settings.onboarded);
   const updateSettings = useSettingsStore((state) => state.updateSettings);
 
@@ -19,4 +19,4 @@ const CalendarRoute: FC = () => {
   return <HomeScreen />;
 };
 
-export default CalendarRoute;
+export default HomeRoute;

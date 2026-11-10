@@ -35,6 +35,9 @@ export const PartnerNotesSheet: FC<PartnerNotesSheetProps> = (props) => {
     <BottomSheet visible={visible} onClose={onClose}>
       <View
         style={{
+          width: "100%",
+          maxWidth: 820,
+          alignSelf: "center",
           padding: theme.spacing.lg,
           paddingBottom: theme.spacing.xl,
           gap: theme.spacing.md,
@@ -47,7 +50,9 @@ export const PartnerNotesSheet: FC<PartnerNotesSheetProps> = (props) => {
             justifyContent: "space-between",
           }}
         >
-          <Typography variant="title">{t("partner.editInsights")}</Typography>
+          <Typography variant="title" style={{ flex: 1 }}>
+            {t("partner.editInsights")}
+          </Typography>
           <IconButton
             plain
             accessibilityLabel={t("common.close")}
@@ -56,14 +61,20 @@ export const PartnerNotesSheet: FC<PartnerNotesSheetProps> = (props) => {
             <Icon name={IconName.X} size={22} color={theme.colors.text} />
           </IconButton>
         </View>
+        <Typography variant="bodySmall" color={theme.colors.textSecondary}>
+          {t("partner.managerDescription")}
+        </Typography>
+
+        <Button
+          leftAccessory={
+            <Icon name={IconName.PLUS} color={theme.colors.surface} size={16} />
+          }
+          onPress={() => setInsightTarget({})}
+        >
+          {t("partner.addInsight")}
+        </Button>
+
         <View>
-          <Typography
-            variant="bodySmall"
-            color={theme.colors.textSecondary}
-            style={{ paddingBottom: theme.spacing.md }}
-          >
-            {t("partner.managerDescription")}
-          </Typography>
           {insights.length === 0 && (
             <Typography
               variant="titleSmall"
@@ -110,15 +121,6 @@ export const PartnerNotesSheet: FC<PartnerNotesSheetProps> = (props) => {
             </Pressable>
           ))}
         </View>
-
-        <Button
-          leftAccessory={
-            <Icon name={IconName.PLUS} color={theme.colors.surface} size={16} />
-          }
-          onPress={() => setInsightTarget({})}
-        >
-          {t("partner.addInsight")}
-        </Button>
 
         {insightTarget && (
           <PartnerInsightDialog
