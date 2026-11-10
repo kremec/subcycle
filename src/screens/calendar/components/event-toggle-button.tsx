@@ -1,7 +1,7 @@
 import { type FC } from "react";
 import { Pressable, View } from "react-native";
 
-import { Icon, type IconName } from "@/components/ui/icon";
+import { Icon, IconName } from "@/components/ui/icon";
 import { Typography } from "@/components/ui/typography";
 
 interface EventToggleButtonProps {
@@ -39,9 +39,12 @@ export const EventToggleButton: FC<EventToggleButtonProps> = (props) => {
           gap: 4,
         }}
       >
-        {icon && (
-          <Icon name={icon} size={16} color={color} filled={icon === "pill"} />
-        )}
+        <Icon
+          name={icon}
+          size={16}
+          color={color}
+          filled={icon === IconName.PILL}
+        />
         <Typography
           variant="caption"
           color={color}

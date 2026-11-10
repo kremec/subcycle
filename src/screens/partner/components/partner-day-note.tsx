@@ -1,8 +1,6 @@
 import { type FC, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 
-import { router } from "expo-router";
-
 import { Button } from "@/components/ui/button";
 import { Icon, IconName } from "@/components/ui/icon";
 import { IconButton } from "@/components/ui/icon-button";
@@ -12,13 +10,14 @@ import { PartnerInsightDialog } from "@/screens/partner/components/partner-insig
 import { useTheme } from "@/theme/use-theme";
 import { dateFormatter, t } from "@/translation/use-translation";
 
-interface PartnerHomeProps {
+interface PartnerDayNoteProps {
   date: Date;
   dayInCycle: number | null;
+  onPressAllNotes: () => void;
 }
 
-export const PartnerHome: FC<PartnerHomeProps> = (props) => {
-  const { date, dayInCycle } = props;
+export const PartnerDayNote: FC<PartnerDayNoteProps> = (props) => {
+  const { date, dayInCycle, onPressAllNotes } = props;
   const theme = useTheme();
   const { data: insights } = usePartnerInsightsQuery();
   const selectedInsight = insights.findLast(
@@ -58,7 +57,7 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
           <Pressable
             accessibilityRole="button"
             hitSlop={8}
-            onPress={() => router.push("/partner")}
+            onPress={onPressAllNotes}
             style={(state) => ({
               minHeight: 44,
               justifyContent: "center",
@@ -130,11 +129,7 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
               {emptyDescription}
             </Typography>
             <Button
-              onPress={
-                showAllNotes
-                  ? () => router.push("/partner")
-                  : () => setEditing(true)
-              }
+              onPress={showAllNotes ? onPressAllNotes : () => setEditing(true)}
             >
               {t(showAllNotes ? "partner.allNotes" : "partner.addInsight")}
             </Button>

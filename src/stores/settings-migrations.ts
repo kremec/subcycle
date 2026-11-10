@@ -22,6 +22,7 @@ export function migrateSettings(saved: unknown, version: number) {
 
   if (version < 2) {
     const { settings } = state;
+    settings.onboarded = true;
     settings.predictionsEnabled = (settings.predictionTimespan ?? 0) > 0;
     delete settings.predictionTimespan;
   }

@@ -1,100 +1,46 @@
-import { type FC, useState } from "react";
-import { Pressable, ScrollView } from "react-native";
+import { Fragment, type FC, useState } from "react";
+import { View } from "react-native";
 
-import { Button } from "@/components/ui/button";
-import { Icon, IconName } from "@/components/ui/icon";
-import { Screen } from "@/components/ui/screen";
-import { Typography } from "@/components/ui/typography";
-import { usePartnerInsightsQuery } from "@/db/repositories/partner-insights-repository";
-import { PartnerInsightDialog } from "@/screens/partner/components/partner-insight-dialog";
+import { Calendar } from "@/screens/calendar/components/calendar";
+import { type CalendarState } from "@/screens/calendar/use-calendar-state";
+import { PartnerDayNote } from "@/screens/partner/components/partner-day-note";
+import { PartnerNotesSheet } from "@/screens/partner/components/partner-notes-sheet";
 import { useTheme } from "@/theme/use-theme";
-import { t } from "@/translation/use-translation";
-import { type PartnerInsight } from "@/types/partner-insight";
 
-type InsightTarget = { insight?: PartnerInsight } | null;
+interface PartnerScreenProps {
+  calendar: CalendarState;
+}
 
-const formatDays = (start: number, next?: number) => {
-  if (next === undefined) return t("partner.dayOnward", { day: start });
-  if (next - 1 === start) return t("partner.day", { day: start });
-  return t("partner.dayRange", { start, end: next - 1 });
-};
-
-const PartnerScreen: FC = () => {
+const PartnerScreen: FC<PartnerScreenProps> = (props) => {
+  const { calendar } = props;
   const theme = useTheme();
-  const [insightTarget, setInsightTarget] = useState<InsightTarget>(null);
-  const { data: insights } = usePartnerInsightsQuery();
+  const [notesVisible, setNotesVisible] = useState(false);
 
   return (
-    <Screen edges={["bottom", "left", "right"]}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Typography
-          variant="bodySmall"
-          color={theme.colors.textSecondary}
-          style={{ paddingBottom: theme.spacing.md }}
+    <Fragment>
+      <View style={{ flex: 1, gap: theme.spacing.md }}>
+        <View
+          style={{ flex: 3, minHeight: 6 * 32 + 80, maxHeight: 6 * 56 + 80 }}
         >
-          {t("partner.managerDescription")}
-        </Typography>
-        {insights.length === 0 && (
-          <Typography
-            variant="titleSmall"
-            style={{
-              paddingVertical: theme.spacing.lg,
-              borderTopWidth: 1,
-              borderTopColor: theme.colors.border,
-            }}
-          >
-            {t("partner.noInsightsFound")}
-          </Typography>
-        )}
-        {insights.map((insight, index) => (
-          <Pressable
-            key={insight.dayInCycle}
-            accessibilityRole="button"
-            accessibilityHint={t("partner.editNote")}
-            onPress={() => setInsightTarget({ insight })}
-            style={(state) => ({
-              gap: theme.spacing.xs,
-              paddingVertical: theme.spacing.lg,
-              borderTopWidth: 1,
-              borderTopColor: theme.colors.border,
-              opacity: state.pressed ? 0.6 : 1,
-            })}
-          >
-            <Typography
-              variant="bodySmallSemibold"
-              color={theme.colors.textSecondary}
-            >
-              {formatDays(insight.dayInCycle, insights[index + 1]?.dayInCycle)}
-            </Typography>
-            <Typography variant="titleSmall">{insight.name}</Typography>
-            <Typography
-              variant="bodySmall"
-              numberOfLines={3}
-              color={theme.colors.textSecondary}
-            >
-              {insight.description}
-            </Typography>
-          </Pressable>
-        ))}
-      </ScrollView>
-
-      <Button
-        leftAccessory={
-          <Icon name={IconName.PLUS} color={theme.colors.surface} size={16} />
-        }
-        onPress={() => setInsightTarget({})}
-      >
-        {t("partner.addInsight")}
-      </Button>
-
-      {insightTarget && (
-        <PartnerInsightDialog
-          insight={insightTarget.insight}
-          dayInCycle={(insights.at(-1)?.dayInCycle ?? 0) + 1}
-          onClose={() => setInsightTarget(null)}
+          <Calendar
+            events={calendar.allEvents}
+            selectedDate={calendar.selectedDate}
+            visibleMonth={calendar.visibleMonth}
+            onChangeMonth={calendar.setVisibleMonth}
+            onPressDate={calendar.setSelectedDate}
+          />
+        </View>
+        <PartnerDayNote
+          date={calendar.selectedDate}
+          dayInCycle={calendar.selectedDayInCycle}
+          onPressAllNotes={() => setNotesVisible(true)}
         />
-      )}
-    </Screen>
+      </View>
+      <PartnerNotesSheet
+        visible={notesVisible}
+        onClose={() => setNotesVisible(false)}
+      />
+    </Fragment>
   );
 };
 

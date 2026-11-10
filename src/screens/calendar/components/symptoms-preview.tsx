@@ -4,10 +4,10 @@ import { Pressable, ScrollView, View } from "react-native";
 import { Icon, IconName } from "@/components/ui/icon";
 import { IconButton } from "@/components/ui/icon-button";
 import { Typography } from "@/components/ui/typography";
-import { symptomGroups } from "@/domain/symptom-groups";
+import { getSymptomGroups } from "@/domain/symptom-groups";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
-import { type Symptoms } from "@/types/symptom";
+import { type Symptoms, type SymptomDefinition } from "@/types/symptom";
 
 interface SymptomsPreviewProps {
   symptoms: Symptoms;
@@ -18,20 +18,18 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
   const { symptoms, onPress } = props;
   const theme = useTheme();
   const [pressed, setPressed] = useState(false);
-  const selected = symptomGroups.flatMap((group) =>
-    group.types
-      .filter((symptom) => symptoms[symptom.key])
-      .map((symptom) => ({
-        ...symptom,
-        color: theme.colors[group.color],
-      })),
-  );
+  const selected: (SymptomDefinition & { color: string })[] = [];
+  for (const group of getSymptomGroups(theme.colors)) {
+    for (const symptom of group.types) {
+      if (symptoms[symptom.key]) {
+        selected.push({ ...symptom, color: group.color });
+      }
+    }
+  }
   const summary =
-    selected.length > 0
-      ? selected
-          .map((symptom) => symptom.label.replaceAll("\n", " "))
-          .join(" · ")
-      : t("calendar.symptoms.empty");
+    selected
+      .map((symptom) => symptom.label.replaceAll("\n", " "))
+      .join(" · ") || t("calendar.symptoms.empty");
 
   return (
     <View

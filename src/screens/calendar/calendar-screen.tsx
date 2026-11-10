@@ -1,52 +1,35 @@
-import { type FC, useState } from "react";
+import { Fragment, type FC, useState } from "react";
 import { Alert, View } from "react-native";
 
-import { isSameDay, startOfMonth } from "date-fns";
+import { isSameDay } from "date-fns";
 
-import { Screen } from "@/components/ui/screen";
 import {
   setMenstruationFlowForDate,
   toggleEventForDate,
-  useEventsQuery,
 } from "@/db/repositories/events-repository";
 import {
   saveSymptoms,
   useSymptomsQuery,
 } from "@/db/repositories/symptoms-repository";
-import { getDayInCycle, getVisibleCycleEvents } from "@/domain/cycle";
-import { getAllPredictions } from "@/domain/cycle-predictions";
 import { Calendar } from "@/screens/calendar/components/calendar";
-import { CalendarHeader } from "@/screens/calendar/components/calendar-header";
 import { CycleStatus } from "@/screens/calendar/components/cycle-status";
 import { DayLogCard } from "@/screens/calendar/components/day-log-card";
 import { SymptomsEditSheet } from "@/screens/calendar/components/symptoms-edit-sheet";
-import { PartnerHome } from "@/screens/partner/components/partner-home";
-import { useSettingsStore } from "@/stores/settings-store";
+import { type CalendarState } from "@/screens/calendar/use-calendar-state";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
 import { eventSchema } from "@/types/event";
 import { symptomsSchema } from "@/types/symptom";
 
-const CalendarScreen: FC = () => {
+interface CalendarScreenProps {
+  calendar: CalendarState;
+}
+
+const CalendarScreen: FC<CalendarScreenProps> = (props) => {
+  const { calendar } = props;
+  const { events, selectedDate, selectedDayInCycle } = calendar;
   const theme = useTheme();
-  const { data: events } = useEventsQuery();
   const { data: symptoms } = useSymptomsQuery();
-  const [selectedDate, setSelectedDate] = useState(() => new Date());
-  const predictionsEnabled = useSettingsStore(
-    (state) => state.settings.predictionsEnabled,
-  );
-  const [visibleMonth, setVisibleMonth] = useState(() =>
-    startOfMonth(new Date()),
-  );
-  const partnerMode = useSettingsStore((state) => state.settings.partnerMode);
-  const allEvents = getAllPredictions(events, predictionsEnabled, visibleMonth);
-  const visibleEvents = getVisibleCycleEvents(allEvents);
-  const selectedDayInCycle = getDayInCycle(
-    selectedDate,
-    getVisibleCycleEvents(
-      getAllPredictions(events, predictionsEnabled, selectedDate),
-    ),
-  );
   const selectedEvent =
     events.find((entry) => isSameDay(entry.date, selectedDate)) ??
     eventSchema.parse({ date: selectedDate });
@@ -56,62 +39,42 @@ const CalendarScreen: FC = () => {
   const [symptomsEditorVisible, setSymptomsEditorVisible] = useState(false);
 
   return (
-    <Screen
-      style={{
-        paddingTop: 0,
-        paddingBottom: theme.spacing.sm,
-        gap: theme.spacing.sm,
-      }}
-    >
-      <CalendarHeader />
-      {!partnerMode && <CycleStatus events={visibleEvents} />}
+    <Fragment>
+      <CycleStatus events={calendar.visibleEvents} />
       <View style={{ flex: 1, gap: theme.spacing.md }}>
-        <View
-          style={{
-            flex: partnerMode ? 3 : 1,
-            minHeight: partnerMode ? 6 * 32 + 80 : undefined,
-            maxHeight: partnerMode ? 6 * 56 + 80 : undefined,
-          }}
-        >
+        <View style={{ flex: 1 }}>
           <Calendar
-            events={allEvents}
+            events={calendar.allEvents}
             selectedDate={selectedDate}
-            visibleMonth={visibleMonth}
-            onChangeMonth={setVisibleMonth}
-            onPressDate={setSelectedDate}
+            visibleMonth={calendar.visibleMonth}
+            onChangeMonth={calendar.setVisibleMonth}
+            onPressDate={calendar.setSelectedDate}
           />
         </View>
-        {partnerMode && (
-          <PartnerHome date={selectedDate} dayInCycle={selectedDayInCycle} />
-        )}
-        {!partnerMode && (
-          <DayLogCard
-            event={selectedEvent}
-            symptoms={selectedSymptoms}
-            dayInCycle={selectedDayInCycle}
-            onPressSymptoms={() => setSymptomsEditorVisible(true)}
-            onChangeFlow={(flow) => {
-              void setMenstruationFlowForDate(selectedDate, flow).catch(() =>
-                Alert.alert(t("common.saveFailed")),
-              );
-            }}
-            onToggle={(key) => {
-              void toggleEventForDate(selectedDate, key).catch(() =>
-                Alert.alert(t("common.saveFailed")),
-              );
-            }}
-          />
-        )}
-      </View>
-      {!partnerMode && (
-        <SymptomsEditSheet
-          visible={symptomsEditorVisible}
+        <DayLogCard
+          event={selectedEvent}
           symptoms={selectedSymptoms}
-          onClose={() => setSymptomsEditorVisible(false)}
-          onChange={saveSymptoms}
+          dayInCycle={selectedDayInCycle}
+          onPressSymptoms={() => setSymptomsEditorVisible(true)}
+          onChangeFlow={(flow) => {
+            void setMenstruationFlowForDate(selectedDate, flow).catch(() =>
+              Alert.alert(t("common.saveFailed")),
+            );
+          }}
+          onToggle={(key) => {
+            void toggleEventForDate(selectedDate, key).catch(() =>
+              Alert.alert(t("common.saveFailed")),
+            );
+          }}
         />
-      )}
-    </Screen>
+      </View>
+      <SymptomsEditSheet
+        visible={symptomsEditorVisible}
+        symptoms={selectedSymptoms}
+        onClose={() => setSymptomsEditorVisible(false)}
+        onChange={saveSymptoms}
+      />
+    </Fragment>
   );
 };
 

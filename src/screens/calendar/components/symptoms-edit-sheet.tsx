@@ -3,7 +3,7 @@ import { ScrollView, View } from "react-native";
 
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Typography } from "@/components/ui/typography";
-import { symptomGroups } from "@/domain/symptom-groups";
+import { getSymptomGroups } from "@/domain/symptom-groups";
 import { SymptomCard } from "@/screens/calendar/components/symptom-card";
 import { useTheme } from "@/theme/use-theme";
 import { dateFormatter, t } from "@/translation/use-translation";
@@ -56,7 +56,7 @@ export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
             date: dateFormatter.format(symptoms.date),
           })}
         </Typography>
-        {symptomGroups.map((group) => (
+        {getSymptomGroups(theme.colors).map((group) => (
           <View key={group.name} style={{ gap: theme.spacing.sm }}>
             <Typography
               variant="titleSmall"
@@ -78,7 +78,7 @@ export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
                     key={symptom.key}
                     icon={symptom.icon}
                     text={symptom.label}
-                    color={theme.colors[group.color]}
+                    color={group.color}
                     filled={symptom.filled}
                     selected={symptoms[symptom.key]}
                     onPress={() => toggleSymptom(group, symptom.key)}

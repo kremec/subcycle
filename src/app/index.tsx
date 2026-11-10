@@ -1,6 +1,6 @@
 import { type FC } from "react";
 
-import CalendarScreen from "@/screens/calendar/calendar-screen";
+import { HomeScreen } from "@/screens/home/home-screen";
 import { OnboardingScreen } from "@/screens/onboarding/onboarding-screen";
 import { useSettingsStore } from "@/stores/settings-store";
 
@@ -16,7 +16,7 @@ const CalendarRoute: FC = () => {
     );
   }
 
-  return <CalendarScreen />;
+  return <HomeScreen />;
 };
 
 export default CalendarRoute;

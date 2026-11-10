@@ -16,14 +16,18 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
   const { marker, height, onPress } = props;
   const theme = useTheme();
   const { date, prediction, color, selected, pill, event } = marker;
-  const labels = [dateFormatter.format(date)];
-  if (event?.menstruationLight) labels.push(t("calendar.edit.light"));
-  if (event?.menstruationModerate) labels.push(t("calendar.edit.moderate"));
-  if (event?.menstruationHeavy) labels.push(t("calendar.edit.heavy"));
-  if (event?.menstruationSpotting) labels.push(t("calendar.edit.spotting"));
-  if (event?.ovulation) labels.push(t("calendar.edit.ovulation"));
-  if (color && prediction) labels.push(t("calendar.predicted"));
-  if (pill) labels.push(t("calendar.pillTaken"));
+  const label = [
+    dateFormatter.format(date),
+    event?.menstruationLight && t("calendar.edit.light"),
+    event?.menstruationModerate && t("calendar.edit.moderate"),
+    event?.menstruationHeavy && t("calendar.edit.heavy"),
+    event?.menstruationSpotting && t("calendar.edit.spotting"),
+    event?.ovulation && t("calendar.edit.ovulation"),
+    color && prediction && t("calendar.predicted"),
+    pill && t("calendar.pillTaken"),
+  ]
+    .filter(Boolean)
+    .join(", ");
   const size = Math.min(40, height - 2);
   const joined = marker.joinsPrevious || marker.joinsNext;
 
@@ -31,7 +35,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
-      accessibilityLabel={labels.join(", ")}
+      accessibilityLabel={label}
       accessibilityState={{ selected }}
       style={{
         width: "100%",

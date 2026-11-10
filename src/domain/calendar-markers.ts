@@ -1,11 +1,9 @@
 import { addDays, format, isLastDayOfMonth, isSameDay } from "date-fns";
 
 import { getVisibleCycleEvents } from "@/domain/cycle";
-import type { themePalettes } from "@/theme/palette";
+import type { Palette } from "@/theme/palette";
 import { type CalendarMarker } from "@/types/calendar-marker";
 import { EventKind, type Event } from "@/types/event";
-
-type Palette = (typeof themePalettes)[keyof typeof themePalettes];
 
 const dateKey = (date: Date) => format(date, "yyyy-MM-dd");
 
