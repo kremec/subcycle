@@ -21,30 +21,35 @@ export const FlowSelector: FC<FlowSelectorProps> = (props) => {
       label: t("calendar.edit.none"),
       icon: IconName.DROPLET_OFF,
       filled: false,
+      fill: theme.colors.backgroundSelected,
     },
     {
       flow: MenstruationFlow.SPOTTING,
       label: t("calendar.edit.spotting"),
       icon: IconName.CHART_BUBBLE,
       filled: true,
+      fill: theme.colors.calendarMenstruationLight,
     },
     {
       flow: MenstruationFlow.LIGHT,
       label: t("calendar.edit.light"),
       icon: IconName.DROPLET,
       filled: false,
+      fill: theme.colors.calendarMenstruationLight,
     },
     {
       flow: MenstruationFlow.MODERATE,
       label: t("calendar.edit.moderate"),
       icon: IconName.DROPLET_HALF,
       filled: true,
+      fill: theme.colors.calendarMenstruationModerate,
     },
     {
       flow: MenstruationFlow.HEAVY,
       label: t("calendar.edit.heavy"),
       icon: IconName.DROPLET,
       filled: true,
+      fill: theme.colors.calendarMenstruationHeavy,
     },
   ];
   const value = Math.max(
@@ -60,9 +65,7 @@ export const FlowSelector: FC<FlowSelectorProps> = (props) => {
     >
       {options.map((option, index) => {
         const selected = index === value;
-        const color = selected
-          ? theme.colors.accent
-          : theme.colors.textSecondary;
+        const color = selected ? theme.colors.text : theme.colors.textSecondary;
 
         return (
           <Pressable
@@ -76,7 +79,7 @@ export const FlowSelector: FC<FlowSelectorProps> = (props) => {
               minHeight: 64,
               paddingVertical: theme.spacing.sm,
               borderRadius: 12,
-              backgroundColor: selected ? theme.colors.accentSoft : undefined,
+              backgroundColor: selected ? option.fill : undefined,
               alignItems: "center",
               justifyContent: "center",
               gap: theme.spacing.xxs,
@@ -93,7 +96,11 @@ export const FlowSelector: FC<FlowSelectorProps> = (props) => {
               <Icon
                 name={option.icon}
                 size={20}
-                color={color}
+                color={
+                  option.flow === null
+                    ? color
+                    : theme.colors.calendarHeavyOutline
+                }
                 filled={option.filled}
               />
             </View>

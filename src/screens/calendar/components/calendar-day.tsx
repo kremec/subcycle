@@ -1,7 +1,6 @@
 import { type FC } from "react";
 import { Pressable, View } from "react-native";
 
-import { Icon, IconName } from "@/components/ui/icon";
 import { Typography } from "@/components/ui/typography";
 import { useTheme } from "@/theme/use-theme";
 import { dateFormatter, t } from "@/translation/use-translation";
@@ -26,6 +25,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
   if (color && prediction) labels.push(t("calendar.predicted"));
   if (pill) labels.push(t("calendar.pillTaken"));
   const size = Math.min(40, height - 2);
+  const pillSize = Math.min(6, size / 6);
   const joined = marker.joinsPrevious || marker.joinsNext;
   let outline: string = theme.colors.calendarSpottingOutline;
   if (event?.menstruationLight) outline = theme.colors.calendarLightOutline;
@@ -94,16 +94,13 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
               position: "absolute",
               bottom: 1,
               left: "50%",
-              marginLeft: -size / 10,
+              marginLeft: -pillSize / 2,
+              width: pillSize,
+              height: pillSize,
+              borderRadius: theme.radius.full,
+              backgroundColor: theme.colors.calendarPill,
             }}
-          >
-            <Icon
-              name={IconName.PILL}
-              size={size / 5}
-              filled
-              color={theme.colors.calendarPill}
-            />
-          </View>
+          />
         )}
       </View>
     </Pressable>

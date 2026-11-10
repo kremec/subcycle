@@ -43,13 +43,21 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
         alignItems: "center",
         gap: theme.spacing.sm,
         minHeight: 52,
-        paddingHorizontal: theme.spacing.sm,
         paddingVertical: theme.spacing.xs,
-        borderRadius: 12,
-        backgroundColor: theme.colors.backgroundElement,
+        marginRight: -theme.spacing.md,
         opacity: pressed ? 0.6 : 1,
       }}
     >
+      <View
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: theme.spacing.md,
+          height: 1,
+          backgroundColor: theme.colors.border,
+        }}
+      />
       <Pressable
         accessible={false}
         onPress={onPress}
@@ -70,6 +78,7 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
         </Typography>
       </Pressable>
       <ScrollView
+        key={symptoms.date.toDateString()}
         horizontal
         bounces={false}
         showsHorizontalScrollIndicator
@@ -109,7 +118,11 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
         accessibilityLabel={`${t("calendar.symptoms.groups.symptoms")}, ${summary}`}
         accessibilityHint={t("calendar.symptoms.edit")}
         onPress={onPress}
-        style={{ opacity: 1 }}
+        style={{
+          opacity: 1,
+          alignItems: "flex-end",
+          paddingRight: theme.spacing.sm,
+        }}
       >
         <Icon
           name={selected.length === 0 ? IconName.PLUS : IconName.CHEVRON_RIGHT}
