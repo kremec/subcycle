@@ -24,12 +24,16 @@ export const PartnerDayNote: FC<PartnerDayNoteProps> = (props) => {
     (insight) => dayInCycle !== null && insight.dayInCycle <= dayInCycle,
   );
   const showAllNotes = dayInCycle === null && insights.length > 0;
-  const emptyDescription =
-    dayInCycle === null
-      ? t("partner.noCycleDescription")
-      : insights.length === 0
-        ? t("partner.noNotesDescription")
-        : t("partner.noNoteTodayDescription", { day: insights[0].dayInCycle });
+  let emptyDescription: string;
+  if (dayInCycle === null) {
+    emptyDescription = t("partner.noCycleDescription");
+  } else if (insights.length === 0) {
+    emptyDescription = t("partner.noNotesDescription");
+  } else {
+    emptyDescription = t("partner.noNoteTodayDescription", {
+      day: insights[0].dayInCycle,
+    });
+  }
   const [editing, setEditing] = useState(false);
 
   return (
