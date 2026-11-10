@@ -1,17 +1,14 @@
 import { type FC } from "react";
 
 import { IconName } from "@/components/ui/icon";
-import { Slider } from "@/components/ui/slider";
-import { Typography } from "@/components/ui/typography";
+import { Switch } from "@/components/ui/switch";
 import { SettingsSectionCard } from "@/screens/settings/components/settings-section-card";
 import { useSettingsStore } from "@/stores/settings-store";
-import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
 
 export const PredictionSettingsSection: FC = () => {
-  const theme = useTheme();
-  const predictionTimespan = useSettingsStore(
-    (state) => state.settings.predictionTimespan,
+  const predictionsEnabled = useSettingsStore(
+    (state) => state.settings.predictionsEnabled,
   );
   const updateSettings = useSettingsStore((state) => state.updateSettings);
 
@@ -19,31 +16,16 @@ export const PredictionSettingsSection: FC = () => {
     <SettingsSectionCard
       icon={IconName.CHART_BUBBLE}
       title={t("settings.menstrualCyclePrediction")}
-      description={t("settings.numberOfMonthsForPrediction")}
-    >
-      <Slider
-        commitOnEnd
-        min={0}
-        max={24}
-        step={1}
-        value={predictionTimespan}
-        onValueChange={(value) => {
-          const nextPredictionTimespan = Math.round(value);
-
-          if (nextPredictionTimespan !== predictionTimespan) {
-            updateSettings({ predictionTimespan: nextPredictionTimespan });
+      description={t("settings.predictionsDescription")}
+      right={
+        <Switch
+          accessibilityLabel={t("settings.menstrualCyclePrediction")}
+          value={predictionsEnabled}
+          onValueChange={(value) =>
+            updateSettings({ predictionsEnabled: value })
           }
-        }}
-      />
-      <Typography
-        variant="bodySmall"
-        style={{ textAlign: "center" }}
-        color={theme.colors.textSecondary}
-      >
-        {predictionTimespan === 0
-          ? t("settings.noPredictions")
-          : t("settings.predictionMonths", { count: predictionTimespan })}
-      </Typography>
-    </SettingsSectionCard>
+        />
+      }
+    />
   );
 };

@@ -13,6 +13,8 @@ export enum EventKind {
   OVULATION = "OVULATION",
 }
 
+export type EventFlag = MenstruationFlow | "ovulation" | "pill";
+
 const flag = z.boolean().default(false);
 
 export const eventSchema = z

@@ -7,25 +7,24 @@
       "other": "{{count}} days"
     },
     "loading": "Loading ...",
-    "notAvailable": "N/A",
-    "save": "Save"
+    "save": "Save",
+    "saveFailed": "Could not save this change. Please try again."
   },
   "calendar": {
     "cycleStatus": {
       "menstruationLeft": "of menstruation left",
       "untilNextMenstruation": "until next menstruation",
-      "noMenstruationEvents": "No menstruation events"
+      "noMenstruationEvents": "No upcoming period"
     },
     "edit": {
-      "eventsTitle": "Events for {{date}}",
-      "predictionsTitle": "Predictions for {{date}}",
-      "dayOfCycle": "{{day}} day of cycle",
       "light": "Light",
       "moderate": "Moderate",
       "heavy": "Heavy",
       "spotting": "Spotting",
       "ovulation": "Ovulation",
-      "pill": "Pill"
+      "pill": "Pill",
+      "flow": "Menstrual flow",
+      "none": "None"
     },
     "symptoms": {
       "title": "Symptoms for {{date}}",
@@ -65,14 +64,16 @@
         "moodAnnoyed": "Annoyed",
         "moodSensitive": "Sensitive",
         "moodIrritated": "Irritated"
-      }
-    }
+      },
+      "empty": "Add symptoms"
+    },
+    "returnToday": "Return to today",
+    "predicted": "Predicted",
+    "pillTaken": "Pill taken",
+    "cycleDay": "Day {{day}}"
   },
   "navigation": {
-    "calendar": "Calendar",
-    "partner": "Partner",
-    "settings": "Settings",
-    "stats": "Stats"
+    "settings": "Settings"
   },
   "ordinal": {
     "one": "{{count}}st",
@@ -81,17 +82,26 @@
     "other": "{{count}}th"
   },
   "partner": {
-    "addInsight": "Add insight",
-    "dayInCycle": "{{day}} day in cycle",
-    "description": "Description",
-    "delete": "Delete",
-    "editInsight": "Edit insight",
-    "editInsights": "Edit insights",
-    "name": "Name",
-    "noInsightsFound": "No insights found",
-    "startDayInCycle": "Start day in cycle",
-    "startDayAlreadyUsed": "An insight already starts on this day.",
-    "todayInsights": "Today's insights"
+    "editInsights": "Cycle notes",
+    "allNotes": "All notes",
+    "editNote": "Edit note",
+    "newNote": "New note",
+    "addInsight": "Add note",
+    "noNoteToday": "No note for this cycle day",
+    "noInsightsFound": "No notes yet",
+    "noNotesDescription": "Add notes for different days of the cycle, then browse them by day.",
+    "noNoteTodayDescription": "The first note starts on cycle day {{day}}.",
+    "noCycleDescription": "A cycle day isn't available for this date. You can still browse all your notes.",
+    "managerDescription": "Each note shows from its start day until the next note begins.",
+    "day": "Day {{day}}",
+    "dayRange": "Days {{start}}–{{end}}",
+    "dayOnward": "Day {{day}} onward",
+    "name": "Title",
+    "description": "Note",
+    "startDayInCycle": "Starts on cycle day",
+    "startDayHint": "Shown until the next note starts.",
+    "startDayAlreadyUsed": "A note already starts on this day.",
+    "delete": "Delete"
   },
   "settings": {
     "addReminder": "Add reminder",
@@ -101,21 +111,15 @@
     "editReminder": "Edit reminder",
     "exportData": "Export data",
     "importData": "Import data",
-    "menstrualCyclePrediction": "Menstrual cycle prediction",
+    "menstrualCyclePrediction": "Cycle predictions",
     "menstruationReminders": "Menstruation reminders",
-    "noPredictions": "No predictions",
     "notificationMessage": "Notification message",
     "notificationMessagePlaceholder": "Leave empty to use the default message.",
     "notificationTime": "Notification time",
     "reminderRuleAtTime": "{{rule}} at {{time}}",
-    "numberOfMonthsForPrediction": "Number of months for prediction",
     "partnerMode": "Partner mode",
     "partnerModeDescription": "Show insights based on day of cycle",
     "pillReminders": "Pill reminders",
-    "predictionMonths": {
-      "one": "{{count}} month",
-      "other": "{{count}} months"
-    },
     "reminderRule": {
       "zero": "On the day",
       "one": "{{count}} day before",
@@ -127,12 +131,8 @@
     "deleteReminder": "Delete reminder",
     "exportTitle": "Export subcycle database",
     "importFailed": "Could not import the database.",
-    "exportFailed": "Could not export the database."
-  },
-  "stats": {
-    "averageCycleLength": "Average cycle length",
-    "averageHeavyPeriodLength": "Average heavy period length",
-    "averagePeriodLength": "Average period length"
+    "exportFailed": "Could not export the database.",
+    "predictionsDescription": "Estimate upcoming periods and ovulation from your logs."
   },
   "reminders": {
     "pillBody": "Don't forget to take your pill.",
@@ -142,5 +142,11 @@
       "one": "Menstruation coming in {{count}} day.",
       "other": "Menstruation coming in {{count}} days."
     }
+  },
+  "appName": "subcycle",
+  "onboarding": {
+    "title": "Know your cycle",
+    "description": "Track your period, pills and symptoms.",
+    "start": "Open calendar"
   }
 }

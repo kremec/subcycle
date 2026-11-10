@@ -1,42 +1,60 @@
-import { type FC, type ReactNode } from "react";
+import { type FC } from "react";
 import { Pressable, View } from "react-native";
 
+import { Icon, IconName } from "@/components/ui/icon";
 import { Typography } from "@/components/ui/typography";
-import { useTheme } from "@/theme/use-theme";
 
 interface EventToggleButtonProps {
   label: string;
-  icon: ReactNode;
   active: boolean;
+  icon: IconName;
   color: string;
+  backgroundColor: string;
   onPress: () => void;
 }
 
 export const EventToggleButton: FC<EventToggleButtonProps> = (props) => {
-  const { label, icon, active, color, onPress } = props;
-  const theme = useTheme();
+  const { label, active, icon, color, backgroundColor, onPress } = props;
 
   return (
     <Pressable
       onPress={onPress}
-      style={{
-        borderRadius: theme.radius.lg,
-        borderWidth: 1,
-        borderColor: active ? color : theme.colors.border,
-        backgroundColor: active ? color : "transparent",
-        paddingHorizontal: theme.spacing.lg,
-        paddingVertical: theme.spacing.md,
-      }}
+      accessibilityRole="checkbox"
+      accessibilityState={{ checked: active }}
+      style={(state) => ({
+        flex: 1,
+        minHeight: 44,
+        justifyContent: "center",
+        borderRadius: 12,
+        paddingHorizontal: 4,
+        backgroundColor: active ? backgroundColor : "transparent",
+        opacity: state.pressed ? 0.6 : 1,
+      })}
     >
       <View
         style={{
           flexDirection: "row",
           alignItems: "center",
-          gap: theme.spacing.sm,
+          justifyContent: "center",
+          gap: 4,
         }}
       >
-        {icon}
-        <Typography color={theme.colors.text}>{label}</Typography>
+        <Icon
+          name={icon}
+          size={16}
+          color={color}
+          filled={icon === IconName.PILL}
+        />
+        <Typography
+          variant="caption"
+          color={color}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          maxFontSizeMultiplier={1.5}
+          style={{ flexShrink: 1 }}
+        >
+          {label}
+        </Typography>
       </View>
     </Pressable>
   );

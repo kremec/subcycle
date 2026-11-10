@@ -1,27 +1,11 @@
-import { addDays, format, isSameDay } from "date-fns";
+import { addDays, format, isLastDayOfMonth, isSameDay } from "date-fns";
 
-import type { themePalettes } from "@/theme/palette";
-import { EventGroupShape, type CalendarMarker } from "@/types/calendar-marker";
+import { getVisibleCycleEvents } from "@/domain/cycle";
+import type { Palette } from "@/theme/palette";
+import { type CalendarMarker } from "@/types/calendar-marker";
 import { EventKind, type Event } from "@/types/event";
 
-type Palette = (typeof themePalettes)[keyof typeof themePalettes];
-
 const dateKey = (date: Date) => format(date, "yyyy-MM-dd");
-
-function getGroupShape(
-  date: Date,
-  events: Map<string, Event>,
-  kind: EventKind,
-) {
-  if (kind === EventKind.NONE) return EventGroupShape.NONE;
-
-  const previous = events.get(dateKey(addDays(date, -1)))?.kind === kind;
-  const next = events.get(dateKey(addDays(date, 1)))?.kind === kind;
-
-  if (!previous && !next) return EventGroupShape.SINGLE;
-  if (!previous) return EventGroupShape.START;
-  return next ? EventGroupShape.MIDDLE : EventGroupShape.END;
-}
 
 function getColor(event: Event | undefined, colors: Palette) {
   if (!event) return null;
@@ -43,8 +27,10 @@ export function createCalendarMarkers(
   const predictedEvents = new Map<string, Event>();
 
   for (const event of events) {
-    const target = event.prediction ? predictedEvents : actualEvents;
-    target.set(dateKey(event.date), event);
+    if (!event.prediction) actualEvents.set(dateKey(event.date), event);
+  }
+  for (const event of getVisibleCycleEvents(events)) {
+    if (event.prediction) predictedEvents.set(dateKey(event.date), event);
   }
 
   return (date: Date): CalendarMarker => {
@@ -53,14 +39,26 @@ export function createCalendarMarkers(
     const prediction = (actual?.kind ?? EventKind.NONE) === EventKind.NONE;
     const visibleEvents = prediction ? predictedEvents : actualEvents;
     const event = visibleEvents.get(key);
+    const period = event?.kind === EventKind.MENSTRUATION;
 
     return {
       date,
       color: getColor(event, colors),
-      group: getGroupShape(date, visibleEvents, event?.kind ?? EventKind.NONE),
+      joinsPrevious:
+        period &&
+        date.getDay() !== 1 &&
+        date.getDate() !== 1 &&
+        visibleEvents.get(dateKey(addDays(date, -1)))?.kind ===
+          EventKind.MENSTRUATION,
+      joinsNext:
+        period &&
+        date.getDay() !== 0 &&
+        !isLastDayOfMonth(date) &&
+        visibleEvents.get(dateKey(addDays(date, 1)))?.kind ===
+          EventKind.MENSTRUATION,
       prediction,
-      textColor: prediction ? colors.text : colors.surface,
-      dotColor: actual?.pill ? colors.calendarPill : "transparent",
+      pill: actual?.pill ?? false,
+      event,
       selected: isSameDay(date, selectedDate),
     };
   };

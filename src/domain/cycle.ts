@@ -1,4 +1,4 @@
-import { compareAsc, differenceInCalendarDays } from "date-fns";
+import { compareAsc, differenceInCalendarDays, format } from "date-fns";
 
 import { EventKind, type Event } from "@/types/event";
 
@@ -12,6 +12,23 @@ export type PeriodHistory = {
   averageCycleLength: number | null;
   averagePeriodLength: number | null;
 };
+
+export function getVisibleCycleEvents(events: Event[]): Event[] {
+  const visible = new Map<string, Event>();
+  for (const event of events) {
+    if (event.prediction && event.kind !== EventKind.NONE) {
+      visible.set(format(event.date, "yyyy-MM-dd"), event);
+    }
+  }
+  for (const event of events) {
+    if (!event.prediction && event.kind !== EventKind.NONE) {
+      visible.set(format(event.date, "yyyy-MM-dd"), event);
+    }
+  }
+  return [...visible.values()].sort((left, right) =>
+    compareAsc(left.date, right.date),
+  );
+}
 
 export function getPeriodHistory(
   events: Event[],
@@ -74,11 +91,4 @@ export function getDayInCycle(date: Date, events: Event[]): number | null {
 
 export function getAverageCycleLength(events: Event[]): number | null {
   return getPeriodHistory(events).averageCycleLength;
-}
-
-export function getAveragePeriodLength(
-  events: Event[],
-  eventFilter?: (event: Event) => boolean,
-): number | null {
-  return getPeriodHistory(events, eventFilter).averagePeriodLength;
 }

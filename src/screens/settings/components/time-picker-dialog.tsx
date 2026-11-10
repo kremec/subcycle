@@ -1,11 +1,11 @@
 import { type FC, useState } from "react";
 import { Platform, View } from "react-native";
 
-import { DateTimePicker } from "@expo/ui/community/datetime-picker";
 import { format, parse } from "date-fns";
 
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { TimePicker } from "@/components/ui/time-picker";
 import { Typography } from "@/components/ui/typography";
 import { useTheme } from "@/theme/use-theme";
 import { t } from "@/translation/use-translation";
@@ -49,15 +49,9 @@ export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
           {selectedValue}
         </Typography>
         {visible && (
-          <DateTimePicker
+          <TimePicker
             value={selectedDate}
-            mode="time"
-            presentation="inline"
-            is24Hour
-            display="spinner"
-            themeVariant={theme.themeName}
-            accentColor={theme.colors.accent}
-            onValueChange={(_, nextValue) => {
+            onChange={(nextValue) => {
               setDraftValue(format(nextValue, "HH:mm"));
             }}
           />
@@ -69,7 +63,9 @@ export const TimePickerDialog: FC<TimePickerDialogProps> = (props) => {
             </Button>
           </View>
           <View style={{ flex: 1 }}>
-            <Button onPress={handleSave}>{t("common.save")}</Button>
+            <Button variant="outline" onPress={handleSave}>
+              {t("common.save")}
+            </Button>
           </View>
         </View>
       </View>

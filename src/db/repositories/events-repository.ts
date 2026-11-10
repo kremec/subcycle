@@ -5,7 +5,12 @@ import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
 import { db } from "@/db/client";
 import { eventsTable } from "@/db/schema";
 import { logInfo } from "@/logging/logger";
-import { type Event, eventSchema } from "@/types/event";
+import {
+  type Event,
+  type EventFlag,
+  MenstruationFlow,
+  eventSchema,
+} from "@/types/event";
 
 function eventsQuery() {
   return db
@@ -26,34 +31,73 @@ export function useEventsQuery() {
   return { ...query, data: eventSchema.array().parse(query.data) };
 }
 
-export async function saveEvent(event: Event): Promise<void> {
-  if (!event.hasFlags) {
-    return db
-      .delete(eventsTable)
-      .where(eq(eventsTable.date, event.date))
-      .then(() => {
-        backupDatabaseAfterWrite();
-        logInfo("db.event", "delete");
-      });
-  }
-
-  const values = {
-    date: event.date,
-    menstruationLight: event.menstruationLight,
-    menstruationModerate: event.menstruationModerate,
-    menstruationHeavy: event.menstruationHeavy,
-    menstruationSpotting: event.menstruationSpotting,
-    ovulation: event.ovulation,
-    pill: event.pill,
-  };
-  return db
-    .insert(eventsTable)
-    .values(values)
-    .onConflictDoUpdate({ target: eventsTable.date, set: values })
-    .then(() => {
-      backupDatabaseAfterWrite();
-      logInfo("db.event", "upsert");
+function updateEventForDate(
+  date: Date,
+  update: (existing: Event) => Partial<Pick<Event, EventFlag>>,
+): void {
+  db.transaction((transaction) => {
+    const existing = eventSchema.parse(
+      transaction
+        .select()
+        .from(eventsTable)
+        .where(eq(eventsTable.date, date))
+        .get() ?? { date },
+    );
+    const event = eventSchema.parse({
+      ...existing,
+      ...update(existing),
     });
+    if (!event.hasFlags) {
+      transaction.delete(eventsTable).where(eq(eventsTable.date, date)).run();
+      return;
+    }
+    const values = {
+      date,
+      menstruationLight: event.menstruationLight,
+      menstruationModerate: event.menstruationModerate,
+      menstruationHeavy: event.menstruationHeavy,
+      menstruationSpotting: event.menstruationSpotting,
+      ovulation: event.ovulation,
+      pill: event.pill,
+    };
+    transaction
+      .insert(eventsTable)
+      .values(values)
+      .onConflictDoUpdate({ target: eventsTable.date, set: values })
+      .run();
+  });
+  backupDatabaseAfterWrite();
+}
+
+export async function toggleEventForDate(
+  date: Date,
+  key: EventFlag,
+): Promise<void> {
+  updateEventForDate(date, (existing) => ({
+    ...(key !== "pill" && {
+      menstruationLight: false,
+      menstruationModerate: false,
+      menstruationHeavy: false,
+      menstruationSpotting: false,
+      ovulation: false,
+    }),
+    [key]: !existing[key],
+  }));
+  logInfo("db.event", "toggle", { key });
+}
+
+export async function setMenstruationFlowForDate(
+  date: Date,
+  flow: MenstruationFlow | null,
+): Promise<void> {
+  updateEventForDate(date, () => ({
+    menstruationLight: flow === MenstruationFlow.LIGHT,
+    menstruationModerate: flow === MenstruationFlow.MODERATE,
+    menstruationHeavy: flow === MenstruationFlow.HEAVY,
+    menstruationSpotting: flow === MenstruationFlow.SPOTTING,
+    ...(flow !== null && { ovulation: false }),
+  }));
+  logInfo("db.event", "set-flow", { flow });
 }
 
 export async function markPillForDate(date: Date): Promise<void> {

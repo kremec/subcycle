@@ -1,12 +1,12 @@
 import { IconName } from "@/components/ui/icon";
-import { themePalettes } from "@/theme/palette";
+import type { Palette } from "@/theme/palette";
 import { t } from "@/translation/use-translation";
 import { Symptom, type SymptomGroupDefinition } from "@/types/symptom";
 
-export const symptomGroups: SymptomGroupDefinition[] = [
+export const getSymptomGroups = (colors: Palette): SymptomGroupDefinition[] => [
   {
     name: t("calendar.symptoms.groups.symptoms"),
-    color: themePalettes.light.symptomsSymptoms,
+    color: colors.symptomsSymptoms,
     types: [
       {
         key: Symptom.SYMPTOM_INTESTINAL_PROBLEMS,
@@ -52,7 +52,7 @@ export const symptomGroups: SymptomGroupDefinition[] = [
   },
   {
     name: t("calendar.symptoms.groups.discharge"),
-    color: themePalettes.light.symptomsDischarge,
+    color: colors.symptomsDischarge,
     types: [
       {
         key: Symptom.DISCHARGE_WATERY,
@@ -79,7 +79,7 @@ export const symptomGroups: SymptomGroupDefinition[] = [
   {
     name: t("calendar.symptoms.groups.libido"),
     exclusive: true,
-    color: themePalettes.light.symptomsLibido,
+    color: colors.symptomsLibido,
     types: [
       {
         key: Symptom.LIBIDO_VERY_LOW,
@@ -107,7 +107,7 @@ export const symptomGroups: SymptomGroupDefinition[] = [
   },
   {
     name: t("calendar.symptoms.groups.exercise"),
-    color: themePalettes.light.symptomsExercise,
+    color: colors.symptomsExercise,
     types: [
       {
         key: Symptom.EXERCISE_RUNNING,
@@ -133,7 +133,7 @@ export const symptomGroups: SymptomGroupDefinition[] = [
   },
   {
     name: t("calendar.symptoms.groups.moods"),
-    color: themePalettes.light.symptomsMoods,
+    color: colors.symptomsMoods,
     types: [
       {
         key: Symptom.MOOD_ANGRY,

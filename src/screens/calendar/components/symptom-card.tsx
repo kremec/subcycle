@@ -9,33 +9,48 @@ import { useTheme } from "@/theme/use-theme";
 interface SymptomCardProps {
   icon: IconName;
   text: string;
-  backgroundColor: string;
+  color: string;
   selected: boolean;
   filled?: boolean;
   onPress: () => void;
 }
 
 export const SymptomCard: FC<SymptomCardProps> = (props) => {
-  const { icon, text, backgroundColor, selected, filled, onPress } = props;
+  const { icon, text, color, selected, filled, onPress } = props;
   const theme = useTheme();
 
   return (
     <Pressable
       onPress={onPress}
-      style={{
+      accessibilityRole="checkbox"
+      accessibilityLabel={text.replaceAll("\n", " ")}
+      accessibilityState={{ checked: selected }}
+      style={(state) => ({
         minWidth: 84,
-        height: 104,
-        marginRight: theme.spacing.xs,
+        minHeight: 104,
         borderRadius: theme.radius.lg,
-        backgroundColor,
-        opacity: selected ? 1 : 0.4,
+        backgroundColor: theme.colors.surface,
+        opacity: state.pressed ? 0.7 : 1,
+        overflow: "hidden",
         borderWidth: selected ? 2 : 0,
         borderColor: theme.colors.text,
         padding: theme.spacing.sm,
         justifyContent: "center",
         alignItems: "center",
-      }}
+      })}
     >
+      <View
+        pointerEvents="none"
+        style={{
+          position: "absolute",
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          backgroundColor: color,
+          opacity: selected ? 0.2 : 0.08,
+        }}
+      />
       <View
         style={{
           alignItems: "center",
@@ -43,8 +58,12 @@ export const SymptomCard: FC<SymptomCardProps> = (props) => {
           gap: theme.spacing.xs,
         }}
       >
-        <Icon name={icon} size={36} color={theme.colors.text} filled={filled} />
-        <Typography variant="caption" style={{ textAlign: "center" }}>
+        <Icon name={icon} size={36} color={color} filled={filled} />
+        <Typography
+          variant="caption"
+          color={theme.colors.text}
+          style={{ textAlign: "center" }}
+        >
           {text}
         </Typography>
       </View>

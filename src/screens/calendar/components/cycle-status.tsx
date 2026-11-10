@@ -16,34 +16,41 @@ interface CycleStatusProps {
 export const CycleStatus: FC<CycleStatusProps> = (props) => {
   const { events } = props;
   const theme = useTheme();
-
   const today = new Date();
-  const currentOrNextPeriod = getEventPeriods(events).find(
+  const period = getEventPeriods(events).find(
     (entry) => differenceInCalendarDays(entry.end, today) >= 0,
   );
-  const isMenstruating =
-    currentOrNextPeriod !== undefined &&
-    differenceInCalendarDays(today, currentOrNextPeriod.start) >= 0;
-  const targetDate = isMenstruating
-    ? currentOrNextPeriod?.end
-    : currentOrNextPeriod?.start;
-  const days = targetDate ? differenceInCalendarDays(targetDate, today) : null;
+  const current =
+    period !== undefined && differenceInCalendarDays(today, period.start) >= 0;
+  const target = current ? period?.end : period?.start;
+  const days = target ? differenceInCalendarDays(target, today) : null;
 
   return (
-    <View
-      style={{
-        paddingBottom: theme.spacing.lg,
-      }}
-    >
+    <View style={{ paddingVertical: theme.spacing.md, gap: 2 }}>
       {days !== null && (
         <Fragment>
-          <Typography variant="display" style={{ textAlign: "center" }}>
+          <Typography
+            variant="display"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            maxFontSizeMultiplier={1.5}
+            style={{ textAlign: "center" }}
+          >
             {t("common.days", { count: days })}
           </Typography>
-          <Typography variant="titleSmall" style={{ textAlign: "center" }}>
-            {isMenstruating
-              ? t("calendar.cycleStatus.menstruationLeft")
-              : t("calendar.cycleStatus.untilNextMenstruation")}
+          <Typography
+            variant="body"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            maxFontSizeMultiplier={1.5}
+            color={theme.colors.textSecondary}
+            style={{ textAlign: "center" }}
+          >
+            {t(
+              current
+                ? "calendar.cycleStatus.menstruationLeft"
+                : "calendar.cycleStatus.untilNextMenstruation",
+            )}
           </Typography>
         </Fragment>
       )}

@@ -50,7 +50,7 @@ export const symptomsSchema = z
 
 export type Symptoms = z.infer<typeof symptomsSchema>;
 
-type SymptomDefinition = {
+export type SymptomDefinition = {
   key: Symptom;
   label: string;
   icon: IconName;

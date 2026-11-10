@@ -20,7 +20,7 @@ export const useSettingsStore = create(
     {
       name: "subcycle.settings",
       storage: createJSONStorage(() => localStorage),
-      version: 1,
+      version: 2,
       migrate: migrateSettings,
     },
   ),
