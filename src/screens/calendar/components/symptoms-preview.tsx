@@ -1,4 +1,4 @@
-import { type FC } from "react";
+import { type FC, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 
 import { Icon, IconName } from "@/components/ui/icon";
@@ -17,6 +17,7 @@ interface SymptomsPreviewProps {
 export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
   const { symptoms, onPress } = props;
   const theme = useTheme();
+  const [pressed, setPressed] = useState(false);
   const selected = symptomGroups.flatMap((group) =>
     group.types
       .filter((symptom) => symptoms[symptom.key])
@@ -34,6 +35,9 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
 
   return (
     <View
+      onTouchStart={() => setPressed(true)}
+      onTouchEnd={() => setPressed(false)}
+      onTouchCancel={() => setPressed(false)}
       style={{
         flexDirection: "row",
         alignItems: "center",
@@ -43,17 +47,17 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
         paddingVertical: theme.spacing.xs,
         borderRadius: 12,
         backgroundColor: theme.colors.backgroundElement,
+        opacity: pressed ? 0.6 : 1,
       }}
     >
       <Pressable
         accessible={false}
         onPress={onPress}
-        style={(state) => ({
+        style={{
           flexShrink: 0,
           minHeight: 44,
           justifyContent: "center",
-          opacity: state.pressed ? 0.6 : 1,
-        })}
+        }}
       >
         <Typography
           variant="bodySmallSemibold"
@@ -80,14 +84,13 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
         <Pressable
           accessible={false}
           onPress={onPress}
-          style={(state) => ({
+          style={{
             flex: 1,
             flexDirection: "row",
             alignItems: "center",
             gap: theme.spacing.sm,
             minHeight: 44,
-            opacity: state.pressed ? 0.6 : 1,
-          })}
+          }}
         >
           {selected.map((symptom) => (
             <Icon
@@ -106,6 +109,7 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
         accessibilityLabel={`${t("calendar.symptoms.groups.symptoms")}, ${summary}`}
         accessibilityHint={t("calendar.symptoms.edit")}
         onPress={onPress}
+        style={{ opacity: 1 }}
       >
         <Icon
           name={selected.length === 0 ? IconName.PLUS : IconName.CHEVRON_RIGHT}

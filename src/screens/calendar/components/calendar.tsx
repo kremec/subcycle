@@ -46,7 +46,11 @@ export const Calendar: FC<CalendarProps> = (props) => {
         hideExtraDays
         firstDay={1}
         testID="cycle-calendar"
-        style={{ backgroundColor: theme.colors.background }}
+        style={{
+          backgroundColor: theme.colors.background,
+          paddingLeft: 0,
+          paddingRight: 0,
+        }}
         renderHeader={(date) => (
           <Pressable
             accessibilityRole="button"
