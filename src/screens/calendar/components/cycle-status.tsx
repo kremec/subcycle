@@ -34,12 +34,7 @@ export const CycleStatus: FC<CycleStatusProps> = (props) => {
             numberOfLines={1}
             adjustsFontSizeToFit
             maxFontSizeMultiplier={1.5}
-            style={{
-              textAlign: "center",
-              fontSize: 40,
-              fontWeight: "600",
-              letterSpacing: -1.2,
-            }}
+            style={{ textAlign: "center" }}
           >
             {t("common.days", { count: days })}
           </Typography>

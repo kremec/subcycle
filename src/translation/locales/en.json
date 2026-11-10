@@ -107,12 +107,7 @@
     "startDayInCycle": "Starts on cycle day",
     "startDayHint": "Shown until the next note starts.",
     "startDayAlreadyUsed": "A note already starts on this day.",
-    "delete": "Delete",
-    "period": "Period",
-    "ovulation": "Ovulation",
-    "expectedUntil": "Expected until {{date}}",
-    "until": "Until {{date}}",
-    "notKnownYet": "Not known yet"
+    "delete": "Delete"
   },
   "settings": {
     "addReminder": "Add reminder",

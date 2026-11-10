@@ -20,7 +20,6 @@ import { CalendarHeader } from "@/screens/calendar/components/calendar-header";
 import { CycleStatus } from "@/screens/calendar/components/cycle-status";
 import { DayLogCard } from "@/screens/calendar/components/day-log-card";
 import { SymptomsEditSheet } from "@/screens/calendar/components/symptoms-edit-sheet";
-import { PartnerCycleGlance } from "@/screens/partner/components/partner-cycle-glance";
 import { PartnerHome } from "@/screens/partner/components/partner-home";
 import { useSettingsStore } from "@/stores/settings-store";
 import { useTheme } from "@/theme/use-theme";
@@ -66,7 +65,6 @@ const CalendarScreen: FC = () => {
     >
       <CalendarHeader />
       {!partnerMode && <CycleStatus events={visibleEvents} />}
-      {partnerMode && <PartnerCycleGlance events={visibleEvents} />}
       <View style={{ flex: 1, gap: theme.spacing.md }}>
         <View
           style={{

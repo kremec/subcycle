@@ -17,7 +17,9 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
   const { symptoms, onPress } = props;
   const theme = useTheme();
   const selected = symptomGroups.flatMap((group) =>
-    group.types.filter((symptom) => symptoms[symptom.key]),
+    group.types
+      .filter((symptom) => symptoms[symptom.key])
+      .map((symptom) => ({ ...symptom, color: group.color })),
   );
   const summary =
     selected.length > 0
@@ -44,29 +46,54 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
         opacity: state.pressed ? 0.6 : 1,
       })}
     >
-      <View style={{ flex: 1, gap: 2 }}>
-        <Typography variant="captionSemibold" maxFontSizeMultiplier={1.5}>
-          {t("calendar.symptoms.groups.symptoms")}
-        </Typography>
-        <Typography
-          variant="caption"
-          color={theme.colors.textSecondary}
-          numberOfLines={1}
-          maxFontSizeMultiplier={1.5}
-        >
-          {summary}
-        </Typography>
-      </View>
-      <View style={{ flexDirection: "row", gap: theme.spacing.xs }}>
+      <Typography
+        variant="bodySmallSemibold"
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        maxFontSizeMultiplier={1.5}
+        style={{ flex: 1 }}
+      >
+        {t("calendar.symptoms.groups.symptoms")}
+      </Typography>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: theme.spacing.xs,
+        }}
+      >
         {selected.slice(0, 3).map((symptom) => (
-          <Icon
+          <View
             key={symptom.key}
-            name={symptom.icon}
-            filled={symptom.filled}
-            size={16}
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 10,
+              backgroundColor: `${symptom.color}66`,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Icon
+              name={symptom.icon}
+              filled={symptom.filled}
+              size={26}
+              color={theme.colors.text}
+            />
+          </View>
+        ))}
+        {selected.length > 3 && (
+          <Typography variant="captionSemibold" maxFontSizeMultiplier={1.5}>
+            +{selected.length - 3}
+          </Typography>
+        )}
+        {selected.length === 0 && (
+          <Icon
+            name={IconName.PLUS}
+            size={24}
             color={theme.colors.textSecondary}
           />
-        ))}
+        )}
       </View>
       <Icon
         name={IconName.CHEVRON_RIGHT}
