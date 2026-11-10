@@ -82,7 +82,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
           style={{
             fontWeight: selected ? "900" : "400",
             fontSize: selected ? theme.typography.body.fontSize : undefined,
-            lineHeight: selected ? 18 : undefined,
+            lineHeight: 18,
             transform: [{ scale: selected ? 1.08 : 1 }],
           }}
         >

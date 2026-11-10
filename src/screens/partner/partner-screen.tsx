@@ -68,7 +68,7 @@ const PartnerScreen: FC = () => {
             </Typography>
             <Typography variant="titleSmall">{insight.name}</Typography>
             <Typography
-              variant="bodySmallRelaxed"
+              variant="bodySmall"
               numberOfLines={3}
               color={theme.colors.textSecondary}
             >

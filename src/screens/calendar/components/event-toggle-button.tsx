@@ -54,7 +54,7 @@ export const EventToggleButton: FC<EventToggleButtonProps> = (props) => {
           <Icon name={icon} size={16} color={color} filled={icon === "pill"} />
         )}
         <Typography
-          variant="captionSemibold"
+          variant="caption"
           color={color}
           numberOfLines={1}
           adjustsFontSizeToFit

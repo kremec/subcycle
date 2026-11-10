@@ -50,7 +50,7 @@ export const DayLogCard: FC<DayLogCardProps> = (props) => {
         }}
       >
         <Typography
-          variant="bodySemibold"
+          variant="bodyStrong"
           numberOfLines={1}
           adjustsFontSizeToFit
           maxFontSizeMultiplier={1.5}

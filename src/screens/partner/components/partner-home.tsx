@@ -66,7 +66,7 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
             })}
           >
             <Typography
-              variant="captionSemibold"
+              variant="caption"
               maxFontSizeMultiplier={1.5}
               color={theme.colors.accent}
             >
@@ -113,7 +113,7 @@ export const PartnerHome: FC<PartnerHomeProps> = (props) => {
         }}
       >
         {selectedInsight && (
-          <Typography variant="bodyRegular" maxFontSizeMultiplier={1.5}>
+          <Typography variant="body" maxFontSizeMultiplier={1.5}>
             {selectedInsight.description}
           </Typography>
         )}

@@ -98,7 +98,7 @@ export const FlowSelector: FC<FlowSelectorProps> = (props) => {
               />
             </View>
             <Typography
-              variant="captionSemibold"
+              variant="caption"
               color={color}
               numberOfLines={1}
               adjustsFontSizeToFit
