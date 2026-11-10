@@ -9,7 +9,7 @@ const projectId = "48d6445a-942c-474d-be16-5d46d6f25603";
 export default {
   name: IS_DEV ? "subcycle (DEV)" : "subcycle",
   slug: "subcycle",
-  version: "6.2.0",
+  version: "6.3.0",
   runtimeVersion: {
     policy: "fingerprint",
   },
