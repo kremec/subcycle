@@ -68,27 +68,41 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
       <ScrollView
         horizontal
         bounces={false}
-        showsHorizontalScrollIndicator={false}
+        showsHorizontalScrollIndicator
+        persistentScrollbar
         accessibilityElementsHidden
         importantForAccessibility="no-hide-descendants"
         style={{ flex: 1 }}
         contentContainerStyle={{
-          alignItems: "center",
-          gap: theme.spacing.sm,
+          flexGrow: 1,
         }}
       >
-        {selected.map((symptom) => (
-          <Icon
-            key={symptom.key}
-            name={symptom.icon}
-            filled={symptom.filled}
-            size={28}
-            color={symptom.color}
-          />
-        ))}
+        <Pressable
+          accessible={false}
+          onPress={onPress}
+          style={(state) => ({
+            flex: 1,
+            flexDirection: "row",
+            alignItems: "center",
+            gap: theme.spacing.sm,
+            minHeight: 44,
+            opacity: state.pressed ? 0.6 : 1,
+          })}
+        >
+          {selected.map((symptom) => (
+            <Icon
+              key={symptom.key}
+              name={symptom.icon}
+              filled={symptom.filled}
+              size={28}
+              color={symptom.color}
+            />
+          ))}
+        </Pressable>
       </ScrollView>
       <IconButton
         plain
+        size={48}
         accessibilityLabel={`${t("calendar.symptoms.groups.symptoms")}, ${summary}`}
         accessibilityHint={t("calendar.symptoms.edit")}
         onPress={onPress}
