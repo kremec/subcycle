@@ -84,7 +84,7 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
         >
           {selected.length === 0 && (
             <Typography
-              variant="caption"
+              variant="bodySmall"
               color={theme.colors.textSecondary}
               numberOfLines={1}
               adjustsFontSizeToFit

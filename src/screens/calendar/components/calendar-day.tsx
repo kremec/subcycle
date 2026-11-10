@@ -25,7 +25,6 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
   if (color && prediction) labels.push(t("calendar.predicted"));
   if (pill) labels.push(t("calendar.pillTaken"));
   const size = Math.min(40, height - 2);
-  const pillSize = Math.min(5, size / 8);
   const joined = marker.joinsPrevious || marker.joinsNext;
   let outline: string = theme.colors.calendarSpottingOutline;
   if (event?.menstruationLight) outline = theme.colors.calendarLightOutline;
@@ -92,10 +91,11 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
           <View
             style={{
               position: "absolute",
-              top: theme.spacing.xs,
-              right: theme.spacing.xs,
-              width: pillSize,
-              height: pillSize,
+              bottom: 3,
+              left: "50%",
+              marginLeft: -6,
+              width: 12,
+              height: 3,
               borderRadius: theme.radius.full,
               backgroundColor: theme.colors.calendarPill,
             }}
