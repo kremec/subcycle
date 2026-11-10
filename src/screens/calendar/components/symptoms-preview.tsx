@@ -45,7 +45,6 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
         paddingVertical: theme.spacing.xs,
         marginRight: -theme.spacing.md,
         marginBottom: -theme.spacing.md,
-        opacity: pressed ? 0.6 : 1,
       }}
     >
       <View
@@ -66,7 +65,7 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
         persistentScrollbar
         accessibilityElementsHidden
         importantForAccessibility="no-hide-descendants"
-        style={{ flex: 1 }}
+        style={{ flex: 1, opacity: pressed ? 0.6 : 1 }}
         contentContainerStyle={{
           flexGrow: 1,
         }}
@@ -112,14 +111,14 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
         accessibilityHint={t("calendar.symptoms.edit")}
         onPress={onPress}
         style={{
-          opacity: 1,
+          opacity: pressed ? 0.6 : 1,
           alignItems: "flex-end",
           paddingRight: theme.spacing.sm,
         }}
       >
         <Icon
           name={selected.length === 0 ? IconName.PLUS : IconName.CHEVRON_RIGHT}
-          size={selected.length === 0 ? 24 : 16}
+          size={selected.length === 0 ? 20 : 16}
           color={theme.colors.textSecondary}
         />
       </IconButton>
