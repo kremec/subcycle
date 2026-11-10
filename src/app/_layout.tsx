@@ -3,6 +3,7 @@ import { Fragment, type FC } from "react";
 import { AppRoot } from "@/components/app-root";
 import { AppStatusBar } from "@/components/app-status-bar";
 
+// Keep the calendar behind notes opened from a deep link.
 export const unstable_settings = { anchor: "index" };
 
 const RootLayout: FC = () => {

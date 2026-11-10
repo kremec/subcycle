@@ -71,7 +71,6 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
         }}
       >
         <Pressable
-          accessible={false}
           onPress={onPress}
           style={{
             flex: 1,
@@ -88,7 +87,6 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
               numberOfLines={1}
               adjustsFontSizeToFit
               maxFontSizeMultiplier={1.5}
-              accessible={false}
             >
               {t("calendar.symptoms.empty")}
             </Typography>

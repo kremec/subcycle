@@ -20,7 +20,6 @@ export const EventToggleButton: FC<EventToggleButtonProps> = (props) => {
     <Pressable
       onPress={onPress}
       accessibilityRole="checkbox"
-      accessibilityLabel={label}
       accessibilityState={{ checked: active }}
       style={(state) => ({
         flex: 1,

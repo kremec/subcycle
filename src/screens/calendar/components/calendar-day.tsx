@@ -26,12 +26,6 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
   if (pill) labels.push(t("calendar.pillTaken"));
   const size = Math.min(40, height - 2);
   const joined = marker.joinsPrevious || marker.joinsNext;
-  let outline: string = theme.colors.calendarSpottingOutline;
-  if (event?.menstruationLight) outline = theme.colors.calendarLightOutline;
-  if (event?.menstruationModerate)
-    outline = theme.colors.calendarModerateOutline;
-  if (event?.menstruationHeavy) outline = theme.colors.rose;
-  if (event?.ovulation) outline = theme.colors.blue;
 
   return (
     <Pressable
@@ -56,8 +50,8 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
             width: joined ? undefined : size,
             marginLeft: joined ? 0 : -size / 2,
             backgroundColor: prediction ? undefined : color,
-            borderColor: outline,
-            borderWidth: prediction ? 1.5 : 0,
+            borderColor: color,
+            borderWidth: prediction ? 2 : 0,
             borderLeftWidth: marker.joinsPrevious ? 0 : undefined,
             borderRightWidth: marker.joinsNext ? 0 : undefined,
             borderTopLeftRadius: marker.joinsPrevious ? 0 : size * 0.28,
@@ -97,7 +91,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
               width: 12,
               height: 3,
               borderRadius: theme.radius.full,
-              backgroundColor: theme.colors.green,
+              backgroundColor: theme.colors.calendarPill,
             }}
           />
         )}

@@ -71,7 +71,6 @@ export const FlowSelector: FC<FlowSelectorProps> = (props) => {
           <Pressable
             key={option.flow ?? "none"}
             accessibilityRole="radio"
-            accessibilityLabel={option.label}
             accessibilityState={{ selected }}
             onPress={() => onChange(option.flow)}
             style={{
@@ -96,7 +95,9 @@ export const FlowSelector: FC<FlowSelectorProps> = (props) => {
               <Icon
                 name={option.icon}
                 size={20}
-                color={option.flow === null ? color : theme.colors.rose}
+                color={
+                  option.flow === null ? color : theme.colors.menstruationText
+                }
                 filled={option.filled}
               />
             </View>
