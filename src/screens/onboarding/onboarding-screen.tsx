@@ -50,6 +50,22 @@ export const OnboardingScreen: FC<OnboardingScreenProps> = (props) => {
               {t("onboarding.description")}
             </Typography>
           </View>
+          <View style={{ gap: theme.spacing.sm }}>
+            <Typography variant="bodyStrong">
+              {t("onboarding.privacyTitle")}
+            </Typography>
+            <Typography variant="bodySmall" color={theme.colors.textSecondary}>
+              {t("onboarding.privacyDescription")}
+            </Typography>
+          </View>
+          <View style={{ gap: theme.spacing.sm }}>
+            <Typography variant="bodyStrong">
+              {t("onboarding.freeTitle")}
+            </Typography>
+            <Typography variant="bodySmall" color={theme.colors.textSecondary}>
+              {t("onboarding.freeDescription")}
+            </Typography>
+          </View>
         </ScrollView>
         <Button
           onPress={onContinue}

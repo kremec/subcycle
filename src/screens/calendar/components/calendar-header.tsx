@@ -13,7 +13,7 @@ export const CalendarHeader: FC = () => {
 
   return (
     <Fragment>
-      <Header title={t("appName")} style={{ paddingHorizontal: 0 }}>
+      <Header title={t("appName")}>
         <IconButton
           size={44}
           accessibilityLabel={t("navigation.settings")}

@@ -1,4 +1,5 @@
 import { type FC } from "react";
+import { View } from "react-native";
 
 import { Screen } from "@/components/ui/screen";
 import CalendarScreen from "@/screens/calendar/calendar-screen";
@@ -16,14 +17,23 @@ export const HomeScreen: FC = () => {
   return (
     <Screen
       style={{
+        paddingHorizontal: 0,
         paddingTop: 0,
         paddingBottom: theme.spacing.sm,
         gap: theme.spacing.sm,
       }}
     >
       <CalendarHeader />
-      {!partnerMode && <CalendarScreen calendar={calendar} />}
-      {partnerMode && <PartnerScreen calendar={calendar} />}
+      <View
+        style={{
+          flex: 1,
+          paddingHorizontal: theme.spacing.lg,
+          gap: theme.spacing.sm,
+        }}
+      >
+        {!partnerMode && <CalendarScreen calendar={calendar} />}
+        {partnerMode && <PartnerScreen calendar={calendar} />}
+      </View>
     </Screen>
   );
 };
