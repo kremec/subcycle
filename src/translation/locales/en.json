@@ -75,6 +75,12 @@
   "navigation": {
     "settings": "Settings"
   },
+  "ordinal": {
+    "one": "{{count}}st",
+    "two": "{{count}}nd",
+    "few": "{{count}}rd",
+    "other": "{{count}}th"
+  },
   "partner": {
     "editInsights": "Cycle notes",
     "allNotes": "All notes",

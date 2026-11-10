@@ -36,6 +36,7 @@ export const locale =
   preferredLocales.find((name) => Object.hasOwn(translations, name)) ?? "en";
 
 const i18n = new I18n(translations, { locale, enableFallback: true });
+const ordinalI18n = new I18n(translations, { locale, enableFallback: true });
 
 for (const name of Object.keys(translations)) {
   const pluralizer =
@@ -44,10 +45,18 @@ for (const name of Object.keys(translations)) {
     plurals.en;
 
   i18n.pluralization.register(name, createPluralizer({ pluralizer }));
+  ordinalI18n.pluralization.register(
+    name,
+    createPluralizer({ pluralizer, includeZero: false, ordinal: true }),
+  );
 }
 
-export function t(key: TranslationKeys, options?: TranslateOptions): string {
-  const sourceLocale = i18n.locales
+function translate(
+  translator: I18n,
+  key: TranslationKeys,
+  options?: TranslateOptions,
+): string {
+  const sourceLocale = translator.locales
     .get(options?.locale ?? locale)
     .find((name) => {
       let value: Translation | undefined = translations[name];
@@ -61,15 +70,21 @@ export function t(key: TranslationKeys, options?: TranslateOptions): string {
         options?.count != null
       ) {
         const forms = value;
-        return i18n.pluralization
-          .get(name)(i18n, options.count)
+        return translator.pluralization
+          .get(name)(translator, options.count)
           .some((category) => forms[category] != null);
       }
       return value != null;
     });
 
-  return i18n.t(key, { ...options, locale: sourceLocale });
+  return translator.t(key, { ...options, locale: sourceLocale });
 }
+
+export const t = (key: TranslationKeys, options?: TranslateOptions) =>
+  translate(i18n, key, options);
+
+export const formatOrdinal = (value: number) =>
+  translate(ordinalI18n, "ordinal", { count: value });
 
 export const dateFormatter = new Intl.DateTimeFormat(locale, {
   calendar: "gregory",

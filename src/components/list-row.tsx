@@ -7,12 +7,13 @@ import { useTheme } from "@/theme/use-theme";
 interface ListRowProps {
   title: string;
   description?: string;
+  left?: ReactNode;
   right?: ReactNode;
   onPress?: () => void;
 }
 
 export const ListRow: FC<ListRowProps> = (props) => {
-  const { title, description, right, onPress } = props;
+  const { title, description, left, right, onPress } = props;
   const theme = useTheme();
 
   return (
@@ -24,6 +25,7 @@ export const ListRow: FC<ListRowProps> = (props) => {
         alignItems: "center",
       }}
     >
+      {left}
       <View style={{ flex: 1, gap: theme.spacing.xxs }}>
         <Typography variant="bodyStrong">{title}</Typography>
         {description && (
