@@ -46,3 +46,7 @@ On stats tab, you can see following statistics about your cycles:
 - Average heavy period length
 
 On partner insights tab, your partner can setup friendly insights into your cycle.
+
+## License
+
+This project is source available under the [Sustainable Use License, version 1.0](LICENSE.md).
