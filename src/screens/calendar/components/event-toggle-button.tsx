@@ -3,7 +3,6 @@ import { Pressable, View } from "react-native";
 
 import { Icon, type IconName } from "@/components/ui/icon";
 import { Typography } from "@/components/ui/typography";
-import { useTheme } from "@/theme/use-theme";
 
 interface EventToggleButtonProps {
   label: string;
@@ -15,16 +14,7 @@ interface EventToggleButtonProps {
 }
 
 export const EventToggleButton: FC<EventToggleButtonProps> = (props) => {
-  const {
-    label,
-    active,
-    icon,
-    color: activeColor,
-    backgroundColor,
-    onPress,
-  } = props;
-  const theme = useTheme();
-  const color = active ? activeColor : theme.colors.textSecondary;
+  const { label, active, icon, color, backgroundColor, onPress } = props;
 
   return (
     <Pressable

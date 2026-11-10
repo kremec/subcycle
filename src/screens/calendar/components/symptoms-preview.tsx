@@ -42,9 +42,9 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
         flexDirection: "row",
         alignItems: "center",
         gap: theme.spacing.sm,
-        minHeight: 52,
         paddingVertical: theme.spacing.xs,
         marginRight: -theme.spacing.md,
+        marginBottom: -theme.spacing.md,
         opacity: pressed ? 0.6 : 1,
       }}
     >
@@ -68,7 +68,8 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
         }}
       >
         <Typography
-          variant="bodySmallSemibold"
+          variant="caption"
+          color={theme.colors.textSecondary}
           numberOfLines={1}
           adjustsFontSizeToFit
           maxFontSizeMultiplier={1.5}
