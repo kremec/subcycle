@@ -96,11 +96,7 @@ export const FlowSelector: FC<FlowSelectorProps> = (props) => {
               <Icon
                 name={option.icon}
                 size={20}
-                color={
-                  option.flow === null
-                    ? color
-                    : theme.colors.calendarHeavyOutline
-                }
+                color={option.flow === null ? color : theme.colors.rose}
                 filled={option.filled}
               />
             </View>

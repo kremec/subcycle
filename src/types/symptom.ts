@@ -61,6 +61,5 @@ export type SymptomGroupDefinition = {
   name: string;
   exclusive?: boolean;
   color: PaletteColor;
-  iconColor: { light: PaletteColor; dark: PaletteColor };
   types: SymptomDefinition[];
 };

@@ -30,8 +30,8 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
   if (event?.menstruationLight) outline = theme.colors.calendarLightOutline;
   if (event?.menstruationModerate)
     outline = theme.colors.calendarModerateOutline;
-  if (event?.menstruationHeavy) outline = theme.colors.calendarHeavyOutline;
-  if (event?.ovulation) outline = theme.colors.calendarOvulationOutline;
+  if (event?.menstruationHeavy) outline = theme.colors.rose;
+  if (event?.ovulation) outline = theme.colors.blue;
 
   return (
     <Pressable
@@ -97,7 +97,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
               width: 12,
               height: 3,
               borderRadius: theme.radius.full,
-              backgroundColor: theme.colors.calendarPill,
+              backgroundColor: theme.colors.green,
             }}
           />
         )}

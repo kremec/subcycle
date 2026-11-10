@@ -23,7 +23,7 @@ export const SymptomsPreview: FC<SymptomsPreviewProps> = (props) => {
       .filter((symptom) => symptoms[symptom.key])
       .map((symptom) => ({
         ...symptom,
-        color: group.iconColor[theme.themeName],
+        color: theme.colors[group.color],
       })),
   );
   const summary =

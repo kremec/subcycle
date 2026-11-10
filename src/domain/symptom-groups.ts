@@ -1,16 +1,11 @@
 import { IconName } from "@/components/ui/icon";
-import { themePalettes } from "@/theme/palette";
 import { t } from "@/translation/use-translation";
 import { Symptom, type SymptomGroupDefinition } from "@/types/symptom";
 
 export const symptomGroups: SymptomGroupDefinition[] = [
   {
     name: t("calendar.symptoms.groups.symptoms"),
-    color: themePalettes.light.symptomsSymptoms,
-    iconColor: {
-      light: themePalettes.light.symptomsSymptomsIcon,
-      dark: themePalettes.dark.symptomsSymptomsIcon,
-    },
+    color: "orange",
     types: [
       {
         key: Symptom.SYMPTOM_INTESTINAL_PROBLEMS,
@@ -56,11 +51,7 @@ export const symptomGroups: SymptomGroupDefinition[] = [
   },
   {
     name: t("calendar.symptoms.groups.discharge"),
-    color: themePalettes.light.symptomsDischarge,
-    iconColor: {
-      light: themePalettes.light.symptomsDischargeIcon,
-      dark: themePalettes.dark.symptomsDischargeIcon,
-    },
+    color: "blue",
     types: [
       {
         key: Symptom.DISCHARGE_WATERY,
@@ -87,11 +78,7 @@ export const symptomGroups: SymptomGroupDefinition[] = [
   {
     name: t("calendar.symptoms.groups.libido"),
     exclusive: true,
-    color: themePalettes.light.symptomsLibido,
-    iconColor: {
-      light: themePalettes.light.symptomsLibidoIcon,
-      dark: themePalettes.dark.symptomsLibidoIcon,
-    },
+    color: "rose",
     types: [
       {
         key: Symptom.LIBIDO_VERY_LOW,
@@ -119,11 +106,7 @@ export const symptomGroups: SymptomGroupDefinition[] = [
   },
   {
     name: t("calendar.symptoms.groups.exercise"),
-    color: themePalettes.light.symptomsExercise,
-    iconColor: {
-      light: themePalettes.light.symptomsExerciseIcon,
-      dark: themePalettes.dark.symptomsExerciseIcon,
-    },
+    color: "green",
     types: [
       {
         key: Symptom.EXERCISE_RUNNING,
@@ -149,11 +132,7 @@ export const symptomGroups: SymptomGroupDefinition[] = [
   },
   {
     name: t("calendar.symptoms.groups.moods"),
-    color: themePalettes.light.symptomsMoods,
-    iconColor: {
-      light: themePalettes.light.symptomsMoodsIcon,
-      dark: themePalettes.dark.symptomsMoodsIcon,
-    },
+    color: "purple",
     types: [
       {
         key: Symptom.MOOD_ANGRY,

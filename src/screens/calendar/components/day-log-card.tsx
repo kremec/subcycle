@@ -75,16 +75,16 @@ export const DayLogCard: FC<DayLogCardProps> = (props) => {
         <EventToggleButton
           label={t("calendar.edit.ovulation")}
           icon={IconName.FLOWER}
-          color={theme.colors.calendarOvulationOutline}
-          backgroundColor={theme.colors.calendarOvulation}
+          color={theme.colors.blue}
+          backgroundColor={theme.colors.blueSoft}
           active={event.ovulation}
           onPress={() => onToggle("ovulation")}
         />
         <EventToggleButton
           label={t("calendar.edit.pill")}
           icon={IconName.PILL}
-          color={theme.colors.calendarPill}
-          backgroundColor={theme.colors.pillSoft}
+          color={theme.colors.green}
+          backgroundColor={theme.colors.greenSoft}
           active={event.pill}
           onPress={() => onToggle("pill")}
         />

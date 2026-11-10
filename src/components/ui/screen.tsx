@@ -1,5 +1,5 @@
 import { type FC, type PropsWithChildren } from "react";
-import { ScrollView, type StyleProp, View, type ViewStyle } from "react-native";
+import { type StyleProp, View, type ViewStyle } from "react-native";
 
 import {
   SafeAreaProvider,
@@ -10,13 +10,12 @@ import {
 import { useTheme } from "@/theme/use-theme";
 
 interface ScreenProps {
-  scroll?: boolean;
   edges?: SafeAreaViewProps["edges"];
   style?: StyleProp<ViewStyle>;
 }
 
 export const Screen: FC<PropsWithChildren<ScreenProps>> = (props) => {
-  const { children, scroll = false, edges, style } = props;
+  const { children, edges, style } = props;
   const theme = useTheme();
   const contentStyle = {
     width: "100%" as const,
@@ -33,18 +32,7 @@ export const Screen: FC<PropsWithChildren<ScreenProps>> = (props) => {
         edges={edges}
         style={{ flex: 1, backgroundColor: theme.colors.background }}
       >
-        {scroll && (
-          <ScrollView
-            contentContainerStyle={[contentStyle, style]}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            {children}
-          </ScrollView>
-        )}
-        {!scroll && (
-          <View style={[contentStyle, { flex: 1 }, style]}>{children}</View>
-        )}
+        <View style={[contentStyle, { flex: 1 }, style]}>{children}</View>
       </SafeAreaView>
     </SafeAreaProvider>
   );

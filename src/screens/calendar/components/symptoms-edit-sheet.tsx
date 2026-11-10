@@ -78,7 +78,7 @@ export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
                     key={symptom.key}
                     icon={symptom.icon}
                     text={symptom.label}
-                    backgroundColor={group.color}
+                    color={theme.colors[group.color]}
                     filled={symptom.filled}
                     selected={symptoms[symptom.key]}
                     onPress={() => toggleSymptom(group, symptom.key)}

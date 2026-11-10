@@ -11,7 +11,7 @@ const dateKey = (date: Date) => format(date, "yyyy-MM-dd");
 
 function getColor(event: Event | undefined, colors: Palette) {
   if (!event) return null;
-  if (event.ovulation) return colors.calendarOvulation;
+  if (event.ovulation) return colors.blueSoft;
   if (event.menstruationLight || event.menstruationSpotting) {
     return colors.calendarMenstruationLight;
   }

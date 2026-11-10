@@ -17,9 +17,6 @@
       "noMenstruationEvents": "No upcoming period"
     },
     "edit": {
-      "eventsTitle": "Events for {{date}}",
-      "predictionsTitle": "Predictions for {{date}}",
-      "dayOfCycle": "{{day}} day of cycle",
       "light": "Light",
       "moderate": "Moderate",
       "heavy": "Heavy",
@@ -76,16 +73,7 @@
     "cycleDay": "Day {{day}}"
   },
   "navigation": {
-    "calendar": "Calendar",
-    "partner": "Partner",
-    "settings": "Settings",
-    "menu": "Open menu"
-  },
-  "ordinal": {
-    "one": "{{count}}st",
-    "two": "{{count}}nd",
-    "few": "{{count}}rd",
-    "other": "{{count}}th"
+    "settings": "Settings"
   },
   "partner": {
     "editInsights": "Cycle notes",
