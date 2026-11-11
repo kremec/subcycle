@@ -31,7 +31,7 @@ export const BottomSheet: FC<PropsWithChildren<BottomSheetProps>> = (props) => {
       <BottomSheetScrollView
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: bottom + spacing.lg }}
+        contentContainerStyle={{ paddingBottom: bottom }}
         style={{ width, maxHeight: height - top - spacing.xxxl - spacing.lg }}
       >
         {children}
