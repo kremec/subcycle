@@ -33,6 +33,10 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
   const predictionColor = event?.ovulation
     ? theme.colors.ovulationText
     : theme.colors.menstruationText;
+  const textColor =
+    !prediction && color === theme.colors.calendarMenstruationHeavy
+      ? theme.colors.menstruationHeavyText
+      : theme.colors.text;
 
   return (
     <Pressable
@@ -78,6 +82,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
       >
         <Typography
           variant="bodySmall"
+          color={textColor}
           allowFontScaling={false}
           style={{
             fontWeight: selected ? "900" : "400",
