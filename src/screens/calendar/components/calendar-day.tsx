@@ -103,7 +103,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
               width: 12,
               height: 3,
               borderRadius: theme.radius.full,
-              backgroundColor: theme.colors.calendarPill,
+              backgroundColor: theme.colors.text,
             }}
           />
         )}
