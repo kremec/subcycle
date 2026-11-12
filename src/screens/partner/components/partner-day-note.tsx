@@ -24,12 +24,10 @@ export const PartnerDayNote: FC<PartnerDayNoteProps> = (props) => {
     (insight) => dayInCycle !== null && insight.dayInCycle <= dayInCycle,
   );
   const showAllNotes = dayInCycle === null && insights.length > 0;
-  let emptyDescription: string;
+  let emptyDescription: string | undefined;
   if (dayInCycle === null) {
     emptyDescription = t("partner.noCycleDescription");
-  } else if (insights.length === 0) {
-    emptyDescription = t("partner.noNotesDescription");
-  } else {
+  } else if (insights.length > 0) {
     emptyDescription = t("partner.noNoteTodayDescription", {
       day: insights[0].dayInCycle,
     });
@@ -129,9 +127,14 @@ export const PartnerDayNote: FC<PartnerDayNoteProps> = (props) => {
                   : "partner.noNoteToday",
               )}
             </Typography>
-            <Typography variant="bodySmall" color={theme.colors.textSecondary}>
-              {emptyDescription}
-            </Typography>
+            {emptyDescription && (
+              <Typography
+                variant="bodySmall"
+                color={theme.colors.textSecondary}
+              >
+                {emptyDescription}
+              </Typography>
+            )}
             <Button
               onPress={showAllNotes ? onPressAllNotes : () => setEditing(true)}
             >

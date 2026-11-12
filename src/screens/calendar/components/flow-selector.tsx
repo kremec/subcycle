@@ -65,7 +65,11 @@ export const FlowSelector: FC<FlowSelectorProps> = (props) => {
     >
       {options.map((option, index) => {
         const selected = index === value;
-        const color = selected ? theme.colors.text : theme.colors.textSecondary;
+        const selectedColor =
+          option.flow === MenstruationFlow.HEAVY
+            ? theme.colors.menstruationHeavyText
+            : theme.colors.text;
+        const color = selected ? selectedColor : theme.colors.textSecondary;
 
         return (
           <Pressable
@@ -96,7 +100,9 @@ export const FlowSelector: FC<FlowSelectorProps> = (props) => {
                 name={option.icon}
                 size={20}
                 color={
-                  option.flow === null ? color : theme.colors.menstruationText
+                  selected || option.flow === null
+                    ? color
+                    : theme.colors.menstruationText
                 }
                 filled={option.filled}
               />

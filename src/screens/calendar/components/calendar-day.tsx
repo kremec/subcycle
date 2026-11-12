@@ -30,6 +30,11 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
     .join(", ");
   const size = Math.min(40, height - 2);
   const joined = marker.joinsPrevious || marker.joinsNext;
+  const predictionColor = event?.ovulation ? theme.colors.ovulationText : color;
+  const textColor =
+    !prediction && color === theme.colors.calendarMenstruationHeavy
+      ? theme.colors.menstruationHeavyText
+      : theme.colors.text;
 
   return (
     <Pressable
@@ -54,7 +59,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
             width: joined ? undefined : size,
             marginLeft: joined ? 0 : -size / 2,
             backgroundColor: prediction ? undefined : color,
-            borderColor: color,
+            borderColor: prediction ? predictionColor : color,
             borderWidth: prediction ? 2 : 0,
             borderLeftWidth: marker.joinsPrevious ? 0 : undefined,
             borderRightWidth: marker.joinsNext ? 0 : undefined,
@@ -75,6 +80,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
       >
         <Typography
           variant="bodySmall"
+          color={textColor}
           allowFontScaling={false}
           style={{
             fontWeight: selected ? "900" : "400",
@@ -95,7 +101,7 @@ export const CalendarDay: FC<CalendarDayProps> = (props) => {
               width: 12,
               height: 3,
               borderRadius: theme.radius.full,
-              backgroundColor: theme.colors.calendarPill,
+              backgroundColor: theme.colors.text,
             }}
           />
         )}

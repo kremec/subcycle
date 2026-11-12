@@ -2,8 +2,6 @@ import { type FC } from "react";
 import { View } from "react-native";
 
 import { BottomSheet } from "@/components/ui/bottom-sheet";
-import { Icon, IconName } from "@/components/ui/icon";
-import { IconButton } from "@/components/ui/icon-button";
 import { Typography } from "@/components/ui/typography";
 import { BackupsSection } from "@/screens/settings/components/backups-section";
 import { MenstruationRemindersSettingsSection } from "@/screens/settings/components/menstruation-reminders-settings-section";
@@ -34,22 +32,7 @@ export const SettingsSheet: FC<SettingsSheetProps> = (props) => {
           gap: theme.spacing.lg,
         }}
       >
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Typography variant="title">{t("navigation.settings")}</Typography>
-          <IconButton
-            plain
-            accessibilityLabel={t("common.close")}
-            onPress={onClose}
-          >
-            <Icon name={IconName.X} size={22} color={theme.colors.text} />
-          </IconButton>
-        </View>
+        <Typography variant="title">{t("navigation.settings")}</Typography>
         <PredictionSettingsSection />
         <PillRemindersSettingsSection />
         <MenstruationRemindersSettingsSection />
