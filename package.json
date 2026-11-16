@@ -13,7 +13,8 @@
     "eas:build:local": "eas build --platform android --profile preview --local",
     "eas:build": "eas build --platform android",
     "eas:submit": "eas submit --platform android",
-    "prepare": "git config --local include.path ../.githooks/.gitconfig"
+    "prepare": "git config --local include.path ../.githooks/.gitconfig",
+    "analyze": "EXPO_ATLAS=true bun expo export --platform android && bunx expo-atlas .expo/atlas.jsonl"
   },
   "dependencies": {
     "@expo/ui": "~58.0.27",
@@ -54,9 +55,13 @@
     "@types/react": "~19.3.0",
     "babel-plugin-inline-import": "^3.0.0",
     "drizzle-kit": "^0.31.11",
+    "expo-atlas": "^0.5.0",
     "oxfmt": "^0.76.0",
     "oxlint": "^1.91.0",
     "typescript": "~6.0.3"
+  },
+  "overrides": {
+    "expo-server": "~58.0.6"
   },
   "engines": {
     "bun": ">=1.4.3"
