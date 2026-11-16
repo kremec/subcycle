@@ -74,7 +74,7 @@ export const MenstruationRemindersSettingsSection: FC = () => {
           )
         }
       >
-        {menstruationNotificationsEnabled && (
+        {sortedRules.length > 0 && (
           <View style={{ gap: theme.spacing.md }}>
             {sortedRules.map((rule, index) => (
               <ListRow
@@ -103,6 +103,7 @@ export const MenstruationRemindersSettingsSection: FC = () => {
                             (item) => item !== rule,
                           ),
                         menstruationNotificationsEnabled:
+                          menstruationNotificationsEnabled &&
                           menstruationNotifications.length > 1,
                       })
                     }
@@ -179,10 +180,12 @@ export const MenstruationRemindersSettingsSection: FC = () => {
           if (!editedRule) rules.push(nextRule);
 
           updateSettings({
-            menstruationNotificationsEnabled: true,
+            menstruationNotificationsEnabled:
+              menstruationNotificationsEnabled || !editedRule,
             menstruationNotifications: rules,
           });
-          ensureReminderPermissions();
+          if (menstruationNotificationsEnabled || !editedRule)
+            ensureReminderPermissions();
 
           setPickingTime(null);
           setRuleTarget(null);

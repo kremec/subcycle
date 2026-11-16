@@ -131,6 +131,7 @@
     "exportTitle": "Export subcycle database",
     "importFailed": "Could not import the database.",
     "exportFailed": "Could not export the database.",
+    "predictionsRequiredForReminders": "Remove menstruation reminders to turn predictions off.",
     "predictionsDescription": "Estimate upcoming periods and ovulation from your logs."
   },
   "reminders": {

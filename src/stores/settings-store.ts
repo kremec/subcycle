@@ -9,18 +9,17 @@ export const useSettingsStore = create(
   persist(
     combine({ settings: settingsSchema.parse({}) }, (set, get) => ({
       updateSettings: (patch: Partial<Settings>) => {
-        set({
-          settings: {
-            ...get().settings,
-            ...patch,
-          },
-        });
+        const settings = { ...get().settings, ...patch };
+        if (settings.menstruationNotifications.length > 0) {
+          settings.predictionsEnabled = true;
+        }
+        set({ settings });
       },
     })),
     {
       name: "subcycle.settings",
       storage: createJSONStorage(() => localStorage),
-      version: 2,
+      version: 3,
       migrate: migrateSettings,
     },
   ),

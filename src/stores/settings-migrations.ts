@@ -27,5 +27,12 @@ export function migrateSettings(saved: unknown, version: number) {
     delete settings.predictionTimespan;
   }
 
+  if (
+    version < 3 &&
+    (state.settings.menstruationNotifications?.length ?? 0) > 0
+  ) {
+    state.settings.predictionsEnabled = true;
+  }
+
   return state;
 }
