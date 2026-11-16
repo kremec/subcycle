@@ -13,10 +13,6 @@
     "eas:build:local": "eas build --platform android --profile preview --local",
     "eas:build": "eas build --platform android",
     "eas:submit": "eas submit --platform android",
-    "lint": "oxlint src",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check",
-    "check": "bun --check",
     "prepare": "git config --local include.path ../.githooks/.gitconfig"
   },
   "dependencies": {
