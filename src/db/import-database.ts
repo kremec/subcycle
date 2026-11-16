@@ -3,7 +3,6 @@ import { Alert } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system/legacy";
 import {
-  backupDatabaseAsync,
   defaultDatabaseDirectory,
   openDatabaseAsync,
   type SQLiteDatabase,
@@ -12,7 +11,7 @@ import {
 import { drizzle } from "drizzle-orm/expo-sqlite";
 
 import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
-import { expoDb } from "@/db/client";
+import { db } from "@/db/client";
 import { eventsTable, partnerInsightsTable, symptomsTable } from "@/db/schema";
 import { logError, logInfo } from "@/logging/logger";
 import { t } from "@/translation/use-translation";
@@ -32,17 +31,6 @@ async function pickDatabaseFile(): Promise<string | null> {
   }
 
   return result.assets[0].uri;
-}
-
-async function notifyLiveQueriesChanged(): Promise<void> {
-  const rows = await expoDb.getAllAsync<{ name: string }>(
-    "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'",
-  );
-  const notifyQueries = rows.map((row) => {
-    const tableName = `"${row.name.replaceAll('"', '""')}"`;
-    return `DROP TABLE IF EXISTS temp.${tableName};CREATE TEMP TABLE ${tableName}(id);INSERT INTO temp.${tableName} VALUES(1);DROP TABLE temp.${tableName}`;
-  });
-  await expoDb.execAsync(notifyQueries.join(";"));
 }
 
 export function importLatestNativeDatabase(): Promise<void> {
@@ -69,19 +57,24 @@ export function importLatestNativeDatabase(): Promise<void> {
         );
 
         const sourceDb = drizzle(importDb);
-        eventSchema.array().parse(sourceDb.select().from(eventsTable).all());
-        symptomsSchema
-          .array()
-          .parse(sourceDb.select().from(symptomsTable).all());
-        partnerInsightSchema
-          .array()
-          .parse(sourceDb.select().from(partnerInsightsTable).all());
+        const events = sourceDb.select().from(eventsTable).all();
+        const symptoms = sourceDb.select().from(symptomsTable).all();
+        const insights = sourceDb.select().from(partnerInsightsTable).all();
+        eventSchema.array().parse(events);
+        symptomsSchema.array().parse(symptoms);
+        partnerInsightSchema.array().parse(insights);
 
-        await backupDatabaseAsync({
-          sourceDatabase: importDb,
-          destDatabase: expoDb,
+        db.transaction((transaction) => {
+          transaction.delete(eventsTable).run();
+          transaction.delete(symptomsTable).run();
+          transaction.delete(partnerInsightsTable).run();
+          for (const event of events)
+            transaction.insert(eventsTable).values(event).run();
+          for (const symptom of symptoms)
+            transaction.insert(symptomsTable).values(symptom).run();
+          for (const insight of insights)
+            transaction.insert(partnerInsightsTable).values(insight).run();
         });
-        await notifyLiveQueriesChanged();
         backupDatabaseAfterWrite();
         logInfo("db.import", "complete");
       } finally {

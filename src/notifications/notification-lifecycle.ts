@@ -38,6 +38,14 @@ async function syncSchedules(): Promise<void> {
 
 export function startNotificationLifecycle(): () => void {
   void syncSchedules();
+  let pending: ReturnType<typeof setTimeout> | undefined;
+  const requestSync = () => {
+    clearTimeout(pending);
+    pending = setTimeout(() => {
+      pending = undefined;
+      void syncSchedules();
+    }, 0);
+  };
 
   const actionSubscription = NativeReminders.addListener(
     "reminderAction",
@@ -49,7 +57,7 @@ export function startNotificationLifecycle(): () => void {
     },
   );
   const databaseSubscription = addDatabaseChangeListener((change) => {
-    if (change.tableName === "events") void syncSchedules();
+    if (change.tableName === "events") requestSync();
   });
   const unsubscribeSettings = useSettingsStore.subscribe((state, previous) => {
     const current = state.settings;
@@ -62,11 +70,12 @@ export function startNotificationLifecycle(): () => void {
         before.menstruationNotificationsEnabled ||
       current.menstruationNotifications !== before.menstruationNotifications
     ) {
-      void syncSchedules();
+      requestSync();
     }
   });
 
   return () => {
+    clearTimeout(pending);
     actionSubscription.remove();
     databaseSubscription.remove();
     unsubscribeSettings();
