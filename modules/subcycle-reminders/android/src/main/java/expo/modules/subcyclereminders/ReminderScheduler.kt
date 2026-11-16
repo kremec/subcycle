@@ -17,6 +17,7 @@ import java.time.ZoneId
 
 class ReminderScheduler(private val context: Context) {
     companion object {
+        private val scheduleLock = Any()
         const val ACTION_PILL_ALARM = "expo.modules.subcyclereminders.PILL_ALARM"
         const val ACTION_MENSTRUATION_ALARM = "expo.modules.subcyclereminders.MENSTRUATION_ALARM"
         const val ACTION_CHECK_PILL = "expo.modules.subcyclereminders.CHECK_PILL"
@@ -34,7 +35,10 @@ class ReminderScheduler(private val context: Context) {
     private val alarmManager =
         context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    fun replacePillSchedules(schedules: List<PillSchedule>) {
+    private fun canScheduleAlarms(): Boolean =
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()
+
+    fun replacePillSchedules(schedules: List<PillSchedule>) = synchronized(scheduleLock) {
         LocalLog.info(
             context,
             "android.scheduler",
@@ -43,12 +47,13 @@ class ReminderScheduler(private val context: Context) {
         )
         cancelPillSchedules()
         ReminderStore.savePillSchedules(context, schedules)
+        if (!canScheduleAlarms()) return@synchronized
         schedules.forEach { schedule ->
             schedulePillAlarm(schedule, fromTime = System.currentTimeMillis())
         }
     }
 
-    fun replaceMenstruationSchedules(schedules: List<MenstruationSchedule>) {
+    fun replaceMenstruationSchedules(schedules: List<MenstruationSchedule>) = synchronized(scheduleLock) {
         LocalLog.info(
             context,
             "android.scheduler",
@@ -57,6 +62,7 @@ class ReminderScheduler(private val context: Context) {
         )
         cancelMenstruationSchedules()
         ReminderStore.saveMenstruationSchedules(context, schedules)
+        if (!canScheduleAlarms()) return@synchronized
         schedules.forEach { schedule ->
             scheduleMenstruationAlarm(schedule)
         }
@@ -76,7 +82,7 @@ class ReminderScheduler(private val context: Context) {
         ReminderStore.saveMenstruationSchedules(context, emptyList())
     }
 
-    fun restoreAllSchedules() {
+    fun restoreAllSchedules() = synchronized(scheduleLock) {
         val pillSchedules = ReminderStore.getPillSchedules(context)
         val menstruationSchedules = ReminderStore.getMenstruationSchedules(context)
         LocalLog.info(
@@ -88,22 +94,18 @@ class ReminderScheduler(private val context: Context) {
                 "menstruationScheduleCount" to menstruationSchedules.size
             )
         )
-        pillSchedules.forEach { schedule ->
-            schedulePillAlarm(schedule, fromTime = System.currentTimeMillis())
-        }
-        menstruationSchedules.forEach { schedule ->
-            scheduleMenstruationAlarm(schedule)
-        }
+        replacePillSchedules(pillSchedules)
+        replaceMenstruationSchedules(menstruationSchedules)
     }
 
-    fun onPillAlarmTriggered(id: String) {
+    fun onPillAlarmTriggered(id: String) = synchronized(scheduleLock) {
         LocalLog.info(
             context,
             "android.scheduler",
             "pill-alarm-triggered",
             mapOf("id" to id)
         )
-        val schedule = ReminderStore.getPillSchedules(context).find { it.id == id } ?: return
+        val schedule = ReminderStore.getPillSchedules(context).find { it.id == id } ?: return@synchronized
         showPillNotification(schedule)
         schedulePillAlarm(schedule, fromTime = System.currentTimeMillis() + 60_000L)
     }
@@ -113,7 +115,7 @@ class ReminderScheduler(private val context: Context) {
         date: String,
         daysBefore: Int,
         customMessage: String?
-    ) {
+    ) = synchronized(scheduleLock) {
         showMenstruationNotification(date, daysBefore, customMessage)
         val remaining = ReminderStore.getMenstruationSchedules(context).filterNot { it.id == id }
         ReminderStore.saveMenstruationSchedules(context, remaining)
@@ -138,7 +140,7 @@ class ReminderScheduler(private val context: Context) {
         val nextTrigger = nextPillTrigger(schedule, fromTime)
         val pendingIntent = pillPendingIntent(schedule.id)
         alarmManager.setAlarmClock(
-            AlarmClockInfo(nextTrigger, pendingIntent),
+            AlarmClockInfo(nextTrigger, openAppPendingIntent(schedule.id)),
             pendingIntent
         )
     }
@@ -156,7 +158,7 @@ class ReminderScheduler(private val context: Context) {
 
         val pendingIntent = menstruationPendingIntent(schedule)
         alarmManager.setAlarmClock(
-            AlarmClockInfo(trigger, pendingIntent),
+            AlarmClockInfo(trigger, openAppPendingIntent(schedule.id)),
             pendingIntent
         )
     }
@@ -216,7 +218,7 @@ class ReminderScheduler(private val context: Context) {
         }
         return PendingIntent.getBroadcast(
             context,
-            requestCode("check-pill-$date"),
+            requestCode("check-pill-$date-$notificationId"),
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )

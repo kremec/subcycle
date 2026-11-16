@@ -27,30 +27,35 @@ export function buildMenstruationSchedules(
   return settings.menstruationNotifications
     .slice()
     .sort((left, right) => left.dayToMenstruation - right.dayToMenstruation)
-    .flatMap((rule, index) => {
-      const target = predictedStarts.find((menstruationStart) => {
-        const candidate = subDays(menstruationStart, rule.dayToMenstruation);
-        return isFuture(parse(rule.notificationTime, "HH:mm", candidate));
-      });
+    .flatMap((rule, index) =>
+      predictedStarts.flatMap((menstruationStart) => {
+        const scheduleDate = subDays(menstruationStart, rule.dayToMenstruation);
+        if (!isFuture(parse(rule.notificationTime, "HH:mm", scheduleDate))) {
+          return [];
+        }
 
-      if (!target) {
-        return [];
-      }
-
-      const scheduleDate = subDays(target, rule.dayToMenstruation);
-      const [hour, minute] = rule.notificationTime.split(":").map(Number);
-
-      return [
-        {
-          id: `menstruation-${index}`,
-          date: format(scheduleDate, "yyyy-MM-dd"),
-          hour,
-          minute,
-          daysBefore: rule.dayToMenstruation,
-          customMessage:
-            rule.customMessage ??
-            t("reminders.menstruationBody", { count: rule.dayToMenstruation }),
-        },
-      ];
-    });
+        const date = format(scheduleDate, "yyyy-MM-dd");
+        const [hour, minute] = rule.notificationTime.split(":").map(Number);
+        return [
+          {
+            id: `menstruation-${index}-${date}`,
+            date,
+            hour,
+            minute,
+            daysBefore: rule.dayToMenstruation,
+            customMessage:
+              rule.customMessage ??
+              t("reminders.menstruationBody", {
+                count: rule.dayToMenstruation,
+              }),
+          },
+        ];
+      }),
+    )
+    .sort(
+      (left, right) =>
+        left.date.localeCompare(right.date) ||
+        left.hour - right.hour ||
+        left.minute - right.minute,
+    );
 }

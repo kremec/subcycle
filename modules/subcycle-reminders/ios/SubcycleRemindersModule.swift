@@ -75,8 +75,8 @@ public class SubcycleRemindersModule: Module {
       ReminderScheduler.replacePillSchedules(schedules, promise: promise)
     }
 
-    AsyncFunction("replaceMenstruationSchedules") { (schedules: [MenstruationSchedule]) in
-      ReminderScheduler.replaceMenstruationSchedules(schedules)
+    AsyncFunction("replaceMenstruationSchedules") { (schedules: [MenstruationSchedule], promise: Promise) in
+      ReminderScheduler.replaceMenstruationSchedules(schedules, promise: promise)
     }
   }
 

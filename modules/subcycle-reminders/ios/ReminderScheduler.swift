@@ -55,6 +55,7 @@ enum ReminderScheduler {
 
       let dispatchGroup = DispatchGroup()
       var schedulingError: Error?
+      let errorLock = NSLock()
 
       schedules.forEach { schedule in
         var components = DateComponents()
@@ -75,9 +76,11 @@ enum ReminderScheduler {
 
         dispatchGroup.enter()
         center.add(request) { error in
+          errorLock.lock()
           if schedulingError == nil {
             schedulingError = error
           }
+          errorLock.unlock()
           if let error {
             LocalLog.append(
               level: "error",
@@ -104,7 +107,7 @@ enum ReminderScheduler {
     }
   }
 
-  static func replaceMenstruationSchedules(_ schedules: [MenstruationSchedule]) {
+  static func replaceMenstruationSchedules(_ schedules: [MenstruationSchedule], promise: Promise) {
     LocalLog.append(
       category: "ios.scheduler",
       event: "replace-menstruation-schedules-requested",
@@ -118,21 +121,18 @@ enum ReminderScheduler {
     let identifiers = schedules.map { $0.id }
     UserDefaults.standard.set(identifiers, forKey: menstruationSchedulesKey)
 
-    let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy-MM-dd"
-    formatter.locale = Locale(identifier: "en_US_POSIX")
+    let dispatchGroup = DispatchGroup()
+    var schedulingError: Error?
+    let errorLock = NSLock()
 
     schedules.forEach { schedule in
-      guard let date = formatter.date(from: schedule.date) else {
-        return
-      }
-
-      let calendar = Calendar.current
-      let components = calendar.dateComponents([.year, .month, .day], from: date)
-      var triggerComponents = DateComponents()
-      triggerComponents.year = components.year
-      triggerComponents.month = components.month
-      triggerComponents.day = components.day
+      let date = schedule.date.split(separator: "-").compactMap { Int($0) }
+      // Noon avoids midnight DST gaps; calendar-free triggers follow the local time zone.
+      guard date.count == 3,
+        let day = Calendar(identifier: .gregorian).date(
+          from: DateComponents(year: date[0], month: date[1], day: date[2], hour: 12))
+      else { return }
+      var triggerComponents = Calendar.current.dateComponents([.era, .year, .month, .day], from: day)
       triggerComponents.hour = schedule.hour
       triggerComponents.minute = schedule.minute
 
@@ -154,7 +154,13 @@ enum ReminderScheduler {
         content: content,
         trigger: UNCalendarNotificationTrigger(dateMatching: triggerComponents, repeats: false)
       )
+      dispatchGroup.enter()
       center.add(request) { error in
+        errorLock.lock()
+        if schedulingError == nil {
+          schedulingError = error
+        }
+        errorLock.unlock()
         if let error {
           LocalLog.append(
             level: "error",
@@ -165,9 +171,17 @@ enum ReminderScheduler {
               "message": error.localizedDescription
             ]
           )
-          return
         }
+        dispatchGroup.leave()
       }
+    }
+
+    dispatchGroup.notify(queue: .main) {
+      if let schedulingError {
+        promise.reject(schedulingError)
+        return
+      }
+      promise.resolve()
     }
   }
 

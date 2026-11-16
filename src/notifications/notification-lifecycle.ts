@@ -1,3 +1,5 @@
+import { Platform } from "react-native";
+
 import { addDatabaseChangeListener } from "expo-sqlite";
 
 import { parseISO } from "date-fns";
@@ -13,6 +15,9 @@ import { useSettingsStore } from "@/stores/settings-store";
 
 import NativeReminders from "@modules/subcycle-reminders";
 
+// Keep native replacements ordered even if the app lifecycle restarts.
+let synchronization = Promise.resolve();
+
 async function syncSchedules(): Promise<void> {
   try {
     const { settings } = useSettingsStore.getState();
@@ -27,23 +32,39 @@ async function syncSchedules(): Promise<void> {
       getMenstruationPredictions(getEvents(), settings.predictionsEnabled),
     );
 
-    await Promise.all([
-      NativeReminders.replacePillSchedules(pillSchedules),
-      NativeReminders.replaceMenstruationSchedules(menstruationSchedules),
-    ]);
+    // Free iOS queue capacity before replacing repeating pill requests.
+    if (Platform.OS === "ios") {
+      await NativeReminders.replaceMenstruationSchedules([]);
+    }
+    await NativeReminders.replacePillSchedules(pillSchedules);
+    await NativeReminders.replaceMenstruationSchedules(
+      Platform.OS === "ios"
+        ? menstruationSchedules.slice(0, Math.max(0, 64 - pillSchedules.length))
+        : menstruationSchedules,
+    );
   } catch (error) {
     logError("notification.lifecycle", "replace-schedules-failed", error);
   }
 }
 
 export function startNotificationLifecycle(): () => void {
-  void syncSchedules();
+  let active = true;
+  let queued = false;
+  const synchronize = () => {
+    if (queued) return;
+    queued = true;
+    synchronization = synchronization.then(async () => {
+      queued = false;
+      if (active) await syncSchedules();
+    });
+  };
+  synchronize();
   let pending: ReturnType<typeof setTimeout> | undefined;
   const requestSync = () => {
     clearTimeout(pending);
     pending = setTimeout(() => {
       pending = undefined;
-      void syncSchedules();
+      synchronize();
     }, 0);
   };
 
@@ -75,6 +96,7 @@ export function startNotificationLifecycle(): () => void {
   });
 
   return () => {
+    active = false;
     clearTimeout(pending);
     actionSubscription.remove();
     databaseSubscription.remove();
