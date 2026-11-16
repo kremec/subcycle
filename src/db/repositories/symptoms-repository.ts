@@ -1,15 +1,15 @@
 import { eq } from "drizzle-orm";
-import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
 import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
 import { db } from "@/db/client";
 import { symptomsTable } from "@/db/schema";
+import { useLiveRows } from "@/db/use-live-rows";
 import { logInfo } from "@/logging/logger";
 import { symptomsSchema, type Symptoms } from "@/types/symptom";
 
 export function useSymptomsQuery() {
-  const query = useLiveQuery(
-    db.select().from(symptomsTable).orderBy(symptomsTable.date),
+  const query = useLiveRows("symptoms", () =>
+    db.select().from(symptomsTable).orderBy(symptomsTable.date).all(),
   );
   return { ...query, data: symptomsSchema.array().parse(query.data) };
 }

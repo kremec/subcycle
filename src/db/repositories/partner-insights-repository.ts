@@ -1,20 +1,21 @@
 import { eq } from "drizzle-orm";
-import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
 import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
 import { db } from "@/db/client";
 import { partnerInsightsTable } from "@/db/schema";
+import { useLiveRows } from "@/db/use-live-rows";
 import { type PartnerInsight } from "@/types/partner-insight";
 
 export function usePartnerInsightsQuery(): {
   data: PartnerInsight[];
   error?: Error;
 } {
-  return useLiveQuery(
+  return useLiveRows("partner_insights", () =>
     db
       .select()
       .from(partnerInsightsTable)
-      .orderBy(partnerInsightsTable.dayInCycle),
+      .orderBy(partnerInsightsTable.dayInCycle)
+      .all(),
   );
 }
 
