@@ -26,18 +26,15 @@ export function exportDatabase(): Promise<void> {
         sourceDatabase: expoDb,
         destDatabase: exportDb,
       })
+        // Close before sharing so the exported file is self-contained.
+        .finally(() => exportDb.closeAsync())
         .then(async () => {
           const exportPath = `file://${defaultDatabaseDirectory}/${EXPORT_DB_NAME}`;
           await Sharing.shareAsync(exportPath, {
             dialogTitle: t("settings.exportTitle"),
           });
           logInfo("db.export", "share-opened");
-        })
-        .finally(() =>
-          exportDb.closeAsync().catch((error) => {
-            logError("db.export", "close-failed", error);
-          }),
-        ),
+        }),
     )
     .catch((error) => {
       logError("db.export", "failed", error);
