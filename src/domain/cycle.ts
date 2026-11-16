@@ -17,7 +17,12 @@ export function getVisibleCycleEvents(events: Event[]): Event[] {
   const visible = new Map<string, Event>();
   for (const event of events) {
     if (event.prediction && event.kind !== EventKind.NONE) {
-      visible.set(format(event.date, "yyyy-MM-dd"), event);
+      const day = format(event.date, "yyyy-MM-dd");
+      if (
+        event.kind === EventKind.MENSTRUATION ||
+        visible.get(day)?.kind !== EventKind.MENSTRUATION
+      )
+        visible.set(day, event);
     }
   }
   for (const event of events) {
