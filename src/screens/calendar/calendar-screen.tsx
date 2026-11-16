@@ -8,7 +8,7 @@ import {
   toggleEventForDate,
 } from "@/db/repositories/events-repository";
 import {
-  saveSymptoms,
+  toggleSymptomForDate,
   useSymptomsQuery,
 } from "@/db/repositories/symptoms-repository";
 import { Calendar } from "@/screens/calendar/components/calendar";
@@ -72,7 +72,11 @@ const CalendarScreen: FC<CalendarScreenProps> = (props) => {
         visible={symptomsEditorVisible}
         symptoms={selectedSymptoms}
         onClose={() => setSymptomsEditorVisible(false)}
-        onChange={saveSymptoms}
+        onToggle={(key, exclusiveWith) => {
+          void toggleSymptomForDate(selectedDate, key, exclusiveWith).catch(
+            () => Alert.alert(t("common.saveFailed")),
+          );
+        }}
       />
     </Fragment>
   );

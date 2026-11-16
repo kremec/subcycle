@@ -7,37 +7,18 @@ import { getSymptomGroups } from "@/domain/symptom-groups";
 import { SymptomCard } from "@/screens/calendar/components/symptom-card";
 import { useTheme } from "@/theme/use-theme";
 import { dateFormatter, t } from "@/translation/use-translation";
-import {
-  symptomsSchema,
-  type Symptoms,
-  type Symptom,
-  type SymptomGroupDefinition,
-} from "@/types/symptom";
+import { type Symptoms, type Symptom } from "@/types/symptom";
 
 interface SymptomsEditSheetProps {
   visible: boolean;
   symptoms: Symptoms;
   onClose: () => void;
-  onChange: (symptoms: Symptoms) => void;
+  onToggle: (key: Symptom, exclusiveWith: Symptom[]) => void;
 }
 
 export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
-  const { visible, symptoms, onClose, onChange } = props;
+  const { visible, symptoms, onClose, onToggle } = props;
   const theme = useTheme();
-
-  function toggleSymptom(group: SymptomGroupDefinition, key: Symptom) {
-    const selected = !symptoms[key];
-    const next = { ...symptoms };
-
-    if (group.exclusive && selected) {
-      for (const symptom of group.types) {
-        next[symptom.key] = false;
-      }
-    }
-
-    next[key] = selected;
-    onChange(symptomsSchema.parse(next));
-  }
 
   return (
     <BottomSheet visible={visible} onClose={onClose}>
@@ -81,7 +62,14 @@ export const SymptomsEditSheet: FC<SymptomsEditSheetProps> = (props) => {
                     color={group.color}
                     filled={symptom.filled}
                     selected={symptoms[symptom.key]}
-                    onPress={() => toggleSymptom(group, symptom.key)}
+                    onPress={() =>
+                      onToggle(
+                        symptom.key,
+                        group.exclusive
+                          ? group.types.map((item) => item.key)
+                          : [],
+                      )
+                    }
                   />
                 ))}
               </View>
