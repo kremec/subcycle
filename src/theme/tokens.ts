@@ -1,4 +1,4 @@
-import { Platform, type TextStyle } from "react-native";
+import { type TextStyle } from "react-native";
 
 export const spacing = {
   xxs: 2,
@@ -41,11 +41,5 @@ export const typography = {
     fontSize: 18,
     lineHeight: 24,
     fontWeight: "400",
-  },
-  mono: {
-    fontSize: 14,
-    lineHeight: 18,
-    fontWeight: "400",
-    fontFamily: Platform.select({ ios: "ui-monospace", default: "monospace" }),
   },
 } satisfies Record<string, TextStyle>;
