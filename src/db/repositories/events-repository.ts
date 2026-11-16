@@ -1,9 +1,9 @@
 import { eq, getTableColumns, sql } from "drizzle-orm";
-import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
 import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
 import { db } from "@/db/client";
 import { eventsTable } from "@/db/schema";
+import { useDatabaseQuery } from "@/db/use-database-query";
 import { logInfo } from "@/logging/logger";
 import {
   type Event,
@@ -27,7 +27,7 @@ export function getEvents(): Event[] {
 }
 
 export function useEventsQuery() {
-  const query = useLiveQuery(eventsQuery());
+  const query = useDatabaseQuery("events", eventsQuery);
   return { ...query, data: eventSchema.array().parse(query.data) };
 }
 
