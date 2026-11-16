@@ -5,6 +5,7 @@
   },
   "build": {
     "development": {
+      "bun": "1.4.4",
       "developmentClient": true,
       "distribution": "internal",
       "env": {
@@ -12,6 +13,7 @@
       }
     },
     "preview": {
+      "bun": "1.4.4",
       "distribution": "internal",
       "channel": "preview"
     },
