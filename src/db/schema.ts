@@ -9,12 +9,10 @@ import {
 
 import { Symptom } from "@/types/symptom";
 
-const epoch = new Date(1970, 0, 1, 12);
-
 const calendarDate = customType<{ data: Date; driverData: number }>({
   dataType: () => "integer",
-  toDriver: (date) => differenceInCalendarDays(date, epoch),
-  fromDriver: (day) => addDays(epoch, day),
+  toDriver: (date) => differenceInCalendarDays(date, new Date(1970, 0, 1, 12)),
+  fromDriver: (day) => addDays(new Date(1970, 0, 1, 12), day),
 });
 
 function flag(name: string) {

@@ -8,12 +8,10 @@ enum PillEventStore {
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-MM-dd"
     formatter.locale = Locale(identifier: "en_US_POSIX")
-    formatter.timeZone = .current
+    formatter.calendar = Calendar(identifier: .gregorian)
+    formatter.timeZone = TimeZone(secondsFromGMT: 0)
 
-    guard
-      let localDate = formatter.date(from: date),
-      let unixEpoch = formatter.date(from: "1970-01-01")
-    else {
+    guard let parsedDate = formatter.date(from: date) else {
       LocalLog.append(
         level: "warn",
         category: "ios.pill-event-store",
@@ -26,11 +24,7 @@ enum PillEventStore {
       .appendingPathComponent("SQLite", isDirectory: true)
       .appendingPathComponent(databaseName)
 
-    let epochDay = Calendar.current.dateComponents(
-      [.day],
-      from: unixEpoch,
-      to: localDate
-    ).day ?? 0
+    let epochDay = Int(parsedDate.timeIntervalSince1970 / 86_400)
 
     var database: OpaquePointer?
     guard sqlite3_open_v2(
