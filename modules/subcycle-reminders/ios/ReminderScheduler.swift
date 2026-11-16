@@ -65,7 +65,6 @@ enum ReminderScheduler {
         content.title = "subcycle"
         content.body = NSLocalizedString("subcycle_pill_body", comment: "Pill reminder body")
         content.categoryIdentifier = pillCategoryIdentifier
-        content.userInfo = ["date": PillEventStore.currentDateString()]
         self.configurePillNotificationContent(content, settings: settings)
 
         let request = UNNotificationRequest(

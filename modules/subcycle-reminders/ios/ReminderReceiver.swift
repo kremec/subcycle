@@ -6,11 +6,19 @@ final class ReminderReceiver: NSObject, UNUserNotificationCenterDelegate {
 
   func userNotificationCenter(
     _ center: UNUserNotificationCenter,
+    willPresent notification: UNNotification,
+    withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+  ) {
+    completionHandler([.banner, .list, .sound])
+  }
+
+  func userNotificationCenter(
+    _ center: UNUserNotificationCenter,
     didReceive response: UNNotificationResponse,
     withCompletionHandler completionHandler: @escaping () -> Void
   ) {
     if response.actionIdentifier == ReminderScheduler.pillActionIdentifier {
-      let date = PillEventStore.currentDateString()
+      let date = PillEventStore.dateString(from: response.notification.date)
       if PillEventStore.markPillForDate(date) {
         AutomaticDatabaseBackup.run()
         let payload: [String: Any] = [

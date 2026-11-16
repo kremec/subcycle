@@ -93,11 +93,11 @@ enum PillEventStore {
     }
   }
 
-  static func currentDateString() -> String {
+  static func dateString(from date: Date) -> String {
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-MM-dd"
     formatter.locale = Locale(identifier: "en_US_POSIX")
     formatter.timeZone = .current
-    return formatter.string(from: Date())
+    return formatter.string(from: date)
   }
 }
