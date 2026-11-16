@@ -8,6 +8,7 @@ import {
   type SQLiteDatabase,
 } from "expo-sqlite";
 
+import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 
 import { backupDatabaseAfterWrite } from "@/db/automatic-database-backup";
@@ -65,9 +66,19 @@ export function importLatestNativeDatabase(): Promise<void> {
         partnerInsightSchema.array().parse(insights);
 
         db.transaction((transaction) => {
-          transaction.delete(eventsTable).run();
-          transaction.delete(symptomsTable).run();
-          transaction.delete(partnerInsightsTable).run();
+          // A predicate prevents SQLite truncation from skipping change listeners.
+          transaction
+            .delete(eventsTable)
+            .where(sql`true`)
+            .run();
+          transaction
+            .delete(symptomsTable)
+            .where(sql`true`)
+            .run();
+          transaction
+            .delete(partnerInsightsTable)
+            .where(sql`true`)
+            .run();
           for (const event of events)
             transaction.insert(eventsTable).values(event).run();
           for (const symptom of symptoms)
