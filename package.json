@@ -17,23 +17,23 @@
     "analyze": "EXPO_ATLAS=true bun expo export --platform android && bunx expo-atlas .expo/atlas.jsonl"
   },
   "dependencies": {
-    "@expo/ui": "58.0.28",
+    "@expo/ui": "58.0.29",
     "@tabler/icons-react-native": "^3.52.0",
     "babel-plugin-react-compiler": "^1.0.0",
     "date-fns": "^4.4.0",
     "drizzle-orm": "0.45.4",
-    "expo": "~58.0.25",
+    "expo": "~58.0.26",
     "expo-build-properties": "~58.0.12",
     "expo-constants": "~58.0.16",
-    "expo-dev-client": "~58.0.20",
+    "expo-dev-client": "~58.0.21",
     "expo-document-picker": "~58.0.5",
-    "expo-file-system": "~58.0.13",
+    "expo-file-system": "~58.0.14",
     "expo-linking": "~58.0.17",
     "expo-localization": "~58.0.5",
-    "expo-router": "~58.0.31",
+    "expo-router": "~58.0.32",
     "expo-sharing": "~58.0.23",
     "expo-splash-screen": "~58.0.14",
-    "expo-sqlite": "~58.0.17",
+    "expo-sqlite": "~58.0.18",
     "expo-system-ui": "~58.0.7",
     "expo-updates": "~58.0.22",
     "i18n-js": "^4.5.4",
@@ -67,7 +67,7 @@
     "bun": ">=1.4.3"
   },
   "patchedDependencies": {
-    "@expo/ui@58.0.28": "patches/@expo%2Fui@58.0.28.patch",
+    "@expo/ui@58.0.29": "patches/@expo%2Fui@58.0.29.patch",
     "drizzle-orm@0.45.4": "patches/drizzle-orm@0.45.4.patch"
   }
 }
